@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using MathHighLow.Models;  // ✅ 추가됨!
+using Models.Cards;  // ✅ 추가됨!
 
 namespace MathHighLow.Services
 {
@@ -47,13 +47,13 @@ namespace MathHighLow.Services
             // × 특수 카드 추가
             for (int i = 0; i < config.MultiplyCardsPerRound; i++)
             {
-                slotDeck.Add(new SpecialCard(SpecialCard.SpecialType.Multiply));
+                slotDeck.Add(new SpecialCard(OperatorType.Multiply));
             }
 
             // √ 특수 카드 추가
             for (int i = 0; i < config.SquareRootCardsPerRound; i++)
             {
-                slotDeck.Add(new SpecialCard(SpecialCard.SpecialType.SquareRoot));
+                slotDeck.Add(new SpecialCard(OperatorType.SquareRoot));
             }
 
             // 셔플

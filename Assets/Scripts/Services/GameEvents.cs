@@ -1,5 +1,5 @@
 using System;
-using MathHighLow.Models;
+using Models.Cards;
 
 namespace MathHighLow.Services
 {
@@ -16,9 +16,9 @@ namespace MathHighLow.Services
 
         // ===== 연산자 관련 이벤트 =====
 
-        public static event Action<OperatorCard.OperatorType> OnOperatorSelected;
+        public static event Action<OperatorType> OnOperatorSelected;
         public static event Action OnSquareRootClicked;
-        public static event Action<OperatorCard.OperatorType> OnOperatorDisabled;
+        public static event Action<OperatorType> OnOperatorDisabled;
         public static event Action<SpecialCard> OnSpecialCardConsumed;
 
         // ===== 게임 진행 이벤트 =====
@@ -93,7 +93,7 @@ namespace MathHighLow.Services
             OnCardClicked?.Invoke(card);
         }
 
-        public static void InvokeOperatorSelected(OperatorCard.OperatorType op)
+        public static void InvokeOperatorSelected(OperatorType op)
         {
             OnOperatorSelected?.Invoke(op);
         }
@@ -153,7 +153,7 @@ namespace MathHighLow.Services
             OnCardConsumed?.Invoke(card);
         }
 
-        public static void InvokeOperatorDisabled(OperatorCard.OperatorType op)
+        public static void InvokeOperatorDisabled(OperatorType op)
         {
             OnOperatorDisabled?.Invoke(op);
         }

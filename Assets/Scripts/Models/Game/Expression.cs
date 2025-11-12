@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace MathHighLow.Models
+namespace Models.Cards
 {
     /// <summary>
     /// [학습 포인트] 복합 데이터 구조
@@ -28,7 +28,7 @@ namespace MathHighLow.Models
         /// 수식의 연산자들 (순서대로)
         /// 연산자 개수 = 숫자 개수 - 1
         /// </summary>
-        public List<OperatorCard.OperatorType> Operators { get; private set; }
+        public List<OperatorType> Operators { get; private set; }
 
         /// <summary>
         /// 각 숫자에 제곱근이 적용되는지 여부
@@ -42,7 +42,7 @@ namespace MathHighLow.Models
         public Expression()
         {
             Numbers = new List<float>();
-            Operators = new List<OperatorCard.OperatorType>();
+            Operators = new List<OperatorType>();
             HasSquareRoot = new List<bool>();
         }
 
@@ -58,7 +58,7 @@ namespace MathHighLow.Models
         /// <summary>
         /// 연산자를 추가합니다.
         /// </summary>
-        public void AddOperator(OperatorCard.OperatorType op)
+        public void AddOperator(OperatorType op)
         {
             Operators.Add(op);
         }
@@ -157,14 +157,14 @@ namespace MathHighLow.Models
         /// <summary>
         /// 연산자를 기호로 변환합니다.
         /// </summary>
-        private string GetOperatorSymbol(OperatorCard.OperatorType op)
+        private string GetOperatorSymbol(OperatorType op)
         {
             return op switch
             {
-                OperatorCard.OperatorType.Add => "+",
-                OperatorCard.OperatorType.Subtract => "-",
-                OperatorCard.OperatorType.Multiply => "×",
-                OperatorCard.OperatorType.Divide => "÷",
+                OperatorType.Add => "+",
+                OperatorType.Subtract => "-",
+                OperatorType.Multiply => "×",
+                OperatorType.Divide => "÷",
                 _ => "?"
             };
         }

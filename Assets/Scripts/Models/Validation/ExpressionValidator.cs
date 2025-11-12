@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MathHighLow.Models
+namespace Models.Cards
 {
     /// <summary>
     /// [학습 포인트] 검증 로직 분리
@@ -187,7 +187,7 @@ namespace MathHighLow.Models
 
             foreach (var op in expression.Operators)
             {
-                if (op == OperatorCard.OperatorType.Multiply)
+                if (op == OperatorType.Multiply)
                     usedCount++;
             }
 
@@ -212,7 +212,7 @@ namespace MathHighLow.Models
         {
             foreach (var op in expression.Operators)
             {
-                if (!hand.IsOperatorEnabled(op) && op != OperatorCard.OperatorType.Multiply)
+                if (!hand.IsOperatorEnabled(op) && op != OperatorType.Multiply)
                 {
                     MarkInvalid(result, $"비활성화된 연산자를 사용했습니다: {GetOperatorName(op)}");
                     return false;
@@ -237,14 +237,14 @@ namespace MathHighLow.Models
         /// <summary>
         /// 연산자 이름 반환
         /// </summary>
-        private static string GetOperatorName(OperatorCard.OperatorType op)
+        private static string GetOperatorName(OperatorType op)
         {
             return op switch
             {
-                OperatorCard.OperatorType.Add => "+",
-                OperatorCard.OperatorType.Subtract => "-",
-                OperatorCard.OperatorType.Multiply => "×",
-                OperatorCard.OperatorType.Divide => "÷",
+                OperatorType.Add => "+",
+                OperatorType.Subtract => "-",
+                OperatorType.Multiply => "×",
+                OperatorType.Divide => "÷",
                 _ => "?"
             };
         }

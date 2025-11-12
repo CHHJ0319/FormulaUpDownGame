@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using MathHighLow.Models;
+using Models.Cards;
 using MathHighLow.Services;
 using System.Collections;
 

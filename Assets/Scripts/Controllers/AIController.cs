@@ -1,5 +1,5 @@
 using UnityEngine;
-using MathHighLow.Models;
+using Models.Cards;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,7 +20,7 @@ namespace MathHighLow.Controllers
         private float bestDistance;
         private Expression prioritizedExpression;
         private float prioritizedDistance;
-        private List<OperatorCard.OperatorType> availableOperators;
+        private List<OperatorType> availableOperators;
         private int requiredSquareRootCount;
         private int requiredMultiplyCount;
         private bool shouldPrioritizeSpecialUsage;
@@ -191,8 +191,8 @@ namespace MathHighLow.Controllers
         private void EnumerateOperators(List<int> numbers, List<int> sqrtCounts)
         {
             // ✅ 수정: 사용 가능한 연산자 리스트 전달
-            var operatorPool = new List<OperatorCard.OperatorType>(availableOperators);
-            AssignOperators(numbers, sqrtCounts, new List<OperatorCard.OperatorType>(),
+            var operatorPool = new List<OperatorType>(availableOperators);
+            AssignOperators(numbers, sqrtCounts, new List<OperatorType>(),
                            operatorPool, 0, 0);
         }
 
@@ -200,8 +200,8 @@ namespace MathHighLow.Controllers
         /// ✅ 완전히 수정: 연산자를 한 번씩만 사용하도록 재귀 배치
         /// </summary>
         private void AssignOperators(List<int> numbers, List<int> sqrtCounts,
-            List<OperatorCard.OperatorType> operators,
-            List<OperatorCard.OperatorType> remainingOperators, // ✅ 추가: 남은 연산자 추적
+            List<OperatorType> operators,
+            List<OperatorType> remainingOperators, // ✅ 추가: 남은 연산자 추적
             int index, int multiplyUsed)
         {
             int totalSlots = numbers.Count - 1;
@@ -226,7 +226,7 @@ namespace MathHighLow.Controllers
             // × 배치 시도 (아직 필요하면)
             if (multiplyUsed < multiplyNeeded)
             {
-                operators.Add(OperatorCard.OperatorType.Multiply);
+                operators.Add(OperatorType.Multiply);
                 AssignOperators(numbers, sqrtCounts, operators, remainingOperators,
                                index + 1, multiplyUsed + 1);
                 operators.RemoveAt(operators.Count - 1);
@@ -241,7 +241,7 @@ namespace MathHighLow.Controllers
                 operators.Add(op);
 
                 // ✅ 핵심: 이 연산자를 제거한 새 리스트 생성
-                var newRemaining = new List<OperatorCard.OperatorType>(remainingOperators);
+                var newRemaining = new List<OperatorType>(remainingOperators);
                 newRemaining.RemoveAt(i);
 
                 // 재귀 호출
@@ -257,7 +257,7 @@ namespace MathHighLow.Controllers
         /// 4단계: 수식 구성 및 평가
         /// </summary>
         private void BuildAndEvaluate(List<int> numbers, List<int> sqrtCounts,
-            List<OperatorCard.OperatorType> operators)
+            List<OperatorType> operators)
         {
             // Expression 객체 구성
             Expression expr = new Expression();
@@ -281,7 +281,7 @@ namespace MathHighLow.Controllers
                 return;
 
             // 계산
-            var evaluation = MathHighLow.Models.ExpressionEvaluator.Evaluate(expr);
+            var evaluation = Models.Cards.ExpressionEvaluator.Evaluate(expr);
             if (!evaluation.Success)
                 return;
 
@@ -321,7 +321,7 @@ namespace MathHighLow.Controllers
             int sqrtRemaining = hand.GetSquareRootCount();
             int multiplyRemaining = Mathf.Min(hand.GetMultiplyCount(), Mathf.Max(0, numbers.Count - 1));
 
-            Queue<OperatorCard.OperatorType> operatorQueue = new Queue<OperatorCard.OperatorType>(
+            Queue<OperatorType> operatorQueue = new Queue<OperatorType>(
                 hand.OperatorCards.Select(card => card.Operator));
 
             for (int i = 0; i < numbers.Count; i++)
@@ -337,11 +337,11 @@ namespace MathHighLow.Controllers
 
                 if (i < numbers.Count - 1)
                 {
-                    OperatorCard.OperatorType opToAdd;
+                    OperatorType opToAdd;
 
                     if (multiplyRemaining > 0)
                     {
-                        opToAdd = OperatorCard.OperatorType.Multiply;
+                        opToAdd = OperatorType.Multiply;
                         multiplyRemaining--;
                     }
                     else if (operatorQueue.Count > 0)
@@ -350,7 +350,7 @@ namespace MathHighLow.Controllers
                     }
                     else
                     {
-                        opToAdd = OperatorCard.OperatorType.Add;
+                        opToAdd = OperatorType.Add;
                     }
 
                     fallback.AddOperator(opToAdd);
@@ -369,7 +369,7 @@ namespace MathHighLow.Controllers
                 return false;
 
             int usedRoots = expr.HasSquareRoot.Count(hasRoot => hasRoot);
-            int usedMultiply = expr.Operators.Count(op => op == OperatorCard.OperatorType.Multiply);
+            int usedMultiply = expr.Operators.Count(op => op == OperatorType.Multiply);
 
             return usedRoots == requiredSquareRootCount && usedMultiply == requiredMultiplyCount;
         }

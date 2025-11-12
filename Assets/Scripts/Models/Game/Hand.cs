@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MathHighLow.Models
+namespace Models.Cards
 {
     /// <summary>
     /// ✅ 수정: OperatorCard 리스트 추가
@@ -31,7 +31,7 @@ namespace MathHighLow.Models
         /// 비활성화된 연산자 목록
         /// × 카드 사용 시 선택한 연산자가 여기 추가됩니다.
         /// </summary>
-        public List<OperatorCard.OperatorType> DisabledOperators { get; private set; }
+        public List<OperatorType> DisabledOperators { get; private set; }
 
         /// <summary>
         /// 생성자
@@ -41,7 +41,7 @@ namespace MathHighLow.Models
             NumberCards = new List<NumberCard>();
             OperatorCards = new List<OperatorCard>();  // ✅ 추가
             SpecialCards = new List<SpecialCard>();
-            DisabledOperators = new List<OperatorCard.OperatorType>();
+            DisabledOperators = new List<OperatorType>();
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace MathHighLow.Models
         /// </summary>
         public int GetMultiplyCount()
         {
-            return SpecialCards.Count(c => c.Type == SpecialCard.SpecialType.Multiply);
+            return SpecialCards.Count(c => c.Type == OperatorType.Multiply);
         }
 
         /// <summary>
@@ -107,13 +107,13 @@ namespace MathHighLow.Models
         /// </summary>
         public int GetSquareRootCount()
         {
-            return SpecialCards.Count(c => c.Type == SpecialCard.SpecialType.SquareRoot);
+            return SpecialCards.Count(c => c.Type == OperatorType.SquareRoot);
         }
 
         /// <summary>
         /// 특정 연산자가 사용 가능한지 확인합니다.
         /// </summary>
-        public bool IsOperatorEnabled(OperatorCard.OperatorType op)
+        public bool IsOperatorEnabled(OperatorType op)
         {
             return !DisabledOperators.Contains(op);
         }
@@ -121,7 +121,7 @@ namespace MathHighLow.Models
         /// <summary>
         /// 연산자를 비활성화합니다.
         /// </summary>
-        public void DisableOperator(OperatorCard.OperatorType op)
+        public void DisableOperator(OperatorType op)
         {
             if (!DisabledOperators.Contains(op))
             {
@@ -132,7 +132,7 @@ namespace MathHighLow.Models
         /// <summary>
         /// ✅ 수정: 연산자 카드도 포함
         /// </summary>
-        public List<OperatorCard.OperatorType> GetAvailableOperators()
+        public List<OperatorType> GetAvailableOperators()
         {
             // 손패에 있는 연산자 카드의 타입 반환
             return OperatorCards

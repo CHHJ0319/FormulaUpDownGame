@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using MathHighLow.Models;
+using Models.Cards;
 using MathHighLow.Services;
 
 namespace MathHighLow.Controllers
@@ -214,9 +214,9 @@ namespace MathHighLow.Controllers
             Debug.Log("[RoundController] 1단계: 기본 연산자 카드 3장 제공");
 
             var basicOperators = new[] {
-                OperatorCard.OperatorType.Add,
-                OperatorCard.OperatorType.Subtract,
-                OperatorCard.OperatorType.Divide
+                OperatorType.Add,
+                OperatorType.Subtract,
+                OperatorType.Divide
             };
 
             foreach (var op in basicOperators)
@@ -294,9 +294,9 @@ namespace MathHighLow.Controllers
 
             // --- 1단계: 기본 연산자 카드 3장 (+, -, ÷) 자동 제공 ---
             var basicOperators = new[] {
-                OperatorCard.OperatorType.Add,
-                OperatorCard.OperatorType.Subtract,
-                OperatorCard.OperatorType.Divide
+                OperatorType.Add,
+                OperatorType.Subtract,
+                OperatorType.Divide
             };
 
             foreach (var op in basicOperators)
@@ -478,17 +478,17 @@ namespace MathHighLow.Controllers
             var playerValidation = ExpressionValidator.Validate(playerExpr, playerHand);
 
             var playerEvaluation = playerValidation.IsValid
-                ? MathHighLow.Models.ExpressionEvaluator.Evaluate(playerExpr)
-                : new MathHighLow.Models.ExpressionEvaluator.EvaluationResult { Success = false, ErrorMessage = playerValidation.ErrorMessage };
+                ? Models.Cards.ExpressionEvaluator.Evaluate(playerExpr)
+                : new Models.Cards.ExpressionEvaluator.EvaluationResult { Success = false, ErrorMessage = playerValidation.ErrorMessage };
 
             Expression aiExpr = aiController.GetExpression();
-            var aiEvaluation = MathHighLow.Models.ExpressionEvaluator.Evaluate(aiExpr);
+            var aiEvaluation = Models.Cards.ExpressionEvaluator.Evaluate(aiExpr);
 
             return CreateRoundResult(playerExpr, playerEvaluation, aiExpr, aiEvaluation);
         }
 
-        private RoundResult CreateRoundResult(Expression playerExpr, MathHighLow.Models.ExpressionEvaluator.EvaluationResult playerEval,
-                                              Expression aiExpr, MathHighLow.Models.ExpressionEvaluator.EvaluationResult aiEval)
+        private RoundResult CreateRoundResult(Expression playerExpr, Models.Cards.ExpressionEvaluator.EvaluationResult playerEval,
+                                              Expression aiExpr, Models.Cards.ExpressionEvaluator.EvaluationResult aiEval)
         {
             RoundResult result = new RoundResult
             {

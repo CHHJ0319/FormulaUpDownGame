@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MathHighLow.Models
+namespace Models.Cards
 {
     /// <summary>
     /// [학습 포인트] 스택을 이용한 수식 계산
@@ -103,11 +103,11 @@ namespace MathHighLow.Models
         /// 2. 현재 연산자보다 스택의 연산자 우선순위가 높으면 먼저 계산
         /// 3. 모든 항목 처리 후 스택에 남은 연산 수행
         /// </summary>
-        private static float CalculateWithPriority(List<float> numbers, List<OperatorCard.OperatorType> operators, EvaluationResult result)
+        private static float CalculateWithPriority(List<float> numbers, List<OperatorType> operators, EvaluationResult result)
         {
             // 스택 초기화
             Stack<float> numberStack = new Stack<float>();
-            Stack<OperatorCard.OperatorType> operatorStack = new Stack<OperatorCard.OperatorType>();
+            Stack<OperatorType> operatorStack = new Stack<OperatorType>();
 
             // 첫 숫자 추가
             numberStack.Push(numbers[0]);
@@ -115,7 +115,7 @@ namespace MathHighLow.Models
             // 연산자와 숫자를 순서대로 처리
             for (int i = 0; i < operators.Count; i++)
             {
-                OperatorCard.OperatorType currentOp = operators[i];
+                OperatorType currentOp = operators[i];
                 float nextNumber = numbers[i + 1];
 
                 // 스택에 있는 더 높은 우선순위 연산자들을 먼저 계산
@@ -143,7 +143,7 @@ namespace MathHighLow.Models
         /// <summary>
         /// 스택에서 연산 하나를 수행합니다.
         /// </summary>
-        private static bool ExecuteOperation(Stack<float> numberStack, Stack<OperatorCard.OperatorType> operatorStack, EvaluationResult result)
+        private static bool ExecuteOperation(Stack<float> numberStack, Stack<OperatorType> operatorStack, EvaluationResult result)
         {
             if (numberStack.Count < 2)
             {
@@ -155,7 +155,7 @@ namespace MathHighLow.Models
             // 스택은 LIFO이므로 순서 주의
             float right = numberStack.Pop();
             float left = numberStack.Pop();
-            OperatorCard.OperatorType op = operatorStack.Pop();
+            OperatorType op = operatorStack.Pop();
 
             // 계산
             float opResult = Calculate(left, op, right, result);
@@ -170,20 +170,20 @@ namespace MathHighLow.Models
         /// <summary>
         /// 두 숫자를 연산자로 계산합니다.
         /// </summary>
-        private static float Calculate(float left, OperatorCard.OperatorType op, float right, EvaluationResult result)
+        private static float Calculate(float left, OperatorType op, float right, EvaluationResult result)
         {
             switch (op)
             {
-                case OperatorCard.OperatorType.Add:
+                case OperatorType.Add:
                     return left + right;
 
-                case OperatorCard.OperatorType.Subtract:
+                case OperatorType.Subtract:
                     return left - right;
 
-                case OperatorCard.OperatorType.Multiply:
+                case OperatorType.Multiply:
                     return left * right;
 
-                case OperatorCard.OperatorType.Divide:
+                case OperatorType.Divide:
                     if (Mathf.Approximately(right, 0))
                     {
                         result.Success = false;
@@ -202,16 +202,16 @@ namespace MathHighLow.Models
         /// <summary>
         /// 연산자 우선순위를 반환합니다.
         /// </summary>
-        private static int GetPriority(OperatorCard.OperatorType op)
+        private static int GetPriority(OperatorType op)
         {
             switch (op)
             {
-                case OperatorCard.OperatorType.Multiply:
-                case OperatorCard.OperatorType.Divide:
+                case OperatorType.Multiply:
+                case OperatorType.Divide:
                     return 2; // 높은 우선순위
 
-                case OperatorCard.OperatorType.Add:
-                case OperatorCard.OperatorType.Subtract:
+                case OperatorType.Add:
+                case OperatorType.Subtract:
                     return 1; // 낮은 우선순위
 
                 default:

@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
-using MathHighLow.Models;
+using Models.Cards;
 using MathHighLow.Services;
 
 namespace MathHighLow.Views

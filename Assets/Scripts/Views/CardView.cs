@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using MathHighLow.Models;
+using Models.Cards;
 using MathHighLow.Services;
 
 namespace MathHighLow.Views
@@ -165,7 +165,7 @@ namespace MathHighLow.Views
             else if (isPlayerCard && card is SpecialCard specialCard &&
                      IsClickableSpecial(card))
             {
-                specialCard.ResetUsage();
+                specialCard.MarkAsUnused();
                 button.interactable = true;
                 backgroundImage.color = specialCardColor;
             }
@@ -175,8 +175,8 @@ namespace MathHighLow.Views
         {
             if (targetCard is SpecialCard specialCard)
             {
-                return specialCard.Type == SpecialCard.SpecialType.Multiply ||
-                       specialCard.Type == SpecialCard.SpecialType.SquareRoot;
+                return specialCard.Type == OperatorType.Multiply ||
+                       specialCard.Type == OperatorType.SquareRoot;
             }
 
             return false;

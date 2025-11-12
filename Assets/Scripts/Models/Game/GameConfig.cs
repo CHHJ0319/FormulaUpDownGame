@@ -1,4 +1,4 @@
-namespace MathHighLow.Models
+namespace Models.Cards
 {
     /// <summary>
 
@@ -10,7 +10,7 @@ namespace MathHighLow.Models
     {
         // 시간 설정
         public float DealInterval = 0.2f;           // 카드 분배 간격
-        public float SubmissionUnlockTime = 30f;    // 제출 잠금 시간
+        public float SubmissionUnlockTime = 5f;    // 제출 잠금 시간
         public float RoundDuration = 180f;          // 라운드 제한 시간
         public float ResultsDisplayDuration = 10f;  // 결과 표시 시간
 

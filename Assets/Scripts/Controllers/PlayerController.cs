@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using MathHighLow.Models;
+using Models.Cards;
 using MathHighLow.Services;
 using System.Linq;
 
@@ -169,7 +169,7 @@ namespace MathHighLow.Controllers
 
             if (applySquareRoot)
             {
-                pendingSquareRootCard.Consume();
+                pendingSquareRootCard.MarkAsUsed();
                 usedCards[pendingSquareRootCard] = true;
                 GameEvents.InvokeSpecialCardConsumed(pendingSquareRootCard);
 
@@ -230,7 +230,7 @@ namespace MathHighLow.Controllers
             }
 
             // 3. 수식에 연산자 추가
-            OperatorCard.OperatorType operatorToAdd = operatorCard.Operator;
+            OperatorType operatorToAdd = operatorCard.Operator;
             currentExpression.AddOperator(operatorToAdd);
             usedCards[operatorCard] = true;
             GameEvents.InvokeCardConsumed(operatorCard);
@@ -276,7 +276,7 @@ namespace MathHighLow.Controllers
 
                 foreach (var card in currentHand.SpecialCards)
                 {
-                    card.ResetUsage();
+                    card.MarkAsUnused();
                     usedCards[card] = false;
                 }
             }
@@ -290,13 +290,13 @@ namespace MathHighLow.Controllers
                 return;
             }
 
-            if (specialCard.Type == SpecialCard.SpecialType.Multiply)
+            if (specialCard.Type == OperatorType.Multiply)
             {
                 HandleMultiplyCardClicked(specialCard);
                 return;
             }
 
-            if (specialCard.Type == SpecialCard.SpecialType.SquareRoot)
+            if (specialCard.Type == OperatorType.SquareRoot)
             {
                 HandleSquareRootCardClicked(specialCard);
                 return;
@@ -321,8 +321,8 @@ namespace MathHighLow.Controllers
                 return;
             }
 
-            currentExpression.AddOperator(OperatorCard.OperatorType.Multiply);
-            multiplyCard.Consume();
+            currentExpression.AddOperator(OperatorType.Multiply);
+            multiplyCard.MarkAsUsed();
             usedCards[multiplyCard] = true;
             GameEvents.InvokeSpecialCardConsumed(multiplyCard);
 
@@ -371,14 +371,14 @@ namespace MathHighLow.Controllers
             Debug.Log("[PlayerController] √ 카드가 준비되었습니다.");
         }
 
-        private string OperatorToText(OperatorCard.OperatorType op)
+        private string OperatorToText(OperatorType op)
         {
             return op switch
             {
-                OperatorCard.OperatorType.Add => "+",
-                OperatorCard.OperatorType.Subtract => "-",
-                OperatorCard.OperatorType.Multiply => "×",
-                OperatorCard.OperatorType.Divide => "÷",
+                OperatorType.Add => "+",
+                OperatorType.Subtract => "-",
+                OperatorType.Multiply => "×",
+                OperatorType.Divide => "÷",
                 _ => "?"
             };
         }
@@ -466,8 +466,8 @@ namespace MathHighLow.Controllers
 
             foreach (var specialCard in currentHand.SpecialCards)
             {
-                if ((specialCard.Type == SpecialCard.SpecialType.Multiply ||
-                     specialCard.Type == SpecialCard.SpecialType.SquareRoot) &&
+                if ((specialCard.Type == OperatorType.Multiply ||
+                     specialCard.Type == OperatorType.SquareRoot) &&
                     !specialCard.IsConsumed)
                 {
                     return false;
