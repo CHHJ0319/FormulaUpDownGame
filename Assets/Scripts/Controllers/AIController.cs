@@ -14,7 +14,7 @@ namespace MathHighLow.Controllers
     /// </summary>
     public class AIController : MonoBehaviour
     {
-        private Hand currentHand;
+        private Models.Hand currentHand;
         private int targetNumber;
         private Expression bestExpression;
         private float bestDistance;
@@ -30,7 +30,7 @@ namespace MathHighLow.Controllers
             // 초기화
         }
 
-        public void PlayTurn(Hand hand, int target)
+        public void PlayTurn(Models.Hand hand, int target)
         {
             bestExpression = FindBestExpression(hand, target);
 
@@ -62,7 +62,7 @@ namespace MathHighLow.Controllers
         /// <summary>
         /// 최적 수식을 찾습니다 (완전 탐색)
         /// </summary>
-        private Expression FindBestExpression(Hand hand, int target)
+        private Expression FindBestExpression(Models.Hand hand, int target)
         {
             // 초기화
             currentHand = hand;
@@ -308,7 +308,7 @@ namespace MathHighLow.Controllers
         /// <summary>
         /// 탐색에서 실패했을 때 모든 특수 카드를 강제로 사용하는 기본 수식을 구성합니다.
         /// </summary>
-        private Expression BuildFallbackExpression(Hand hand)
+        private Expression BuildFallbackExpression(Models.Hand hand)
         {
             Expression fallback = new Expression();
 

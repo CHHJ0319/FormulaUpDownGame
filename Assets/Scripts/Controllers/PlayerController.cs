@@ -19,7 +19,7 @@ namespace MathHighLow.Controllers
     public class PlayerController : MonoBehaviour
     {
         // --- 현재 라운드 상태 ---
-        private Hand currentHand;
+        private Models.Hand currentHand;
         private Expression currentExpression;
 
         // --- 카드 사용량 추적 ---
@@ -62,7 +62,7 @@ namespace MathHighLow.Controllers
 
         #region 공개 메서드
 
-        public void SetHand(Hand hand)
+        public void SetHand(Models.Hand hand)
         {
             currentHand = hand;
             ResetExpressionState();

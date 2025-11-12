@@ -29,8 +29,8 @@ namespace MathHighLow.Controllers
         public AIController aiController;
 
         // --- 라운드 상태 ---
-        private Hand playerHand;
-        private Hand aiHand;
+        private Models.Hand playerHand;
+        private Models.Hand aiHand;
         private int currentTarget;
         private int currentBet;
 
@@ -56,8 +56,8 @@ namespace MathHighLow.Controllers
             this.deckService = deckService;
 
             // 라운드에서 사용할 손패 객체 생성
-            playerHand = new Hand();
-            aiHand = new Hand();
+            playerHand = new Models.Hand();
+            aiHand = new Models.Hand();
         }
 
         #region Unity 생명주기 및 이벤트 구독
