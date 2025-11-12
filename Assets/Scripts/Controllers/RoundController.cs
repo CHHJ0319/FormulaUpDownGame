@@ -474,30 +474,30 @@ namespace MathHighLow.Controllers
         /// </summary>
         private RoundResult EvaluatePhase()
         {
-            Expression playerExpr = playerController.GetExpression();
+            Models.Expression playerExpr = playerController.GetExpression();
             var playerValidation = ExpressionValidator.Validate(playerExpr, playerHand);
 
             var playerEvaluation = playerValidation.IsValid
                 ? Models.Cards.ExpressionEvaluator.Evaluate(playerExpr)
                 : new Models.Cards.ExpressionEvaluator.EvaluationResult { Success = false, ErrorMessage = playerValidation.ErrorMessage };
 
-            Expression aiExpr = aiController.GetExpression();
+            Models.Expression aiExpr = aiController.GetExpression();
             var aiEvaluation = Models.Cards.ExpressionEvaluator.Evaluate(aiExpr);
 
             return CreateRoundResult(playerExpr, playerEvaluation, aiExpr, aiEvaluation);
         }
 
-        private RoundResult CreateRoundResult(Expression playerExpr, Models.Cards.ExpressionEvaluator.EvaluationResult playerEval,
-                                              Expression aiExpr, Models.Cards.ExpressionEvaluator.EvaluationResult aiEval)
+        private RoundResult CreateRoundResult(Models.Expression playerExpr, Models.Cards.ExpressionEvaluator.EvaluationResult playerEval,
+                                              Models.Expression aiExpr, Models.Cards.ExpressionEvaluator.EvaluationResult aiEval)
         {
             RoundResult result = new RoundResult
             {
                 Target = currentTarget,
                 Bet = currentBet,
-                PlayerExpression = playerEval.Success ? playerExpr.ToDisplayString() : "-",
+                PlayerExpression = playerEval.Success ? playerExpr.ToString() : "-",
                 PlayerValue = playerEval.Success ? playerEval.Value : float.NaN,
                 PlayerError = playerEval.Success ? "" : playerEval.ErrorMessage,
-                AIExpression = aiEval.Success ? aiExpr.ToDisplayString() : "-",
+                AIExpression = aiEval.Success ? aiExpr.ToString() : "-",
                 AIValue = aiEval.Success ? aiEval.Value : float.NaN,
                 AIError = aiEval.Success ? "" : aiEval.ErrorMessage
             };

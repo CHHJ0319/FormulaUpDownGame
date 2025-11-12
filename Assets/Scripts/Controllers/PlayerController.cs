@@ -20,7 +20,7 @@ namespace MathHighLow.Controllers
     {
         // --- 현재 라운드 상태 ---
         private Models.Hand currentHand;
-        private Expression currentExpression;
+        private Models.Expression currentExpression;
 
         // --- 카드 사용량 추적 ---
         private Dictionary<Card, bool> usedCards; // 모든 카드 추적 (숫자 + 연산자)
@@ -33,7 +33,7 @@ namespace MathHighLow.Controllers
         /// </summary>
         public void Initialize()
         {
-            currentExpression = new Expression();
+            currentExpression = new Models.Expression();
             usedCards = new Dictionary<Card, bool>();
             isSubmitAvailable = false;
             isSquareRootPending = false;
@@ -68,7 +68,7 @@ namespace MathHighLow.Controllers
             ResetExpressionState();
         }
 
-        public Expression GetExpression()
+        public Models.Expression GetExpression()
         {
             return currentExpression.Clone();
         }
@@ -180,7 +180,7 @@ namespace MathHighLow.Controllers
             }
 
             // 4. UI 업데이트
-            GameEvents.InvokeExpressionUpdated(currentExpression.ToDisplayString());
+            GameEvents.InvokeExpressionUpdated(currentExpression.ToString());
 
             bool hasUnusedNumbers = HasUnusedNumberCards();
 
@@ -236,7 +236,7 @@ namespace MathHighLow.Controllers
             GameEvents.InvokeCardConsumed(operatorCard);
 
             // 4. UI 업데이트
-            GameEvents.InvokeExpressionUpdated(currentExpression.ToDisplayString());
+            GameEvents.InvokeExpressionUpdated(currentExpression.ToString());
 
             if (currentExpression.ExpectingNumber())
             {
@@ -326,7 +326,7 @@ namespace MathHighLow.Controllers
             usedCards[multiplyCard] = true;
             GameEvents.InvokeSpecialCardConsumed(multiplyCard);
 
-            GameEvents.InvokeExpressionUpdated(currentExpression.ToDisplayString());
+            GameEvents.InvokeExpressionUpdated(currentExpression.ToString());
             GameEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요.");
             Debug.Log("[PlayerController] × 카드가 즉시 적용되었습니다.");
         }

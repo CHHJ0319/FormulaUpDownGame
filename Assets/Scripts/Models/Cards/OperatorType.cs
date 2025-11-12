@@ -1,11 +1,13 @@
+using System.ComponentModel;
+
 namespace Models.Cards
 {
     public enum OperatorType
     {
-        Add,        // +
-        Subtract,   // -
-        Multiply,   // ¡¿
-        Divide,     // ¡À
-        SquareRoot  // ¡î      
+        Add,
+        Subtract,
+        Multiply,
+        Divide,
+        SquareRoot
     }
 }
