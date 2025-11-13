@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Models.Cards;
 using MathHighLow.Services;
 using System.Collections;
 
@@ -20,7 +19,7 @@ namespace MathHighLow.Controllers
         [HideInInspector] public AIController aiController;
 
         private Models.GameConfig config;
-        private DeckService deckService;
+        private Models.Cards.Deck Deck;
         private int playerCredits;
         private int aiCredits;
 
@@ -37,13 +36,13 @@ namespace MathHighLow.Controllers
         void Awake()
         {
             config = Models.GameConfig.Default();
-            deckService = new DeckService(config);
+            Deck = new Models.Cards.Deck(config);
 
             roundController = GetComponent<RoundController>();
             playerController = GetComponent<PlayerController>();
             aiController = GetComponent<AIController>();
 
-            roundController.Initialize(config, deckService);
+            roundController.Initialize(config, Deck);
             playerController.Initialize();
             aiController.Initialize();
         }

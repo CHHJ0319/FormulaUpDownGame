@@ -34,13 +34,13 @@ namespace MathHighLow.Controllers
         {
             bestExpression = FindBestExpression(hand, target);
 
-            var validation = ExpressionValidator.Validate(bestExpression, hand);
+            var validation = Algorithm.ExpressionValidator.Validate(bestExpression, hand);
             if (!validation.IsValid)
             {
                 Debug.LogWarning($"[AI] 탐색된 수식이 유효하지 않습니다: {validation.ErrorMessage}");
                 bestExpression = BuildFallbackExpression(hand);
 
-                var fallbackValidation = ExpressionValidator.Validate(bestExpression, hand);
+                var fallbackValidation = Algorithm.ExpressionValidator.Validate(bestExpression, hand);
                 if (!fallbackValidation.IsValid)
                 {
                     Debug.LogWarning($"[AI] 대체 수식도 규칙을 만족하지 못했습니다: {fallbackValidation.ErrorMessage}");
@@ -276,7 +276,7 @@ namespace MathHighLow.Controllers
             }
 
             // 검증
-            var validation = ExpressionValidator.Validate(expr, currentHand);
+            var validation = Algorithm.ExpressionValidator.Validate(expr, currentHand);
             if (!validation.IsValid)
                 return;
 

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Models.Cards;
 using MathHighLow.Services;
 
 namespace MathHighLow.Controllers
@@ -20,7 +19,7 @@ namespace MathHighLow.Controllers
     {
         // --- 의존성 (GameController로부터 주입받음) ---
         private Models.GameConfig config;
-        private DeckService deckService;
+        private Models.Cards.Deck Deck;
 
         // --- 컨트롤러 참조 (GameController가 관리) ---
         [HideInInspector]
@@ -50,10 +49,10 @@ namespace MathHighLow.Controllers
         /// <summary>
         /// 컨트롤러 초기화 (GameController가 호출)
         /// </summary>
-        public void Initialize(Models.GameConfig config, DeckService deckService)
+        public void Initialize(Models.GameConfig config, Models.Cards.Deck Deck)
         {
             this.config = config;
-            this.deckService = deckService;
+            this.Deck = Deck;
 
             // 라운드에서 사용할 손패 객체 생성
             playerHand = new Models.Hand();
@@ -182,7 +181,7 @@ namespace MathHighLow.Controllers
             roundTimer = 0f;
             playerHand.Clear();
             aiHand.Clear();
-            deckService.BuildSlotDeck(); // 덱 재구성
+            Deck.BuildDeck(); // 덱 재구성
 
             // UI와 PlayerController에 라운드 시작 알림
             GameEvents.InvokeRoundStarted();
@@ -214,14 +213,14 @@ namespace MathHighLow.Controllers
             Debug.Log("[RoundController] 1단계: 기본 연산자 카드 3장 제공");
 
             var basicOperators = new[] {
-                OperatorType.Add,
-                OperatorType.Subtract,
-                OperatorType.Divide
+                Models.Cards.OperatorType.Add,
+                Models.Cards.OperatorType.Subtract,
+                Models.Cards.OperatorType.Divide
             };
 
             foreach (var op in basicOperators)
             {
-                OperatorCard operatorCard = new OperatorCard(op);
+                Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(op);
                 playerHand.AddCard(operatorCard);
                 GameEvents.InvokeCardAdded(operatorCard, true);
 
@@ -238,7 +237,7 @@ namespace MathHighLow.Controllers
             // 1) 우선 3장을 뽑아서 공개한다 (숫자/특수 혼합 가능)
             while (cardsDealt < 3)
             {
-                Card drawnCard = deckService.DrawSlotCard();
+                Models.Cards.Card drawnCard = Deck.Draw();
                 cardsDealt++;
 
                 if (drawnCard.GetCardType() == "Number")
@@ -261,7 +260,7 @@ namespace MathHighLow.Controllers
             // 2) 숫자 카드가 3장이 될 때까지 계속 뽑아서 보충한다.
             while (numberCardsDrawn < 3)
             {
-                Card drawnCard = deckService.DrawSlotCard();
+                Models.Cards.Card drawnCard = Deck.Draw();
 
                 if (drawnCard.GetCardType() == "Number")
                 {
@@ -294,14 +293,14 @@ namespace MathHighLow.Controllers
 
             // --- 1단계: 기본 연산자 카드 3장 (+, -, ÷) 자동 제공 ---
             var basicOperators = new[] {
-                OperatorType.Add,
-                OperatorType.Subtract,
-                OperatorType.Divide
+                Models.Cards.OperatorType.Add,
+                Models.Cards.OperatorType.Subtract,
+                Models.Cards.OperatorType.Divide
             };
 
             foreach (var op in basicOperators)
             {
-                OperatorCard operatorCard = new OperatorCard(op);
+                Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(op);
                 aiHand.AddCard(operatorCard);
                 GameEvents.InvokeCardAdded(operatorCard, false);
 
@@ -315,7 +314,7 @@ namespace MathHighLow.Controllers
 
             while (cardsDealt < 3)
             {
-                Card drawnCard = deckService.DrawSlotCard();
+                Models.Cards.Card drawnCard = Deck.Draw();
                 cardsDealt++;
 
                 if (drawnCard.GetCardType() == "Number")
@@ -337,7 +336,7 @@ namespace MathHighLow.Controllers
             // --- 3단계: 숫자 카드가 3장이 될 때까지 계속 보충 ---
             while (numberCardsDrawn < 3)
             {
-                Card drawnCard = deckService.DrawSlotCard();
+                Models.Cards.Card drawnCard = Deck.Draw();
 
                 if (drawnCard.GetCardType() == "Number")
                 {
@@ -363,12 +362,12 @@ namespace MathHighLow.Controllers
         /// <summary>
         /// ✅ 숫자 카드만 뽑기 (특수 카드가 나올 때까지 계속 뽑음)
         /// </summary>
-        private Card DrawNumberCardOnly()
+        private Models.Cards.Card DrawNumberCardOnly()
         {
-            Card card;
+            Models.Cards.Card card;
             do
             {
-                card = deckService.DrawSlotCard();
+                card = Deck.Draw();
             }
             while (card.GetCardType() != "Number");
 
@@ -475,7 +474,7 @@ namespace MathHighLow.Controllers
         private Models.Round.RoundResult EvaluatePhase()
         {
             Models.Expression playerExpr = playerController.GetExpression();
-            var playerValidation = ExpressionValidator.Validate(playerExpr, playerHand);
+            var playerValidation = Algorithm.ExpressionValidator.Validate(playerExpr, playerHand);
 
             var playerEvaluation = playerValidation.IsValid
                 ? Models.Cards.ExpressionEvaluator.Evaluate(playerExpr)

@@ -9,10 +9,11 @@ namespace Models
         public float RoundDuration = 180f;          // 라운드 제한 시간
         public float ResultsDisplayDuration = 10f;  // 결과 표시 시간
 
-        public int InitialCardCount = 3;            // 초기 카드 수
-        public int NumberCopiesPerValue = 4;        // 숫자당 카드 복사본 수
-        public int MultiplyCardsPerRound = 2;       // 라운드당 × 카드 수
-        public int SquareRootCardsPerRound = 2;     // 라운드당 √ 카드 수
+        public int InitialCardCount = 3;           
+
+        public int NumberCardCopiesPerRound = 4;
+        public int MultiplySpecialCardsPerRound = 2;       
+        public int SquareRootSpecialCardsPerRound = 2;     
 
         public int StartingCredits = 20;            // 초기 자금
         public int MinBet = 1;                      // 최소 베팅

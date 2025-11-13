@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Models.Cards
+namespace Algorithm
 {
     /// <summary>
     /// [학습 포인트] 검증 로직 분리
@@ -45,7 +45,7 @@ namespace Models.Cards
         /// </summary>
         private const string GeneralFailureMessage = "수식을 완성하지 못했습니다.";
 
-        public static ValidationResult Validate(Expression expression, Hand hand)
+        public static ValidationResult Validate(Models.Expression expression, Models.Hand hand)
         {
             ValidationResult result = new ValidationResult();
 
@@ -79,7 +79,7 @@ namespace Models.Cards
         /// <summary>
         /// 1단계: 수식이 비어있지 않은지 검증
         /// </summary>
-        private static bool ValidateNotEmpty(Expression expression, ValidationResult result)
+        private static bool ValidateNotEmpty(Models.Expression expression, ValidationResult result)
         {
             if (expression.IsEmpty())
             {
@@ -92,7 +92,7 @@ namespace Models.Cards
         /// <summary>
         /// 2단계: 수식이 완성되었는지 검증
         /// </summary>
-        private static bool ValidateComplete(Expression expression, ValidationResult result)
+        private static bool ValidateComplete(Models.Expression expression, ValidationResult result)
         {
             if (!expression.IsComplete())
             {
@@ -107,7 +107,7 @@ namespace Models.Cards
         /// 
         /// [학습 포인트] Dictionary를 이용한 개수 세기
         /// </summary>
-        private static bool ValidateNumberUsage(Expression expression, Hand hand, ValidationResult result)
+        private static bool ValidateNumberUsage(Models.Expression expression, Models.Hand hand, ValidationResult result)
         {
             // 손패의 숫자별 개수 세기
             Dictionary<int, int> availableNumbers = new Dictionary<int, int>();
@@ -153,7 +153,7 @@ namespace Models.Cards
         /// <summary>
         /// 4단계: 제곱근(√) 사용량 검증
         /// </summary>
-        private static bool ValidateSquareRootUsage(Expression expression, Hand hand, ValidationResult result)
+        private static bool ValidateSquareRootUsage(Models.Expression expression, Models.Hand hand, ValidationResult result)
         {
             int requiredCount = hand.GetSquareRootCount();
             int usedCount = 0;
@@ -180,14 +180,14 @@ namespace Models.Cards
         /// <summary>
         /// 5단계: 곱하기(×) 카드 사용량 검증
         /// </summary>
-        private static bool ValidateMultiplyUsage(Expression expression, Hand hand, ValidationResult result)
+        private static bool ValidateMultiplyUsage(Models.Expression expression, Models.Hand hand, ValidationResult result)
         {
             int requiredCount = hand.GetMultiplyCount();
             int usedCount = 0;
 
             foreach (var op in expression.Operators)
             {
-                if (op == OperatorType.Multiply)
+                if (op == Models.Cards.OperatorType.Multiply)
                     usedCount++;
             }
 
@@ -208,11 +208,11 @@ namespace Models.Cards
         /// <summary>
         /// 6단계: 비활성화된 연산자 사용 여부 검증
         /// </summary>
-        private static bool ValidateDisabledOperators(Expression expression, Hand hand, ValidationResult result)
+        private static bool ValidateDisabledOperators(Models.Expression expression, Models.Hand hand, ValidationResult result)
         {
             foreach (var op in expression.Operators)
             {
-                if (!hand.IsOperatorEnabled(op) && op != OperatorType.Multiply)
+                if (!hand.IsOperatorEnabled(op) && op != Models.Cards.OperatorType.Multiply)
                 {
                     MarkInvalid(result, $"비활성화된 연산자를 사용했습니다: {GetOperatorName(op)}");
                     return false;
@@ -237,14 +237,14 @@ namespace Models.Cards
         /// <summary>
         /// 연산자 이름 반환
         /// </summary>
-        private static string GetOperatorName(OperatorType op)
+        private static string GetOperatorName(Models.Cards.OperatorType op)
         {
             return op switch
             {
-                OperatorType.Add => "+",
-                OperatorType.Subtract => "-",
-                OperatorType.Multiply => "×",
-                OperatorType.Divide => "÷",
+                Models.Cards.OperatorType.Add => "+",
+                Models.Cards.OperatorType.Subtract => "-",
+                Models.Cards.OperatorType.Multiply => "×",
+                Models.Cards.OperatorType.Divide => "÷",
                 _ => "?"
             };
         }
