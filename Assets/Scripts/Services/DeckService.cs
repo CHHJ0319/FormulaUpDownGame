@@ -9,14 +9,14 @@ namespace MathHighLow.Services
     /// </summary>
     public class DeckService
     {
-        private readonly GameConfig config;
+        private readonly Models.GameConfig config;
         private readonly List<Card> slotDeck;
         private System.Random random;
 
         /// <summary>
         /// 생성자
         /// </summary>
-        public DeckService(GameConfig config, int? seed = null)
+        public DeckService(Models.GameConfig config, int? seed = null)
         {
             this.config = config;
             this.slotDeck = new List<Card>();

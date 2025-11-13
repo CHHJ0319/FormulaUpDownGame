@@ -19,7 +19,7 @@ namespace MathHighLow.Controllers
         [HideInInspector] public PlayerController playerController;
         [HideInInspector] public AIController aiController;
 
-        private GameConfig config;
+        private Models.GameConfig config;
         private DeckService deckService;
         private int playerCredits;
         private int aiCredits;
@@ -36,7 +36,7 @@ namespace MathHighLow.Controllers
 
         void Awake()
         {
-            config = GameConfig.Default();
+            config = Models.GameConfig.Default();
             deckService = new DeckService(config);
 
             roundController = GetComponent<RoundController>();
@@ -78,7 +78,7 @@ namespace MathHighLow.Controllers
             roundController.StartNewRound();
         }
 
-        private void HandleRoundEnded(RoundResult result)
+        private void HandleRoundEnded(Models.Round.RoundResult result)
         {
             if (currentState != GameState.Playing) return;
 

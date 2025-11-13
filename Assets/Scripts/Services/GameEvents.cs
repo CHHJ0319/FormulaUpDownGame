@@ -24,7 +24,7 @@ namespace MathHighLow.Services
         // ===== 게임 진행 이벤트 =====
 
         public static event Action OnRoundStarted;
-        public static event Action<RoundResult> OnRoundEnded;
+        public static event Action<Models.Round.RoundResult> OnRoundEnded;
         public static event Action OnSubmitClicked;
         public static event Action OnResetClicked;
 
@@ -128,7 +128,7 @@ namespace MathHighLow.Services
             OnRoundStarted?.Invoke();
         }
 
-        public static void InvokeRoundEnded(RoundResult result)
+        public static void InvokeRoundEnded(Models.Round.RoundResult result)
         {
             OnRoundEnded?.Invoke(result);
         }

@@ -215,7 +215,7 @@ namespace MathHighLow.Views
             spawnedCards.Add(newCardView.gameObject);
         }
 
-        private void HandleRoundEnded(RoundResult result)
+        private void HandleRoundEnded(Models.Round.RoundResult result)
         {
             // 결과 패널 표시
             resultSummaryText.text = result.GetSummary();

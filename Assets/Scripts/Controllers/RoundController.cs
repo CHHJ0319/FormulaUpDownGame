@@ -19,7 +19,7 @@ namespace MathHighLow.Controllers
     public class RoundController : MonoBehaviour
     {
         // --- 의존성 (GameController로부터 주입받음) ---
-        private GameConfig config;
+        private Models.GameConfig config;
         private DeckService deckService;
 
         // --- 컨트롤러 참조 (GameController가 관리) ---
@@ -50,7 +50,7 @@ namespace MathHighLow.Controllers
         /// <summary>
         /// 컨트롤러 초기화 (GameController가 호출)
         /// </summary>
-        public void Initialize(GameConfig config, DeckService deckService)
+        public void Initialize(Models.GameConfig config, DeckService deckService)
         {
             this.config = config;
             this.deckService = deckService;
@@ -153,7 +153,7 @@ namespace MathHighLow.Controllers
 
             // --- 3. Evaluating (평가) ---
             currentPhase = RoundPhase.Evaluating;
-            RoundResult result = EvaluatePhase();
+            Models.Round.RoundResult result = EvaluatePhase();
 
             // --- 4. Results (결과) ---
             currentPhase = RoundPhase.Results;
@@ -472,7 +472,7 @@ namespace MathHighLow.Controllers
         /// <summary>
         /// 3단계: 수식 평가 및 결과 생성
         /// </summary>
-        private RoundResult EvaluatePhase()
+        private Models.Round.RoundResult EvaluatePhase()
         {
             Models.Expression playerExpr = playerController.GetExpression();
             var playerValidation = ExpressionValidator.Validate(playerExpr, playerHand);
@@ -487,13 +487,13 @@ namespace MathHighLow.Controllers
             return CreateRoundResult(playerExpr, playerEvaluation, aiExpr, aiEvaluation);
         }
 
-        private RoundResult CreateRoundResult(Models.Expression playerExpr, Models.Cards.ExpressionEvaluator.EvaluationResult playerEval,
+        private Models.Round.RoundResult CreateRoundResult(Models.Expression playerExpr, Models.Cards.ExpressionEvaluator.EvaluationResult playerEval,
                                               Models.Expression aiExpr, Models.Cards.ExpressionEvaluator.EvaluationResult aiEval)
         {
-            RoundResult result = new RoundResult
+            Models.Round.RoundResult result = new Models.Round.RoundResult
             {
-                Target = currentTarget,
-                Bet = currentBet,
+                TargetScore = currentTarget,
+                BetAmount = currentBet,
                 PlayerExpression = playerEval.Success ? playerExpr.ToString() : "-",
                 PlayerValue = playerEval.Success ? playerEval.Value : float.NaN,
                 PlayerError = playerEval.Success ? "" : playerEval.ErrorMessage,
@@ -502,8 +502,8 @@ namespace MathHighLow.Controllers
                 AIError = aiEval.Success ? "" : aiEval.ErrorMessage
             };
 
-            result.PlayerDifference = playerEval.Success ? Mathf.Abs(result.PlayerValue - result.Target) : float.PositiveInfinity;
-            result.AIDifference = aiEval.Success ? Mathf.Abs(result.AIValue - result.Target) : float.PositiveInfinity;
+            result.PlayerDifference = playerEval.Success ? Mathf.Abs(result.PlayerValue - result.TargetScore) : float.PositiveInfinity;
+            result.AIDifference = aiEval.Success ? Mathf.Abs(result.AIValue - result.TargetScore) : float.PositiveInfinity;
 
             if (result.PlayerDifference == float.PositiveInfinity && result.AIDifference == float.PositiveInfinity)
             {
