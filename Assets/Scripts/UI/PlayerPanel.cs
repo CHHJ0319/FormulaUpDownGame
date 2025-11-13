@@ -19,10 +19,12 @@ namespace UI
         [SerializeField] private Button submitButton;
         [SerializeField] private Button resetButton;
 
-        void Start()
+        public void Initialize()
         {
             submitButton.onClick.AddListener(() => GameEvents.InvokeSubmit());
             resetButton.onClick.AddListener(() => GameEvents.InvokeReset());
+
+            UpdateExpressionText("");
         }
 
         public void UpdateCreditsText(int credits)

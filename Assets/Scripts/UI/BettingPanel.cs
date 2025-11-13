@@ -14,7 +14,7 @@ namespace UI
      
         private int betAmount;
 
-        void Start()
+        public void Initialize()
         {
             increaseBetButton.onClick.AddListener(HandleBetIncrease);
             decreaseBetButton.onClick.AddListener(HandleBetDecrease);

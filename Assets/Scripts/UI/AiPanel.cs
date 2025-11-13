@@ -20,7 +20,7 @@ namespace UI
         public void HandleCardAdded(Card card)
         {
             CardButton newCardButton = Instantiate(cardPrefab, handContainer.transform);
-            newCardButton.Initialize(card, true);
+            newCardButton.Initialize(card, false);
             cardsInHand.Add(newCardButton.gameObject);
         }
 
