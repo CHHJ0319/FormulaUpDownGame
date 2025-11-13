@@ -16,7 +16,7 @@ namespace MathHighLow.Views
     public class GameView : MonoBehaviour
     {
         [Header("프리팹")]
-        [SerializeField] private CardView cardPrefab;
+        [SerializeField] private UI.CardButton cardPrefab;
 
         [Header("UI 컨테이너 (손패)")]
         [SerializeField] private Transform playerHandContainer;
@@ -206,7 +206,7 @@ namespace MathHighLow.Views
         {
             // 1. 프리팹 생성
             Transform parent = isPlayer ? playerHandContainer : aiHandContainer;
-            CardView newCardView = Instantiate(cardPrefab, parent);
+            UI.CardButton newCardView = Instantiate(cardPrefab, parent);
 
             // 2. 프리팹 초기화 (데이터 주입)
             newCardView.Initialize(card, isPlayer);
