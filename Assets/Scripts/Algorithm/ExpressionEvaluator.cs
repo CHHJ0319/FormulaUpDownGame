@@ -40,7 +40,7 @@ namespace Models.Cards
         /// 1패스: 제곱근 적용
         /// 2패스: 연산자 우선순위 계산
         /// </summary>
-        public static EvaluationResult Evaluate(Expression expression)
+        public static EvaluationResult Evaluate(Models.Expression.Expression expression)
         {
             EvaluationResult result = new EvaluationResult();
 
@@ -68,7 +68,7 @@ namespace Models.Cards
         /// <summary>
         /// 1패스: 모든 숫자에 제곱근을 적용합니다.
         /// </summary>
-        private static List<float> ApplySquareRoots(Expression expression, EvaluationResult result)
+        private static List<float> ApplySquareRoots(Models.Expression.Expression expression, EvaluationResult result)
         {
             List<float> processed = new List<float>();
 
@@ -224,7 +224,7 @@ namespace Models.Cards
         /// 연산자 우선순위를 무시하고 순차적으로 계산합니다.
         /// 교육용으로 먼저 가르칠 수 있는 간단한 버전입니다.
         /// </summary>
-        public static EvaluationResult EvaluateSimple(Expression expression)
+        public static EvaluationResult EvaluateSimple(Models.Expression.Expression expression)
         {
             EvaluationResult result = new EvaluationResult();
 

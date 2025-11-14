@@ -16,9 +16,9 @@ namespace MathHighLow.Controllers
     {
         private Models.Hand currentHand;
         private int targetNumber;
-        private Models.Expression bestExpression;
+        private Models.Expression.Expression bestExpression;
         private float bestDistance;
-        private Models.Expression prioritizedExpression;
+        private Models.Expression.Expression prioritizedExpression;
         private float prioritizedDistance;
         private List<OperatorType> availableOperators;
         private int requiredSquareRootCount;
@@ -54,20 +54,20 @@ namespace MathHighLow.Controllers
             }
         }
 
-        public Models.Expression GetExpression()
+        public Models.Expression.Expression GetExpression()
         {
-            return bestExpression ?? new Models.Expression();
+            return bestExpression ?? new Models.Expression.Expression();
         }
 
         /// <summary>
         /// 최적 수식을 찾습니다 (완전 탐색)
         /// </summary>
-        private Models.Expression FindBestExpression(Models.Hand hand, int target)
+        private Models.Expression.Expression FindBestExpression(Models.Hand hand, int target)
         {
             // 초기화
             currentHand = hand;
             targetNumber = target;
-            bestExpression = new Models.Expression();
+            bestExpression = new Models.Expression.Expression();
             bestDistance = float.PositiveInfinity;
             prioritizedExpression = null;
             prioritizedDistance = float.PositiveInfinity;
@@ -85,16 +85,16 @@ namespace MathHighLow.Controllers
 
             // 카드가 없으면 빈 수식 반환
             if (hand.NumberCards.Count == 0)
-                return new Models.Expression();
+                return new Models.Expression.Expression();
 
             // 곱하기와 기본 연산자 검증
             int totalSlots = Mathf.Max(0, hand.NumberCards.Count - 1);
             if (requiredMultiplyCount > totalSlots)
-                return new Models.Expression();
+                return new Models.Expression.Expression();
 
             int baseOperatorSlots = totalSlots - requiredMultiplyCount;
             if (baseOperatorSlots > availableOperators.Count)
-                return new Models.Expression();
+                return new Models.Expression.Expression();
 
             // 완전 탐색 시작
             var numbers = hand.NumberCards.Select(c => c.Value).ToList();
@@ -260,7 +260,7 @@ namespace MathHighLow.Controllers
             List<OperatorType> operators)
         {
             // Expression 객체 구성
-            Models.Expression expr = new Models.Expression();
+            Models.Expression.Expression expr = new Models.Expression.Expression();
 
             for (int i = 0; i < numbers.Count; i++)
             {
@@ -308,9 +308,9 @@ namespace MathHighLow.Controllers
         /// <summary>
         /// 탐색에서 실패했을 때 모든 특수 카드를 강제로 사용하는 기본 수식을 구성합니다.
         /// </summary>
-        private Models.Expression BuildFallbackExpression(Models.Hand hand)
+        private Models.Expression.Expression BuildFallbackExpression(Models.Hand hand)
         {
-            Models.Expression fallback = new Models.Expression();
+            Models.Expression.Expression fallback = new Models.Expression.Expression();
 
             var numbers = hand.NumberCards.Select(card => card.Value).ToList();
             if (numbers.Count == 0)
@@ -363,7 +363,7 @@ namespace MathHighLow.Controllers
         /// <summary>
         /// 현재 손패에서 요구하는 모든 √/× 카드를 사용했는지 확인합니다.
         /// </summary>
-        private bool UsesAllRequiredSpecialCards(Models.Expression expr)
+        private bool UsesAllRequiredSpecialCards(Models.Expression.Expression expr)
         {
             if (expr == null)
                 return false;

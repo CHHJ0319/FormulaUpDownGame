@@ -20,7 +20,7 @@ namespace MathHighLow.Controllers
     {
         // --- 현재 라운드 상태 ---
         private Models.Hand currentHand;
-        private Models.Expression currentExpression;
+        private Models.Expression.Expression currentExpression;
 
         // --- 카드 사용량 추적 ---
         private Dictionary<Card, bool> usedCards; // 모든 카드 추적 (숫자 + 연산자)
@@ -33,7 +33,7 @@ namespace MathHighLow.Controllers
         /// </summary>
         public void Initialize()
         {
-            currentExpression = new Models.Expression();
+            currentExpression = new Models.Expression.Expression();
             usedCards = new Dictionary<Card, bool>();
             isSubmitAvailable = false;
             isSquareRootPending = false;
@@ -68,7 +68,7 @@ namespace MathHighLow.Controllers
             ResetExpressionState();
         }
 
-        public Models.Expression GetExpression()
+        public Models.Expression.Expression GetExpression()
         {
             return currentExpression.Clone();
         }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Models
+namespace Models.Expression
 {
     public class Expression
     {
@@ -48,7 +48,7 @@ namespace Models
         }
 
 
-        public bool IsComplete()
+        public bool IsValidSequence()
         {
             return Numbers.Count > 0 && Operators.Count == Numbers.Count - 1;
         }

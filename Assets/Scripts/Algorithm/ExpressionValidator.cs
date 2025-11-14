@@ -3,111 +3,56 @@ using UnityEngine;
 
 namespace Algorithm
 {
-    /// <summary>
-    /// [학습 포인트] 검증 로직 분리
-    /// 
-    /// 플레이어가 만든 수식이 게임 규칙에 맞는지 검증합니다.
-    /// 
-    /// 검증 규칙:
-    /// 1. 모든 숫자 카드 사용
-    /// 2. 모든 특수 카드 사용
-    /// 3. 비활성화된 연산자 미사용
-    /// 4. 수식 형식이 올바른지 (숫자-연산자-숫자...)
-    /// 
-    /// 실습 과제:
-    /// 1. 수식 길이 제한 검증 추가
-    /// 2. 특정 숫자 범위 제한 추가
-    /// </summary>
     public static class ExpressionValidator
     {
-        /// <summary>
-        /// 검증 결과를 담는 클래스
-        /// </summary>
-        public class ValidationResult
+
+        public static Models.Expression.ValidationResult Validate(Models.Expression.Expression expression, Models.Hand hand)
         {
-            public bool IsValid { get; set; }
-            public string ErrorMessage { get; set; }
-            public List<string> Warnings { get; set; }
+            Models.Expression.ValidationResult result = new Models.Expression.ValidationResult();
 
-            public ValidationResult()
-            {
-                IsValid = true;
-                ErrorMessage = "";
-                Warnings = new List<string>();
-            }
-        }
-
-        /// <summary>
-        /// 수식을 검증합니다.
-        /// 
-        /// [학습 포인트] 단계별 검증
-        /// 여러 규칙을 순서대로 검증하고, 실패하면 즉시 중단합니다.
-        /// </summary>
-        private const string GeneralFailureMessage = "수식을 완성하지 못했습니다.";
-
-        public static ValidationResult Validate(Models.Expression expression, Models.Hand hand)
-        {
-            ValidationResult result = new ValidationResult();
-
-            // 1단계: 수식이 비어있지 않은지
-            if (!ValidateNotEmpty(expression, result))
+            if (!IsNotEmpty(expression, result))
                 return result;
 
-            // 2단계: 수식이 완성되었는지 (숫자-연산자-숫자... 형태)
-            if (!ValidateComplete(expression, result))
+            if (!IsValidSequence(expression, result))
                 return result;
 
-            // 3단계: 숫자 카드 사용량 검증
-            if (!ValidateNumberUsage(expression, hand, result))
+            if (!AreAllNumberCardsUsed(expression, hand, result))
                 return result;
 
-            // 4단계: 특수 카드(√) 사용량 검증
-            if (!ValidateSquareRootUsage(expression, hand, result))
+            if (!AreAllSpecialCardsUsed(expression, hand, result))
                 return result;
 
-            // 5단계: 곱하기(×) 카드 사용량 검증
-            if (!ValidateMultiplyUsage(expression, hand, result))
-                return result;
-
-            // 6단계: 비활성화된 연산자 사용 여부
             if (!ValidateDisabledOperators(expression, hand, result))
                 return result;
 
             return result;
         }
 
-        /// <summary>
-        /// 1단계: 수식이 비어있지 않은지 검증
-        /// </summary>
-        private static bool ValidateNotEmpty(Models.Expression expression, ValidationResult result)
+        private static bool IsNotEmpty(in Models.Expression.Expression expression, Models.Expression.ValidationResult result)
         {
             if (expression.IsEmpty())
             {
-                MarkInvalid(result, "수식이 비어있습니다.");
+                result.MarkInvalid("수식이 비어있습니다.");
                 return false;
             }
-            return true;
-        }
-
-        /// <summary>
-        /// 2단계: 수식이 완성되었는지 검증
-        /// </summary>
-        private static bool ValidateComplete(Models.Expression expression, ValidationResult result)
-        {
-            if (!expression.IsComplete())
+            else
             {
-                MarkInvalid(result, "수식이 완성되지 않았습니다.");
+                return true;
+
+            }
+        }
+
+        private static bool IsValidSequence(in Models.Expression.Expression expression, Models.Expression.ValidationResult result)
+        {
+            if (!expression.IsValidSequence())
+            {
+                result.MarkInvalid("수식이 완성되지 않았습니다.");
                 return false;
             }
             return true;
         }
 
-        /// <summary>
-        /// 3단계: 숫자 카드 사용량 검증
-        /// 
-        /// [학습 포인트] Dictionary를 이용한 개수 세기
-        /// </summary>
-        private static bool ValidateNumberUsage(Models.Expression expression, Models.Hand hand, ValidationResult result)
+        private static bool AreAllNumberCardsUsed(Models.Expression.Expression expression, Models.Hand hand, Models.Expression.ValidationResult result)
         {
             // 손패의 숫자별 개수 세기
             Dictionary<int, int> availableNumbers = new Dictionary<int, int>();
@@ -137,12 +82,12 @@ namespace Algorithm
 
                 if (used < available)
                 {
-                    MarkInvalid(result, $"숫자 {number}을(를) {available - used}장 더 사용해야 합니다.");
+                    result.MarkInvalid($"숫자 {number}을(를) {available - used}장 더 사용해야 합니다.");
                     return false;
                 }
                 else if (used > available)
                 {
-                    MarkInvalid(result, $"숫자 {number}을(를) {used - available}장 초과 사용했습니다.");
+                    result.MarkInvalid($"숫자 {number}을(를) {used - available}장 초과 사용했습니다.");
                     return false;
                 }
             }
@@ -150,10 +95,18 @@ namespace Algorithm
             return true;
         }
 
-        /// <summary>
-        /// 4단계: 제곱근(√) 사용량 검증
-        /// </summary>
-        private static bool ValidateSquareRootUsage(Models.Expression expression, Models.Hand hand, ValidationResult result)
+        private static bool AreAllSpecialCardsUsed(Models.Expression.Expression expression, Models.Hand hand, Models.Expression.ValidationResult result)
+        {
+            if (!AreAllSquareRootUsed(expression, hand, result))
+                return false;
+
+            if (!AreAllMultiplyUsed(expression, hand, result))
+                return false;
+
+            return true;
+        }
+
+        private static bool AreAllSquareRootUsed(Models.Expression.Expression expression, Models.Hand hand, Models.Expression.ValidationResult result)
         {
             int requiredCount = hand.GetSquareRootCount();
             int usedCount = 0;
@@ -165,22 +118,19 @@ namespace Algorithm
 
             if (usedCount < requiredCount)
             {
-                MarkInvalid(result, $"√를 {requiredCount - usedCount}개 더 사용해야 합니다.");
+                result.MarkInvalid($"√를 {requiredCount - usedCount}개 더 사용해야 합니다.");
                 return false;
             }
             else if (usedCount > requiredCount)
             {
-                MarkInvalid(result, $"√를 {usedCount - requiredCount}개 초과 사용했습니다.");
+                result.MarkInvalid($"√를 {usedCount - requiredCount}개 초과 사용했습니다.");
                 return false;
             }
 
             return true;
         }
 
-        /// <summary>
-        /// 5단계: 곱하기(×) 카드 사용량 검증
-        /// </summary>
-        private static bool ValidateMultiplyUsage(Models.Expression expression, Models.Hand hand, ValidationResult result)
+        private static bool AreAllMultiplyUsed(Models.Expression.Expression expression, Models.Hand hand, Models.Expression.ValidationResult result)
         {
             int requiredCount = hand.GetMultiplyCount();
             int usedCount = 0;
@@ -193,12 +143,12 @@ namespace Algorithm
 
             if (usedCount < requiredCount)
             {
-                MarkInvalid(result, $"×를 {requiredCount - usedCount}개 더 사용해야 합니다.");
+                result.MarkInvalid($"×를 {requiredCount - usedCount}개 더 사용해야 합니다.");
                 return false;
             }
             else if (usedCount > requiredCount)
             {
-                MarkInvalid(result, $"×를 {usedCount - requiredCount}개 초과 사용했습니다.");
+                result.MarkInvalid($"×를 {usedCount - requiredCount}개 초과 사용했습니다.");
                 return false;
             }
 
@@ -208,30 +158,18 @@ namespace Algorithm
         /// <summary>
         /// 6단계: 비활성화된 연산자 사용 여부 검증
         /// </summary>
-        private static bool ValidateDisabledOperators(Models.Expression expression, Models.Hand hand, ValidationResult result)
+        private static bool ValidateDisabledOperators(Models.Expression.Expression expression, Models.Hand hand, Models.Expression.ValidationResult result)
         {
             foreach (var op in expression.Operators)
             {
                 if (!hand.IsOperatorEnabled(op) && op != Models.Cards.OperatorType.Multiply)
                 {
-                    MarkInvalid(result, $"비활성화된 연산자를 사용했습니다: {GetOperatorName(op)}");
+                    result.MarkInvalid($"비활성화된 연산자를 사용했습니다: {GetOperatorName(op)}");
                     return false;
                 }
             }
 
             return true;
-        }
-
-        private static void MarkInvalid(ValidationResult result, string detailedMessage)
-        {
-            result.IsValid = false;
-            result.ErrorMessage = GeneralFailureMessage;
-
-            if (!string.IsNullOrEmpty(detailedMessage))
-            {
-                result.Warnings.Add(detailedMessage);
-                Debug.LogWarning($"[ExpressionValidator] {detailedMessage}");
-            }
         }
 
         /// <summary>

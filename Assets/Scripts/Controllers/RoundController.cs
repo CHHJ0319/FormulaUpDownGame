@@ -473,21 +473,21 @@ namespace MathHighLow.Controllers
         /// </summary>
         private Models.Round.RoundResult EvaluatePhase()
         {
-            Models.Expression playerExpr = playerController.GetExpression();
+            Models.Expression.Expression playerExpr = playerController.GetExpression();
             var playerValidation = Algorithm.ExpressionValidator.Validate(playerExpr, playerHand);
 
             var playerEvaluation = playerValidation.IsValid
                 ? Models.Cards.ExpressionEvaluator.Evaluate(playerExpr)
                 : new Models.Cards.ExpressionEvaluator.EvaluationResult { Success = false, ErrorMessage = playerValidation.ErrorMessage };
 
-            Models.Expression aiExpr = aiController.GetExpression();
+            Models.Expression.Expression aiExpr = aiController.GetExpression();
             var aiEvaluation = Models.Cards.ExpressionEvaluator.Evaluate(aiExpr);
 
             return CreateRoundResult(playerExpr, playerEvaluation, aiExpr, aiEvaluation);
         }
 
-        private Models.Round.RoundResult CreateRoundResult(Models.Expression playerExpr, Models.Cards.ExpressionEvaluator.EvaluationResult playerEval,
-                                              Models.Expression aiExpr, Models.Cards.ExpressionEvaluator.EvaluationResult aiEval)
+        private Models.Round.RoundResult CreateRoundResult(Models.Expression.Expression playerExpr, Models.Cards.ExpressionEvaluator.EvaluationResult playerEval,
+                                              Models.Expression.Expression aiExpr, Models.Cards.ExpressionEvaluator.EvaluationResult aiEval)
         {
             Models.Round.RoundResult result = new Models.Round.RoundResult
             {
