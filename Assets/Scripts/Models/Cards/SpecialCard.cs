@@ -2,9 +2,9 @@ namespace Models.Cards
 {   
     public class SpecialCard : Card
     {
-        public OperatorType Type { get; set; }
+        public Algorithm.Operator.OperatorType Type { get; set; }
 
-        public SpecialCard(OperatorType type)
+        public SpecialCard(Algorithm.Operator.OperatorType type)
         {
             Type = type;
             IsConsumed = false;
@@ -14,8 +14,8 @@ namespace Models.Cards
         {
             return Type switch
             {
-                OperatorType.Multiply => "×",
-                OperatorType.SquareRoot => "√",
+                Algorithm.Operator.OperatorType.Multiply => "×",
+                Algorithm.Operator.OperatorType.SquareRoot => "√",
                 _ => "?"
             };
         }

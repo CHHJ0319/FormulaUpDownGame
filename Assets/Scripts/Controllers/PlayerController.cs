@@ -229,9 +229,7 @@ namespace MathHighLow.Controllers
                 return;
             }
 
-            // 3. 수식에 연산자 추가
-            OperatorType operatorToAdd = operatorCard.Operator;
-            currentExpression.AddOperator(operatorToAdd);
+            currentExpression.AddOperator(operatorCard.Operator);
             usedCards[operatorCard] = true;
             GameEvents.InvokeCardConsumed(operatorCard);
 
@@ -243,7 +241,7 @@ namespace MathHighLow.Controllers
                 GameEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요.");
             }
 
-            Debug.Log($"[PlayerController] 연산자 추가: {OperatorToText(operatorToAdd)}");
+            Debug.Log($"[PlayerController] 연산자 추가: {OperatorToText(operatorCard.Operator.Type)}");
         }
 
         #endregion
@@ -290,13 +288,13 @@ namespace MathHighLow.Controllers
                 return;
             }
 
-            if (specialCard.Type == OperatorType.Multiply)
+            if (specialCard.Type == Algorithm.Operator.OperatorType.Multiply)
             {
                 HandleMultiplyCardClicked(specialCard);
                 return;
             }
 
-            if (specialCard.Type == OperatorType.SquareRoot)
+            if (specialCard.Type == Algorithm.Operator.OperatorType.SquareRoot)
             {
                 HandleSquareRootCardClicked(specialCard);
                 return;
@@ -321,7 +319,7 @@ namespace MathHighLow.Controllers
                 return;
             }
 
-            currentExpression.AddOperator(OperatorType.Multiply);
+            currentExpression.AddOperator(new Algorithm.Operator(Algorithm.Operator.OperatorType.Multiply));
             multiplyCard.MarkAsUsed();
             usedCards[multiplyCard] = true;
             GameEvents.InvokeSpecialCardConsumed(multiplyCard);
@@ -371,14 +369,14 @@ namespace MathHighLow.Controllers
             Debug.Log("[PlayerController] √ 카드가 준비되었습니다.");
         }
 
-        private string OperatorToText(OperatorType op)
+        private string OperatorToText(Algorithm.Operator.OperatorType op)
         {
             return op switch
             {
-                OperatorType.Add => "+",
-                OperatorType.Subtract => "-",
-                OperatorType.Multiply => "×",
-                OperatorType.Divide => "÷",
+                Algorithm.Operator.OperatorType.Add => "+",
+                Algorithm.Operator.OperatorType.Subtract => "-",
+                Algorithm.Operator.OperatorType.Multiply => "×",
+                Algorithm.Operator.OperatorType.Divide => "÷",
                 _ => "?"
             };
         }
@@ -466,8 +464,8 @@ namespace MathHighLow.Controllers
 
             foreach (var specialCard in currentHand.SpecialCards)
             {
-                if ((specialCard.Type == OperatorType.Multiply ||
-                     specialCard.Type == OperatorType.SquareRoot) &&
+                if ((specialCard.Type == Algorithm.Operator.OperatorType.Multiply ||
+                     specialCard.Type == Algorithm.Operator.OperatorType.SquareRoot) &&
                     !specialCard.IsConsumed)
                 {
                     return false;

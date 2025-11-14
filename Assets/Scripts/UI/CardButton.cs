@@ -168,8 +168,8 @@ namespace UI
         {
             if (targetCard is SpecialCard specialCard)
             {
-                return specialCard.Type == OperatorType.Multiply ||
-                       specialCard.Type == OperatorType.SquareRoot;
+                return specialCard.Type == Algorithm.Operator.OperatorType.Multiply ||
+                       specialCard.Type == Algorithm.Operator.OperatorType.SquareRoot;
             }
 
             return false;

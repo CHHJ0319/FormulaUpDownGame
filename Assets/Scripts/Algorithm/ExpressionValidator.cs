@@ -137,7 +137,7 @@ namespace Algorithm
 
             foreach (var op in expression.Operators)
             {
-                if (op == Models.Cards.OperatorType.Multiply)
+                if (op.Type == Operator.OperatorType.Multiply)
                     usedCount++;
             }
 
@@ -162,9 +162,9 @@ namespace Algorithm
         {
             foreach (var op in expression.Operators)
             {
-                if (!hand.IsOperatorEnabled(op) && op != Models.Cards.OperatorType.Multiply)
+                if (!hand.IsOperatorEnabled(op.Type) && op.Type != Algorithm.Operator.OperatorType.Multiply)
                 {
-                    result.MarkInvalid($"비활성화된 연산자를 사용했습니다: {GetOperatorName(op)}");
+                    result.MarkInvalid($"비활성화된 연산자를 사용했습니다: {GetOperatorName(op.Type)}");
                     return false;
                 }
             }
@@ -175,14 +175,14 @@ namespace Algorithm
         /// <summary>
         /// 연산자 이름 반환
         /// </summary>
-        private static string GetOperatorName(Models.Cards.OperatorType op)
+        private static string GetOperatorName(Algorithm.Operator.OperatorType op)
         {
             return op switch
             {
-                Models.Cards.OperatorType.Add => "+",
-                Models.Cards.OperatorType.Subtract => "-",
-                Models.Cards.OperatorType.Multiply => "×",
-                Models.Cards.OperatorType.Divide => "÷",
+                Algorithm.Operator.OperatorType.Add => "+",
+                Algorithm.Operator.OperatorType.Subtract => "-",
+                Algorithm.Operator.OperatorType.Multiply => "×",
+                Algorithm.Operator.OperatorType.Divide => "÷",
                 _ => "?"
             };
         }

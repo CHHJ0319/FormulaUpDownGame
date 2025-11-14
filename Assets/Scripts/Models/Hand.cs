@@ -8,14 +8,14 @@ namespace Models
         public List<Cards.NumberCard> NumberCards { get; private set; }
         public List<Cards.OperatorCard> OperatorCards { get; private set; }
         public List<Cards.SpecialCard> SpecialCards { get; private set; }
-        public List<Cards.OperatorType> DisabledOperators { get; private set; }
+        public List<Algorithm.Operator.OperatorType> DisabledOperators { get; private set; }
 
         public Hand()
         {
             NumberCards = new List<Cards.NumberCard>();
             OperatorCards = new List<Cards.OperatorCard>();
             SpecialCards = new List<Cards.SpecialCard>();
-            DisabledOperators = new List<Cards.OperatorType>();
+            DisabledOperators = new List<Algorithm.Operator.OperatorType>();
         }
 
         public void Clear()
@@ -44,15 +44,15 @@ namespace Models
 
         public int GetMultiplyCount()
         {
-            return SpecialCards.Count(c => c.Type == Cards.OperatorType.Multiply);
+            return SpecialCards.Count(c => c.Type == Algorithm.Operator.OperatorType.Multiply);
         }
 
         public int GetSquareRootCount()
         {
-            return SpecialCards.Count(c => c.Type == Cards.OperatorType.SquareRoot);
+            return SpecialCards.Count(c => c.Type == Algorithm.Operator.OperatorType.SquareRoot);
         }
 
-        public bool IsOperatorEnabled(Cards.OperatorType op)
+        public bool IsOperatorEnabled(Algorithm.Operator.OperatorType op)
         {
             return !DisabledOperators.Contains(op);
         }

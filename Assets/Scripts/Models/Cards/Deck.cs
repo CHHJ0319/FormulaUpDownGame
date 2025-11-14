@@ -44,12 +44,12 @@ namespace Models.Cards
         {
             for (int i = 0; i < config.MultiplySpecialCardsPerRound; i++)
             {
-                cards.Add(new SpecialCard(OperatorType.Multiply));
+                cards.Add(new SpecialCard(Algorithm.Operator.OperatorType.Multiply));
             }
 
             for (int i = 0; i < config.SquareRootSpecialCardsPerRound; i++)
             {
-                cards.Add(new SpecialCard(OperatorType.SquareRoot));
+                cards.Add(new SpecialCard(Algorithm.Operator.OperatorType.SquareRoot));
             }
         }
 

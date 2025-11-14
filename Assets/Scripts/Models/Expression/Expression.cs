@@ -6,13 +6,13 @@ namespace Models.Expression
     public class Expression
     {
         public List<float> Numbers { get; private set; }
-        public List<Cards.OperatorType> Operators { get; private set; }
+        public List<Algorithm.Operator> Operators { get; private set; }
         public List<bool> HasSquareRoot { get; private set; }
 
         public Expression()
         {
             Numbers = new List<float>();
-            Operators = new List<Cards.OperatorType>();
+            Operators = new List<Algorithm.Operator>();
             HasSquareRoot = new List<bool>();
         }
 
@@ -22,7 +22,7 @@ namespace Models.Expression
             HasSquareRoot.Add(hasSquareRoot);
         }
 
-        public void AddOperator(Cards.OperatorType op)
+        public void AddOperator(Algorithm.Operator op)
         {
             Operators.Add(op);
         }
@@ -84,7 +84,7 @@ namespace Models.Expression
                 if (i < Operators.Count)
                 {
                     sb.Append(" ");
-                    sb.Append(Converter.OperatorTypeWithString.ToSymbolString(Operators[i]));
+                    sb.Append(Converter.OperatorTypeWithString.ToSymbolString(Operators[i].Type));
                     sb.Append(" ");
                 }
             }

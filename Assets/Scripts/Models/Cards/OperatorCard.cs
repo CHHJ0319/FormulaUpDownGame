@@ -2,21 +2,21 @@ namespace Models.Cards
 {
     public class OperatorCard : Card
     {
-        public OperatorType Operator { get;}
+        public Algorithm.Operator Operator { get;}
 
-        public OperatorCard(OperatorType op)
+        public OperatorCard(Algorithm.Operator op)
         {
             Operator = op;
         }
 
         public override string GetDisplayText()
         {
-            return Operator switch
+            return Operator.Type switch
             {
-                OperatorType.Add => "+",
-                OperatorType.Subtract => "-",
-                OperatorType.Multiply => "×",
-                OperatorType.Divide => "÷",
+                Algorithm.Operator.OperatorType.Add => "+",
+                Algorithm.Operator.OperatorType.Subtract => "-",
+                Algorithm.Operator.OperatorType.Multiply => "×",
+                Algorithm.Operator.OperatorType.Divide => "÷",
                 _ => "?"
             };
         }
