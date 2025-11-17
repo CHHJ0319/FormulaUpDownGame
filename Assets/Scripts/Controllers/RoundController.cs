@@ -159,42 +159,31 @@ namespace Controllers
             StartNewRound();
         }
 
-        /// <summary>
-        /// ✅ 완전히 새로운 카드 분배 로직
-        /// 
-        /// 1. 기본 연산자 카드 3장 (+, -, ÷) 자동 제공
-        /// 2. 숫자 카드 3장 무조건 보장
-        /// 3. 특수 카드 나오면 → 숫자 카드 1장 추가
-        /// </summary>
         private IEnumerator DealingPhase()
         {
-            // 상태 초기화
-            playerSubmitted = false;
-            roundTimer = 0f;
-            aiHand.Clear();
-            Deck.BuildDeck(); // 덱 재구성
-
-            // UI와 PlayerController에 라운드 시작 알림
-            Events.GameEvents.InvokeRoundStarted();
-
-            // 목표값과 베팅 초기화
+            //Standard Phase
             currentTarget = config.TargetValues[0];
             currentBet = config.MinBet;
             Events.GameEvents.InvokeTargetSelected(currentTarget);
             Events.GameEvents.InvokeBetChanged(currentBet);
 
-            // ===== 플레이어 카드 분배 =====
-            playerController = GetComponent<PlayerController>();
+            playerSubmitted = false;
+            roundTimer = 0f;
 
+            Events.GameEvents.InvokeRoundStarted();
+
+
+            Deck.BuildDeck();
+
+            playerController = GetComponent<PlayerController>();
             if (playerController == null)
             {
                 Debug.LogError("[RoundController] PlayerController를 찾을 수 없습니다!");
             }
-            
             playerController.ResetHand();
             yield return StartCoroutine(DealCardsToPlayer());
 
-            // ===== AI 카드 분배 (남은 카드로) =====
+            aiHand.Clear();
             yield return StartCoroutine(DealCardsToAI());
 
             // Player/AI Controller에 완성된 Hand 정보 전달
@@ -207,8 +196,6 @@ namespace Controllers
         private IEnumerator DealCardsToPlayer()
         {
             Debug.Log("[RoundController] === 플레이어 카드 분배 시작 ===");
-
-            // --- 1단계: 기본 연산자 카드 3장 (+, -, ÷) 자동 제공 ---
             Debug.Log("[RoundController] 1단계: 기본 연산자 카드 3장 제공");
 
             var basicOperators = new[] {
@@ -265,12 +252,10 @@ namespace Controllers
                 if (drawnCard.GetCardType() == "Number")
                 {
                     numberCardsDrawn++;
-                    Debug.Log($"[RoundController] 숫자 카드 보충: {drawnCard.GetDisplayText()} ({numberCardsDrawn}/3)");
                 }
                 else if (drawnCard.GetCardType() == "Special")
                 {
                     specialCardsDrawn++;
-                    Debug.Log($"[RoundController] 특수 카드 추가 발견: {drawnCard.GetDisplayText()}");
                 }
 
                 playerController.AddCard(drawnCard);

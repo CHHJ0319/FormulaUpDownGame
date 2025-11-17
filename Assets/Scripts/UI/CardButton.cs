@@ -116,7 +116,7 @@ namespace UI
         private void SetEffect()
         {
             button.onClick.RemoveAllListeners();
-            if (isPlayerCard && (card is NumberCard || card is OperatorCard))
+            if (isPlayerCard)
             {
                 button.interactable = true;
                 button.onClick.AddListener(HandleClick);
@@ -135,11 +135,6 @@ namespace UI
             }
 
             if (card.IsUsed)
-            {
-                return;
-            }
-
-            if (card is SpecialCard specialCard)
             {
                 return;
             }
