@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using Models.Cards;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
@@ -8,13 +9,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UI.AiPanel aiPanel;
     [SerializeField] private UI.BettingPanel bettingPanel;
     [SerializeField] private UI.ResultPanel resultPanel;
-    [SerializeField] private UI.TargetScoreSettingPanel targetScoreSettingPanel;
+    [SerializeField] private UI.TargetScorePanel targetScorePanel;
+    [SerializeField] private UI.SlotMachineUI slotMachine;
 
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI statusText;
-
-
-    #region 이벤트 구독 (OnEnable / OnDisable)
 
     void OnEnable()
     {
@@ -37,6 +36,8 @@ public class UIManager : MonoBehaviour
 
         // 게임 종료
         Events.GameEvents.OnGameOver += HandleGameOver;
+
+        Events.RoundEvents.OnTargetScoreSet += OnTargetSet;
     }
 
     void OnDisable()
@@ -50,9 +51,10 @@ public class UIManager : MonoBehaviour
         Events.GameEvents.OnSubmitAvailabilityChanged -= playerPanel.UpdateSubmitAvailability;
         Events.UIEvents.OnStatusTextUpdated -= UpdateStatusText;
         Events.GameEvents.OnGameOver -= HandleGameOver;
+
+        Events.RoundEvents.OnTargetScoreSet -= OnTargetSet;
     }
 
-    #endregion
 
     void Start()
     {
@@ -63,10 +65,7 @@ public class UIManager : MonoBehaviour
         resultPanel.Hide();
         playerPanel.Initialize();
         bettingPanel.Initialize();
-        targetScoreSettingPanel.Initialize();
     }
-
-    #region 로직 핸들러 (Event -> UI)
 
     private void UpdateScoreText(int playerScore, int aiScore)
     {
@@ -156,5 +155,24 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    #endregion
+    private void OnTargetSet(int score)
+    {
+        StopAllCoroutines();
+        StartCoroutine(PlayTargetScoreSequence(score));
+    }
+
+    public IEnumerator PlayTargetScoreSequence(int score)
+    {
+        bool isSlotFinished = false;
+
+        slotMachine.PlaySlot(score, () =>
+        {
+            isSlotFinished = true;
+        });
+
+        yield return new WaitUntil(() => isSlotFinished);
+
+        targetScorePanel.UpdateTargetScoreText(score);
+    }
+ 
 }

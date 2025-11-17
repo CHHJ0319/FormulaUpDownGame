@@ -90,10 +90,7 @@ namespace Events
             OnResetClicked?.Invoke();
         }
 
-        public static void InvokeTargetSelected(int target)
-        {
-            OnTargetSelected?.Invoke(target);
-        }
+
 
         public static void InvokeBetChanged(int bet)
         {

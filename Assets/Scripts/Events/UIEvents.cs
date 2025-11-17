@@ -22,6 +22,8 @@ namespace Events
         {
             OnExpressionUpdated?.Invoke(expressionText);
         }
+
+        
     }
 }
 

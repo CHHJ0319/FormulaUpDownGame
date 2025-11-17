@@ -29,12 +29,13 @@ namespace Controllers
 
         // --- 라운드 상태 ---
         private Models.Hand aiHand;
-        private int currentTarget;
+        private int targetScore;
         private int currentBet;
 
         private enum RoundPhase
         {
             Idle,
+            Standby,
             Dealing,    // 카드 분배 중
             Waiting,    // 플레이어 입력 대기
             Evaluating, // 수식 평가 중
@@ -71,14 +72,12 @@ namespace Controllers
         void OnEnable()
         {
             Events.GameEvents.OnSubmitClicked += HandleSubmitClicked;
-            Events.GameEvents.OnTargetSelected += HandleTargetSelected;
             Events.GameEvents.OnBetChanged += HandleBetChanged;
         }
 
         void OnDisable()
         {
             Events.GameEvents.OnSubmitClicked -= HandleSubmitClicked;
-            Events.GameEvents.OnTargetSelected -= HandleTargetSelected;
             Events.GameEvents.OnBetChanged -= HandleBetChanged;
         }
 
@@ -101,9 +100,9 @@ namespace Controllers
             }
         }
 
-        private void HandleTargetSelected(int target)
+        private void SetTargetScore()
         {
-            currentTarget = target;
+            targetScore = Random.Range(0, 21);
         }
 
         private void HandleBetChanged(int bet)
@@ -128,7 +127,9 @@ namespace Controllers
 
         private IEnumerator RoundLoopRoutine()
         {
-            // --- 1. Dealing (분배) ---
+            currentPhase = RoundPhase.Standby;
+            yield return StartCoroutine(StartStandbyPhase());
+
             currentPhase = RoundPhase.Dealing;
             Events.UIEvents.InvokeStatusTextUpdated("카드를 분배합니다...");
             yield return StartCoroutine(DealingPhase());
@@ -140,7 +141,7 @@ namespace Controllers
             currentPhase = RoundPhase.Waiting;
             yield return StartCoroutine(WaitingPhase());
 
-            aiController.PlayTurn(aiHand, currentTarget);
+            aiController.PlayTurn(aiHand, targetScore);
 
             // --- 3. Evaluating (평가) ---
             currentPhase = RoundPhase.Evaluating;
@@ -159,20 +160,25 @@ namespace Controllers
             StartNewRound();
         }
 
-        private IEnumerator DealingPhase()
+        private IEnumerator StartStandbyPhase()
         {
-            //Standard Phase
-            currentTarget = config.TargetValues[0];
-            currentBet = config.MinBet;
-            Events.GameEvents.InvokeTargetSelected(currentTarget);
-            Events.GameEvents.InvokeBetChanged(currentBet);
+            
 
-            playerSubmitted = false;
+            currentBet = config.MinBet;
+            Events.GameEvents.InvokeBetChanged(currentBet);
             roundTimer = 0f;
+            playerSubmitted = false;
+
+            SetTargetScore();
+            Events.RoundEvents.InvokeTargetScoreSet(targetScore);
 
             Events.GameEvents.InvokeRoundStarted();
 
+            yield return null;
+        }
 
+        private IEnumerator DealingPhase()
+        {
             Deck.BuildDeck();
 
             playerController = GetComponent<PlayerController>();
@@ -473,7 +479,7 @@ namespace Controllers
         {
             Models.Round.RoundResult result = new Models.Round.RoundResult
             {
-                TargetScore = currentTarget,
+                TargetScore = targetScore,
                 BetAmount = currentBet,
                 PlayerExpression = playerEval.Success ? playerExpr.ToString() : "-",
                 PlayerValue = playerEval.Success ? playerEval.Value : float.NaN,
