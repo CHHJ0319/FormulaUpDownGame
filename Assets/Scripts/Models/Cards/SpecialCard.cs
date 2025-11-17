@@ -7,7 +7,7 @@ namespace Models.Cards
         public SpecialCard(Algorithm.Operator.OperatorType type)
         {
             Type = type;
-            IsConsumed = false;
+            MarkAsUnused();
         }
 
         public override string GetDisplayText()
@@ -28,16 +28,6 @@ namespace Models.Cards
         public override Card Clone()
         {
             return new SpecialCard(Type);
-        }
-
-        public void MarkAsUsed()
-        {
-            IsConsumed = true;
-        }
-
-        public void MarkAsUnused()
-        {
-            IsConsumed = false;
         }
     }
 }

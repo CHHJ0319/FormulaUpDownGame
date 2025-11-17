@@ -52,14 +52,25 @@ namespace Models
             return SpecialCards.Count(c => c.Type == Algorithm.Operator.OperatorType.SquareRoot);
         }
 
+        public void ResetCardsUsage()
+        {
+            foreach (var card in NumberCards)
+            {
+                card.MarkAsUnused(); 
+            }
+            foreach (var card in OperatorCards)
+            {
+                card.MarkAsUnused();
+            }
+            foreach (var card in SpecialCards)
+            {
+                card.MarkAsUnused();
+            }
+        }
+
         public bool IsOperatorEnabled(Algorithm.Operator.OperatorType op)
         {
             return !DisabledOperators.Contains(op);
-        }
-
-        public int GetTotalCardCount()
-        {
-            return NumberCards.Count + OperatorCards.Count + SpecialCards.Count;
         }
     }
 }

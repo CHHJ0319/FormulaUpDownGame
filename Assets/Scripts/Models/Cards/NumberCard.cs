@@ -12,6 +12,7 @@ namespace Models.Cards
         public NumberCard(int value)
         {
             Value = Mathf.Clamp(value, minValue, maxValue);
+            MarkAsUnused();
         }
 
         public override string GetDisplayText()

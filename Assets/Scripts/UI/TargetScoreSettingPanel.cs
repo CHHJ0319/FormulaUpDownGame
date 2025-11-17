@@ -1,4 +1,3 @@
-using MathHighLow.Services;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,7 +23,7 @@ namespace UI
         {
             ChangeButtonsColor(buttonIndex);
 
-            GameEvents.InvokeTargetSelected(targetValue);
+            Events.GameEvents.InvokeTargetSelected(targetValue);
         }
 
         private void ChangeButtonsColor(int buttonIndex)

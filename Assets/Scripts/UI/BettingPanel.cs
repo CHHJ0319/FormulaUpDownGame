@@ -1,4 +1,3 @@
-using MathHighLow.Services;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,7 +28,7 @@ namespace UI
                 betAmount = 5;
             }
 
-            GameEvents.InvokeBetChanged(betAmount);
+            Events.GameEvents.InvokeBetChanged(betAmount);
         }
 
         private void HandleBetDecrease()
@@ -39,7 +38,7 @@ namespace UI
             {
                 betAmount = 1;
             }
-            GameEvents.InvokeBetChanged(betAmount);
+            Events.GameEvents.InvokeBetChanged(betAmount);
         }
 
         public  void UpdateBetText(int newBet)

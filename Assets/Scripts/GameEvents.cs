@@ -1,7 +1,7 @@
 using System;
 using Models.Cards;
 
-namespace MathHighLow.Services
+namespace Events
 {
     /// <summary>
     /// ✅ 수정: 타이머 및 제출 가능 여부 이벤트 추가
@@ -10,16 +10,14 @@ namespace MathHighLow.Services
     {
         // ===== 카드 관련 이벤트 =====
 
-        public static event Action<Card> OnCardClicked;
+       
         public static event Action<Card, bool> OnCardAdded; // Card, isPlayer
-        public static event Action<Card> OnCardConsumed; // ✅ 새로 추가: 실제로 사용된 카드
 
         // ===== 연산자 관련 이벤트 =====
 
         public static event Action<Algorithm.Operator.OperatorType> OnOperatorSelected;
         public static event Action OnSquareRootClicked;
         public static event Action<Algorithm.Operator.OperatorType> OnOperatorDisabled;
-        public static event Action<SpecialCard> OnSpecialCardConsumed;
 
         // ===== 게임 진행 이벤트 =====
 
@@ -37,7 +35,6 @@ namespace MathHighLow.Services
 
         public static event Action<int, int> OnScoreChanged; // playerScore, aiScore
         public static event Action<string> OnGameOver; // winner
-        public static event Action<string> OnExpressionUpdated; // 수식 텍스트가 변경됨
 
         // ===== ✅ 추가: 타이머 및 제출 가능 여부 =====
 
@@ -51,22 +48,13 @@ namespace MathHighLow.Services
         /// </summary>
         public static event Action<bool> OnSubmitAvailabilityChanged; // canSubmit
 
-        /// <summary>
-        /// ✅ 추가: 상태 텍스트 업데이트
-        /// </summary>
-        public static event Action<string> OnStatusTextUpdated; // statusMessage
-
-        // ===== 유틸리티 메서드 =====
-
         public static void ClearAllEvents()
         {
-            OnCardClicked = null;
+            CardEvents.ClearCarddEvents();
             OnCardAdded = null;
-            OnCardConsumed = null;
             OnOperatorSelected = null;
             OnSquareRootClicked = null;
             OnOperatorDisabled = null;
-            OnSpecialCardConsumed = null;
             OnRoundStarted = null;
             OnRoundEnded = null;
             OnSubmitClicked = null;
@@ -75,23 +63,12 @@ namespace MathHighLow.Services
             OnBetChanged = null;
             OnScoreChanged = null;
             OnGameOver = null;
-            OnExpressionUpdated = null;
             OnTimerUpdated = null; // ✅ 추가
             OnSubmitAvailabilityChanged = null; // ✅ 추가
-            OnStatusTextUpdated = null; // ✅ 추가
         }
 
         // ===== 이벤트 발행 메서드 =====
 
-        public static void InvokeExpressionUpdated(string expressionText)
-        {
-            OnExpressionUpdated?.Invoke(expressionText);
-        }
-
-        public static void InvokeCardClicked(Card card)
-        {
-            OnCardClicked?.Invoke(card);
-        }
 
         public static void InvokeOperatorSelected(Algorithm.Operator.OperatorType op)
         {
@@ -146,21 +123,11 @@ namespace MathHighLow.Services
         public static void InvokeCardAdded(Card card, bool isPlayer)
         {
             OnCardAdded?.Invoke(card, isPlayer);
-        }
-
-        public static void InvokeCardConsumed(Card card)
-        {
-            OnCardConsumed?.Invoke(card);
-        }
+        } 
 
         public static void InvokeOperatorDisabled(Algorithm.Operator.OperatorType op)
         {
             OnOperatorDisabled?.Invoke(op);
-        }
-
-        public static void InvokeSpecialCardConsumed(SpecialCard card)
-        {
-            OnSpecialCardConsumed?.Invoke(card);
         }
 
         // ===== ✅ 추가: 새로운 이벤트 발행 메서드 =====
@@ -179,14 +146,6 @@ namespace MathHighLow.Services
         public static void InvokeSubmitAvailabilityChanged(bool canSubmit)
         {
             OnSubmitAvailabilityChanged?.Invoke(canSubmit);
-        }
-
-        /// <summary>
-        /// ✅ 추가: 상태 텍스트 업데이트 이벤트 발행
-        /// </summary>
-        public static void InvokeStatusTextUpdated(string statusMessage)
-        {
-            OnStatusTextUpdated?.Invoke(statusMessage);
         }
     }
 }

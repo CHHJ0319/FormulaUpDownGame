@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 using TMPro;
 using Models.Cards;
-using MathHighLow.Services;
 
 namespace UI
 {
@@ -23,18 +22,16 @@ namespace UI
 
         void OnEnable()
         {
-            GameEvents.OnRoundStarted += ResetCartButton;
-            GameEvents.OnResetClicked += ResetCartButton;
-            GameEvents.OnCardConsumed += HandleCardConsumed;
-            GameEvents.OnSpecialCardConsumed += HandleSpecialCardConsumed;
+            Events.GameEvents.OnRoundStarted += ResetCartButton;
+            Events.GameEvents.OnResetClicked += ResetCartButton;
+            Events.CardEvents.OnCardConsumed += HandleCardUsed;
         }
 
         void OnDisable()
         {
-            GameEvents.OnRoundStarted -= ResetCartButton;
-            GameEvents.OnResetClicked -= ResetCartButton;
-            GameEvents.OnCardConsumed -= HandleCardConsumed;
-            GameEvents.OnSpecialCardConsumed -= HandleSpecialCardConsumed;
+            Events.GameEvents.OnRoundStarted -= ResetCartButton;
+            Events.GameEvents.OnResetClicked -= ResetCartButton;
+            Events.CardEvents.OnCardConsumed -= HandleCardUsed;
         }
 
         private void Awake()
@@ -59,33 +56,15 @@ namespace UI
             SetEffect();
         }
 
-        private void HandleCardConsumed(Card usedCard)
+        private void HandleCardUsed(Card usedCard)
         {
-            if (usedCard == this.card)
-            {
-                if (card is SpecialCard specialCard &&
-                    IsClickableSpecial(card) &&
-                    !specialCard.IsConsumed)
-                {
-                    button.interactable = true;
-                    backgroundImage.color = specialCardColor;
-                    return;
-                }
-
-                button.interactable = false;
-                backgroundImage.color = Color.gray;
-            }
-        }
-
-        private void HandleSpecialCardConsumed(SpecialCard consumedCard)
-        {
-            if (card == consumedCard)
+            if (usedCard == card)
             {
                 button.interactable = false;
                 backgroundImage.color = Color.gray;
             }
         }
-
+        
         private void ResetCartButton()
         {
             if (isPlayerCard && (card is NumberCard || card is OperatorCard))
@@ -101,8 +80,7 @@ namespace UI
                     backgroundImage.color = playerOperatorCardColor;
                 }
             }
-            else if (isPlayerCard && card is SpecialCard specialCard &&
-                     IsClickableSpecial(card))
+            else if (isPlayerCard && card is SpecialCard specialCard)
             {
                 specialCard.MarkAsUnused();
                 button.interactable = true;
@@ -138,7 +116,7 @@ namespace UI
         private void SetEffect()
         {
             button.onClick.RemoveAllListeners();
-            if (isPlayerCard && (card is NumberCard || card is OperatorCard || IsClickableSpecial(card)))
+            if (isPlayerCard && (card is NumberCard || card is OperatorCard))
             {
                 button.interactable = true;
                 button.onClick.AddListener(HandleClick);
@@ -156,23 +134,17 @@ namespace UI
                 return;
             }
 
-            if (card is SpecialCard specialCard && !IsClickableSpecial(card))
+            if (card.IsUsed)
             {
                 return;
             }
 
-            GameEvents.InvokeCardClicked(this.card);
-        }
-
-        private bool IsClickableSpecial(Card targetCard)
-        {
-            if (targetCard is SpecialCard specialCard)
+            if (card is SpecialCard specialCard)
             {
-                return specialCard.Type == Algorithm.Operator.OperatorType.Multiply ||
-                       specialCard.Type == Algorithm.Operator.OperatorType.SquareRoot;
+                return;
             }
 
-            return false;
+            Events.CardEvents.InvokeCardClicked(this.card);
         }
     }
 }

@@ -1,4 +1,3 @@
-using MathHighLow.Services;
 using Models.Cards;
 using System.Collections.Generic;
 using TMPro;
@@ -19,10 +18,21 @@ namespace UI
         [SerializeField] private Button submitButton;
         [SerializeField] private Button resetButton;
 
+        void OnEnable()
+        {
+            Events.UIEvents.OnExpressionUpdated += UpdateExpressionText;
+
+        }
+
+        void OnDisable()
+        {
+            Events.UIEvents.OnExpressionUpdated -= UpdateExpressionText;
+        }
+
         public void Initialize()
         {
-            submitButton.onClick.AddListener(() => GameEvents.InvokeSubmit());
-            resetButton.onClick.AddListener(() => GameEvents.InvokeReset());
+            submitButton.onClick.AddListener(() => Events.GameEvents.InvokeSubmit());
+            resetButton.onClick.AddListener(() => Events.GameEvents.InvokeReset());
 
             UpdateExpressionText("");
         }

@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using MathHighLow.Services;
+using MathHighLow.Controllers;
 
-namespace MathHighLow.Controllers
+namespace Controllers
 {
     /// <summary>
     /// [학습 포인트] 코루틴을 이용한 상태 머신
@@ -28,7 +28,6 @@ namespace MathHighLow.Controllers
         public AIController aiController;
 
         // --- 라운드 상태 ---
-        private Models.Hand playerHand;
         private Models.Hand aiHand;
         private int currentTarget;
         private int currentBet;
@@ -55,7 +54,6 @@ namespace MathHighLow.Controllers
             this.Deck = Deck;
 
             // 라운드에서 사용할 손패 객체 생성
-            playerHand = new Models.Hand();
             aiHand = new Models.Hand();
         }
 
@@ -63,13 +61,7 @@ namespace MathHighLow.Controllers
 
         void Start()
         {
-            playerController = GetComponent<PlayerController>();
             aiController = GetComponent<AIController>();
-
-            if (playerController == null)
-            {
-                Debug.LogError("[RoundController] PlayerController를 찾을 수 없습니다!");
-            }
             if (aiController == null)
             {
                 Debug.LogError("[RoundController] AIController를 찾을 수 없습니다!");
@@ -78,16 +70,16 @@ namespace MathHighLow.Controllers
 
         void OnEnable()
         {
-            GameEvents.OnSubmitClicked += HandleSubmitClicked;
-            GameEvents.OnTargetSelected += HandleTargetSelected;
-            GameEvents.OnBetChanged += HandleBetChanged;
+            Events.GameEvents.OnSubmitClicked += HandleSubmitClicked;
+            Events.GameEvents.OnTargetSelected += HandleTargetSelected;
+            Events.GameEvents.OnBetChanged += HandleBetChanged;
         }
 
         void OnDisable()
         {
-            GameEvents.OnSubmitClicked -= HandleSubmitClicked;
-            GameEvents.OnTargetSelected -= HandleTargetSelected;
-            GameEvents.OnBetChanged -= HandleBetChanged;
+            Events.GameEvents.OnSubmitClicked -= HandleSubmitClicked;
+            Events.GameEvents.OnTargetSelected -= HandleTargetSelected;
+            Events.GameEvents.OnBetChanged -= HandleBetChanged;
         }
 
         #endregion
@@ -104,7 +96,7 @@ namespace MathHighLow.Controllers
                 }
                 else
                 {
-                    GameEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다.");
+                    Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다.");
                 }
             }
         }
@@ -138,11 +130,11 @@ namespace MathHighLow.Controllers
         {
             // --- 1. Dealing (분배) ---
             currentPhase = RoundPhase.Dealing;
-            GameEvents.InvokeStatusTextUpdated("카드를 분배합니다...");
+            Events.UIEvents.InvokeStatusTextUpdated("카드를 분배합니다...");
             yield return StartCoroutine(DealingPhase());
 
             // ✅ 추가: 분배 완료 후 안내
-            GameEvents.InvokeStatusTextUpdated("30초가 지날 때까지 수식을 완성시키고 AI와 본인 중 누가 이길지 예측해 배팅해 보세요.");
+            Events.UIEvents.InvokeStatusTextUpdated("30초가 지날 때까지 수식을 완성시키고 AI와 본인 중 누가 이길지 예측해 배팅해 보세요.");
 
             // --- 2. Waiting (대기) ---
             currentPhase = RoundPhase.Waiting;
@@ -156,8 +148,8 @@ namespace MathHighLow.Controllers
 
             // --- 4. Results (결과) ---
             currentPhase = RoundPhase.Results;
-            GameEvents.InvokeRoundEnded(result);
-            GameEvents.InvokeStatusTextUpdated("수식 결과를 확인하세요.");
+            Events.GameEvents.InvokeRoundEnded(result);
+            Events.UIEvents.InvokeStatusTextUpdated("수식 결과를 확인하세요.");
 
             // ✅ 추가: 결과 확인 타이머
             yield return StartCoroutine(ResultsPhase());
@@ -179,27 +171,34 @@ namespace MathHighLow.Controllers
             // 상태 초기화
             playerSubmitted = false;
             roundTimer = 0f;
-            playerHand.Clear();
             aiHand.Clear();
             Deck.BuildDeck(); // 덱 재구성
 
             // UI와 PlayerController에 라운드 시작 알림
-            GameEvents.InvokeRoundStarted();
+            Events.GameEvents.InvokeRoundStarted();
 
             // 목표값과 베팅 초기화
             currentTarget = config.TargetValues[0];
             currentBet = config.MinBet;
-            GameEvents.InvokeTargetSelected(currentTarget);
-            GameEvents.InvokeBetChanged(currentBet);
+            Events.GameEvents.InvokeTargetSelected(currentTarget);
+            Events.GameEvents.InvokeBetChanged(currentBet);
 
             // ===== 플레이어 카드 분배 =====
+            playerController = GetComponent<PlayerController>();
+
+            if (playerController == null)
+            {
+                Debug.LogError("[RoundController] PlayerController를 찾을 수 없습니다!");
+            }
+            
+            playerController.ResetHand();
             yield return StartCoroutine(DealCardsToPlayer());
 
             // ===== AI 카드 분배 (남은 카드로) =====
             yield return StartCoroutine(DealCardsToAI());
 
             // Player/AI Controller에 완성된 Hand 정보 전달
-            playerController.SetHand(playerHand);
+            playerController.Prepare();
         }
 
         /// <summary>
@@ -222,8 +221,8 @@ namespace MathHighLow.Controllers
             {
                 Algorithm.Operator opr = new Algorithm.Operator(op); 
                 Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(opr);
-                playerHand.AddCard(operatorCard);
-                GameEvents.InvokeCardAdded(operatorCard, true);
+                playerController.AddCard(operatorCard);
+                Events.GameEvents.InvokeCardAdded(operatorCard, true);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
@@ -252,8 +251,8 @@ namespace MathHighLow.Controllers
                     Debug.Log($"[RoundController] 특수 카드 발견 (초기): {drawnCard.GetDisplayText()}");
                 }
 
-                playerHand.AddCard(drawnCard);
-                GameEvents.InvokeCardAdded(drawnCard, true);
+                playerController.AddCard(drawnCard);
+                Events.GameEvents.InvokeCardAdded(drawnCard, true);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
@@ -274,15 +273,13 @@ namespace MathHighLow.Controllers
                     Debug.Log($"[RoundController] 특수 카드 추가 발견: {drawnCard.GetDisplayText()}");
                 }
 
-                playerHand.AddCard(drawnCard);
-                GameEvents.InvokeCardAdded(drawnCard, true);
+                playerController.AddCard(drawnCard);
+                Events.GameEvents.InvokeCardAdded(drawnCard, true);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
 
             Debug.Log($"[RoundController] 숫자 3장 확보 완료 (특수 {specialCardsDrawn}장)");
-
-            Debug.Log($"[RoundController] === 플레이어 카드 분배 완료: 총 {playerHand.GetTotalCardCount()}장 ===");
         }
 
         /// <summary>
@@ -304,7 +301,7 @@ namespace MathHighLow.Controllers
                 Algorithm.Operator opr = new Algorithm.Operator(op);
                 Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(opr);
                 aiHand.AddCard(operatorCard);
-                GameEvents.InvokeCardAdded(operatorCard, false);
+                Events.GameEvents.InvokeCardAdded(operatorCard, false);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
@@ -330,7 +327,7 @@ namespace MathHighLow.Controllers
                 }
 
                 aiHand.AddCard(drawnCard);
-                GameEvents.InvokeCardAdded(drawnCard, false);
+                Events.GameEvents.InvokeCardAdded(drawnCard, false);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
@@ -351,14 +348,12 @@ namespace MathHighLow.Controllers
                 }
 
                 aiHand.AddCard(drawnCard);
-                GameEvents.InvokeCardAdded(drawnCard, false);
+                Events.GameEvents.InvokeCardAdded(drawnCard, false);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
 
             Debug.Log($"[RoundController] (AI) 숫자 3장 확보 완료 (특수 {specialCardsDrawn}장)");
-
-            Debug.Log($"[RoundController] === AI 카드 분배 완료: 총 {aiHand.GetTotalCardCount()}장 ===");
         }
 
         /// <summary>
@@ -386,7 +381,7 @@ namespace MathHighLow.Controllers
             bool requirementMessageShown = false;
             bool earlyRequirementReminderShown = false;
 
-            GameEvents.InvokeStatusTextUpdated("30초가 지날 때까지 수식을 완성시키고 AI와 본인 중 누가 이길지 예측해 배팅해 보세요.");
+            Events.UIEvents.InvokeStatusTextUpdated("30초가 지날 때까지 수식을 완성시키고 AI와 본인 중 누가 이길지 예측해 배팅해 보세요.");
 
             while (roundTimer < config.RoundDuration)
             {
@@ -396,7 +391,7 @@ namespace MathHighLow.Controllers
                 }
 
                 roundTimer += Time.deltaTime;
-                GameEvents.InvokeTimerUpdated(roundTimer, config.RoundDuration);
+                Events.GameEvents.InvokeTimerUpdated(roundTimer, config.RoundDuration);
 
                 bool timeUnlocked = roundTimer >= config.SubmissionUnlockTime;
                 bool hasUsedRequiredSpecials = playerController != null && playerController.HasUsedRequiredSpecialCards();
@@ -406,7 +401,7 @@ namespace MathHighLow.Controllers
                 {
                     if (!earlyRequirementReminderShown)
                     {
-                        GameEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다.");
+                        Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다.");
                         earlyRequirementReminderShown = true;
                     }
                 }
@@ -419,14 +414,14 @@ namespace MathHighLow.Controllers
                 bool isSubmitAvailable = timeUnlocked && hasUsedRequiredSpecials;
                 if (isSubmitAvailable != wasSubmitAvailable)
                 {
-                    GameEvents.InvokeSubmitAvailabilityChanged(isSubmitAvailable);
+                    Events.GameEvents.InvokeSubmitAvailabilityChanged(isSubmitAvailable);
                     wasSubmitAvailable = isSubmitAvailable;
 
                     if (isSubmitAvailable)
                     {
                         Debug.Log($"[RoundController] 제출 가능! ({config.SubmissionUnlockTime}초 경과)");
                         // ✅ 추가: 제출 가능 안내 텍스트
-                        GameEvents.InvokeStatusTextUpdated("수식을 완성하면 제출 버튼을 눌러 제출하세요.");
+                        Events.UIEvents.InvokeStatusTextUpdated("수식을 완성하면 제출 버튼을 눌러 제출하세요.");
                         requirementMessageShown = false;
                     }
                 }
@@ -435,7 +430,7 @@ namespace MathHighLow.Controllers
                 {
                     if (!requirementMessageShown)
                     {
-                        GameEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다.");
+                        Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다.");
                         requirementMessageShown = true;
                     }
                 }
@@ -462,7 +457,7 @@ namespace MathHighLow.Controllers
                 resultsTimer += Time.deltaTime;
 
                 // ✅ 결과 확인 타이머 표시
-                GameEvents.InvokeTimerUpdated(resultsTimer, config.ResultsDisplayDuration);
+                Events.GameEvents.InvokeTimerUpdated(resultsTimer, config.ResultsDisplayDuration);
 
                 yield return null;
             }
@@ -476,7 +471,7 @@ namespace MathHighLow.Controllers
         private Models.Round.RoundResult EvaluatePhase()
         {
             Models.Expression.Expression playerExpr = playerController.GetExpression();
-            var playerValidation = Algorithm.ExpressionValidator.Validate(playerExpr, playerHand);
+            var playerValidation = Algorithm.ExpressionValidator.Validate(playerExpr, playerController.Hand);
 
             var playerEvaluation = playerValidation.IsValid
                 ? Algorithm.ExpressionEvaluator.Evaluate(playerExpr)

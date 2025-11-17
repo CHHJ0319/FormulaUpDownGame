@@ -1,21 +1,18 @@
 ﻿using UnityEngine;
-using MathHighLow.Services;
-using System.Collections;
+using MathHighLow.Controllers;
 
-namespace MathHighLow.Controllers
-{
-    /// <summary>
-    /// ✅ 수정: 베팅 검증 기능 추가
-    /// - 최대 5원까지만
-    /// - 보유 머니 초과 방지
-    /// </summary>
-    [RequireComponent(typeof(RoundController))]
-    [RequireComponent(typeof(PlayerController))]
+/// <summary>
+/// ✅ 수정: 베팅 검증 기능 추가
+/// - 최대 5원까지만
+/// - 보유 머니 초과 방지
+/// </summary>
+[RequireComponent(typeof(Controllers.RoundController))]
+    [RequireComponent(typeof(Controllers.PlayerController))]
     [RequireComponent(typeof(AIController))]
     public class GameController : MonoBehaviour
     {
-        [HideInInspector] public RoundController roundController;
-        [HideInInspector] public PlayerController playerController;
+        [HideInInspector] public Controllers.RoundController roundController;
+        [HideInInspector] public Controllers.PlayerController playerController;
         [HideInInspector] public AIController aiController;
 
         private Models.GameConfig config;
@@ -38,8 +35,8 @@ namespace MathHighLow.Controllers
             config = Models.GameConfig.Default();
             Deck = new Models.Cards.Deck(config);
 
-            roundController = GetComponent<RoundController>();
-            playerController = GetComponent<PlayerController>();
+            roundController = GetComponent<Controllers.RoundController>();
+            playerController = GetComponent<Controllers.PlayerController>();
             aiController = GetComponent<AIController>();
 
             roundController.Initialize(config, Deck);
@@ -49,14 +46,14 @@ namespace MathHighLow.Controllers
 
         void OnEnable()
         {
-            GameEvents.OnRoundEnded += HandleRoundEnded;
-            GameEvents.OnBetChanged += HandleBetChanged; // ✅ 추가
+            Events.GameEvents.OnRoundEnded += HandleRoundEnded;
+            Events.GameEvents.OnBetChanged += HandleBetChanged; // ✅ 추가
         }
 
         void OnDisable()
         {
-            GameEvents.OnRoundEnded -= HandleRoundEnded;
-            GameEvents.OnBetChanged -= HandleBetChanged; // ✅ 추가
+            Events.GameEvents.OnRoundEnded -= HandleRoundEnded;
+            Events.GameEvents.OnBetChanged -= HandleBetChanged; // ✅ 추가
         }
 
         void Start()
@@ -73,7 +70,7 @@ namespace MathHighLow.Controllers
             currentState = GameState.Playing;
             playerCredits = config.StartingCredits;
             aiCredits = config.StartingCredits;
-            GameEvents.InvokeScoreChanged(playerCredits, aiCredits);
+            Events.GameEvents.InvokeScoreChanged(playerCredits, aiCredits);
             roundController.StartNewRound();
         }
 
@@ -83,7 +80,7 @@ namespace MathHighLow.Controllers
 
             playerCredits += result.PlayerScoreChange;
             aiCredits += result.AIScoreChange;
-            GameEvents.InvokeScoreChanged(playerCredits, aiCredits);
+            Events.GameEvents.InvokeScoreChanged(playerCredits, aiCredits);
 
             if (playerCredits <= 0)
             {
@@ -104,17 +101,17 @@ namespace MathHighLow.Controllers
             // 1. 최대 베팅 확인 (5원)
             if (requestedBet > config.MaxBet)
             {
-                GameEvents.InvokeStatusTextUpdated($"베팅은 최대 {config.MaxBet}원까지만 가능합니다.");
-                GameEvents.InvokeBetChanged(config.MaxBet);
+                Events.UIEvents.InvokeStatusTextUpdated($"베팅은 최대 {config.MaxBet}원까지만 가능합니다.");
+                Events.GameEvents.InvokeBetChanged(config.MaxBet);
                 return;
             }
 
             // 2. 보유 머니 확인
             if (requestedBet > playerCredits)
             {
-                GameEvents.InvokeStatusTextUpdated($"보유 머니({playerCredits}원)보다 많이 걸 수 없습니다.");
+                Events.UIEvents.InvokeStatusTextUpdated($"보유 머니({playerCredits}원)보다 많이 걸 수 없습니다.");
                 int maxAffordable = Mathf.Min(playerCredits, config.MaxBet);
-                GameEvents.InvokeBetChanged(maxAffordable);
+                Events.GameEvents.InvokeBetChanged(maxAffordable);
                 return;
             }
 
@@ -125,10 +122,9 @@ namespace MathHighLow.Controllers
         private void EndGame(string winner)
         {
             currentState = GameState.GameOver;
-            GameEvents.InvokeGameOver(winner);
+            Events.GameEvents.InvokeGameOver(winner);
             Debug.Log($"[GameController] 게임 종료! 최종 승자: {winner}");
         }
 
         #endregion
     }
-}

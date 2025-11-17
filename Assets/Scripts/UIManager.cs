@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
 using Models.Cards;
-using MathHighLow.Services;
 
 public class UIManager : MonoBehaviour
 {
@@ -20,40 +19,37 @@ public class UIManager : MonoBehaviour
     void OnEnable()
     {
         // 점수
-        GameEvents.OnScoreChanged += UpdateScoreText;
+        Events.GameEvents.OnScoreChanged += UpdateScoreText;
 
         // 라운드 진행
-        GameEvents.OnRoundStarted += HandleRoundStarted;
-        GameEvents.OnCardAdded += HandleCardAdded;
-        GameEvents.OnRoundEnded += resultPanel.HandleRoundEnded;
+        Events.GameEvents.OnRoundStarted += HandleRoundStarted;
+        Events.GameEvents.OnCardAdded += HandleCardAdded;
+        Events.GameEvents.OnRoundEnded += resultPanel.HandleRoundEnded;
 
         // 플레이어 입력
-        GameEvents.OnExpressionUpdated += playerPanel.UpdateExpressionText;
-        GameEvents.OnBetChanged += bettingPanel.UpdateBetText;
-        GameEvents.OnTimerUpdated += UpdateTimerText;
+        Events.GameEvents.OnBetChanged += bettingPanel.UpdateBetText;
+        Events.GameEvents.OnTimerUpdated += UpdateTimerText;
 
         // 제출 가능 여부
-        GameEvents.OnSubmitAvailabilityChanged += playerPanel.UpdateSubmitAvailability;
+        Events.GameEvents.OnSubmitAvailabilityChanged += playerPanel.UpdateSubmitAvailability;
 
-        // ✅ 추가: 상태 텍스트
-        GameEvents.OnStatusTextUpdated += UpdateStatusText;
+        Events.UIEvents.OnStatusTextUpdated += UpdateStatusText;
 
         // 게임 종료
-        GameEvents.OnGameOver += HandleGameOver;
+        Events.GameEvents.OnGameOver += HandleGameOver;
     }
 
     void OnDisable()
     {
-        GameEvents.OnScoreChanged -= UpdateScoreText;
-        GameEvents.OnRoundStarted -= HandleRoundStarted;
-        GameEvents.OnCardAdded -= HandleCardAdded;
-        GameEvents.OnRoundEnded -= resultPanel.HandleRoundEnded;
-        GameEvents.OnExpressionUpdated -= playerPanel.UpdateExpressionText;
-        GameEvents.OnBetChanged -= bettingPanel.UpdateBetText;
-        GameEvents.OnTimerUpdated -= UpdateTimerText;
-        GameEvents.OnSubmitAvailabilityChanged -= playerPanel.UpdateSubmitAvailability;
-        GameEvents.OnStatusTextUpdated -= UpdateStatusText; // ✅ 추가
-        GameEvents.OnGameOver -= HandleGameOver;
+        Events.GameEvents.OnScoreChanged -= UpdateScoreText;
+        Events.GameEvents.OnRoundStarted -= HandleRoundStarted;
+        Events.GameEvents.OnCardAdded -= HandleCardAdded;
+        Events.GameEvents.OnRoundEnded -= resultPanel.HandleRoundEnded;
+        Events.GameEvents.OnBetChanged -= bettingPanel.UpdateBetText;
+        Events.GameEvents.OnTimerUpdated -= UpdateTimerText;
+        Events.GameEvents.OnSubmitAvailabilityChanged -= playerPanel.UpdateSubmitAvailability;
+        Events.UIEvents.OnStatusTextUpdated -= UpdateStatusText;
+        Events.GameEvents.OnGameOver -= HandleGameOver;
     }
 
     #endregion
@@ -138,7 +134,6 @@ public class UIManager : MonoBehaviour
     {
         statusText.text = message;
 
-        // 메시지별 색상 설정
         if (message.Contains("분배"))
         {
             statusText.color = Color.white;

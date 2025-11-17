@@ -7,6 +7,7 @@ namespace Models.Cards
         public OperatorCard(Algorithm.Operator op)
         {
             Operator = op;
+            MarkAsUnused();
         }
 
         public override string GetDisplayText()
