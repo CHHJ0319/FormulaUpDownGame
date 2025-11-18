@@ -1,19 +1,24 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Models.Cards
 {
     public class Deck
     {
-        private readonly GameConfig config;
         private readonly List<Card> cards;
+
+        private int numberCardCopiesPerRound;
+        private int specialCardsPerRound;
 
         private System.Random random;
 
-        public Deck(GameConfig config, int? seed = null)
+        public Deck(int numCounts, int specialCounts, int? seed = null)
         {
-            this.config = config;
-            this.cards = new List<Card>();
-            this.random = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
+            numberCardCopiesPerRound = numCounts;
+            specialCardsPerRound = specialCounts;
+
+            cards = new List<Card>();
+            random = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
         }
 
         public void BuildDeck()
@@ -33,7 +38,7 @@ namespace Models.Cards
         {
             for (int num = 0; num <= 10; num++)
             {
-                for (int i = 0; i < config.NumberCardCopiesPerRound; i++)
+                for (int i = 0; i < numberCardCopiesPerRound; i++)
                 {
                     cards.Add(new NumberCard(num));
                 }
@@ -42,14 +47,18 @@ namespace Models.Cards
 
         private void AddSpecialCard()
         {
-            for (int i = 0; i < config.MultiplySpecialCardsPerRound; i++)
+            for (int i = 0; i < specialCardsPerRound; i++)
             {
-                cards.Add(new SpecialCard(Algorithm.Operator.OperatorType.Multiply));
-            }
+                if (Random.value < 0.5f)
+                {
+                    cards.Add(new SpecialCard(Algorithm.Operator.OperatorType.Multiply));
 
-            for (int i = 0; i < config.SquareRootSpecialCardsPerRound; i++)
-            {
-                cards.Add(new SpecialCard(Algorithm.Operator.OperatorType.SquareRoot));
+                }
+                else
+                {
+                    cards.Add(new SpecialCard(Algorithm.Operator.OperatorType.SquareRoot));
+
+                }
             }
         }
 

@@ -34,7 +34,6 @@ namespace Events
         // ===== 점수 관련 이벤트 =====
 
         public static event Action<int, int> OnScoreChanged; // playerScore, aiScore
-        public static event Action<string> OnGameOver; // winner
 
         // ===== ✅ 추가: 타이머 및 제출 가능 여부 =====
 
@@ -62,7 +61,6 @@ namespace Events
             OnTargetSelected = null;
             OnBetChanged = null;
             OnScoreChanged = null;
-            OnGameOver = null;
             OnTimerUpdated = null; // ✅ 추가
             OnSubmitAvailabilityChanged = null; // ✅ 추가
         }
@@ -110,11 +108,6 @@ namespace Events
         public static void InvokeScoreChanged(int playerScore, int aiScore)
         {
             OnScoreChanged?.Invoke(playerScore, aiScore);
-        }
-
-        public static void InvokeGameOver(string winner)
-        {
-            OnGameOver?.Invoke(winner);
         }
 
         public static void InvokeCardAdded(Card card, bool isPlayer)

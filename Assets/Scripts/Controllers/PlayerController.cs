@@ -10,6 +10,7 @@ namespace Controllers
         private Models.Expression.Expression expression;
 
         private bool isSubmitAvailable;
+
         private bool isSquareRootPending;
         private Models.Cards.SpecialCard pendingSquareRootCard;
 
@@ -17,12 +18,12 @@ namespace Controllers
         {
             Hand = new Models.Hand();
             expression = new Models.Expression.Expression();
+
             isSubmitAvailable = false;
+
             isSquareRootPending = false;
             pendingSquareRootCard = null;
         }
-
-        #region Unity 생명주기 및 이벤트 구독
 
         void OnEnable()
         {
@@ -39,10 +40,6 @@ namespace Controllers
             Events.CardEvents.OnCardClicked -= HandleCardClicked;
             Events.GameEvents.OnSubmitAvailabilityChanged -= HandleSubmitAvailabilityChanged;
         }
-
-        #endregion
-
-        #region 공개 메서드
 
         public void ResetHand()
         {
@@ -74,12 +71,6 @@ namespace Controllers
         {
             return expression.Clone();
         }
-
-
-
-        #endregion
-
-
         private void HandleRoundStarted()
         {
             Prepare();

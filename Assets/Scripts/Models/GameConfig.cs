@@ -12,8 +12,7 @@ namespace Models
         public int InitialCardCount = 3;           
 
         public int NumberCardCopiesPerRound = 4;
-        public int MultiplySpecialCardsPerRound = 5;       
-        public int SquareRootSpecialCardsPerRound = 5;     
+        public int SpecialCardsPerRound = 10;           
 
         public int StartingCredits = 20;            // 초기 자금
         public int MinBet = 1;                      // 최소 베팅

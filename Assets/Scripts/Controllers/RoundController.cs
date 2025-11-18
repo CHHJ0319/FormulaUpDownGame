@@ -17,11 +17,11 @@ namespace Controllers
     /// </summary>
     public class RoundController : MonoBehaviour
     {
-        // --- 의존성 (GameController로부터 주입받음) ---
+        // --- 의존성 (GameManager로부터 주입받음) ---
         private Models.GameConfig config;
         private Models.Cards.Deck Deck;
 
-        // --- 컨트롤러 참조 (GameController가 관리) ---
+        // --- 컨트롤러 참조 (GameManager가 관리) ---
         [HideInInspector]
         public PlayerController playerController;
         [HideInInspector]
@@ -47,7 +47,7 @@ namespace Controllers
         private float roundTimer;     // 라운드 경과 시간
 
         /// <summary>
-        /// 컨트롤러 초기화 (GameController가 호출)
+        /// 컨트롤러 초기화 (GameManager가 호출)
         /// </summary>
         public void Initialize(Models.GameConfig config, Models.Cards.Deck Deck)
         {

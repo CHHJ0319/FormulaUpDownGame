@@ -34,9 +34,6 @@ public class UIManager : MonoBehaviour
 
         Events.UIEvents.OnStatusTextUpdated += UpdateStatusText;
 
-        // 게임 종료
-        Events.GameEvents.OnGameOver += HandleGameOver;
-
         Events.RoundEvents.OnTargetScoreSet += OnTargetSet;
     }
 
@@ -50,7 +47,6 @@ public class UIManager : MonoBehaviour
         Events.GameEvents.OnTimerUpdated -= UpdateTimerText;
         Events.GameEvents.OnSubmitAvailabilityChanged -= playerPanel.UpdateSubmitAvailability;
         Events.UIEvents.OnStatusTextUpdated -= UpdateStatusText;
-        Events.GameEvents.OnGameOver -= HandleGameOver;
 
         Events.RoundEvents.OnTargetScoreSet -= OnTargetSet;
     }
@@ -124,9 +120,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void HandleGameOver(string winner)
+    public static void ShowWinner(string winner)
     {
-        statusText.text = $"게임 종료! 최종 승자: {winner}";
+        // = $"게임 종료! 최종 승자: {winner}";
     }
 
     private void UpdateStatusText(string message)
