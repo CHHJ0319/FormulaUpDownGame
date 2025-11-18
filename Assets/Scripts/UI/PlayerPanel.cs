@@ -39,7 +39,7 @@ namespace UI
 
         public void UpdateCreditsText(int credits)
         {
-            creditsText.text = $"Player: ${credits}";
+            creditsText.text = $"{credits}";
         }
 
         public void DisableSubmitButton()

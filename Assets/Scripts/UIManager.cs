@@ -135,7 +135,7 @@ public class UIManager : MonoBehaviour
 
         if (message.Contains("분배"))
         {
-            statusText.color = Color.white;
+            statusText.color = Color.black;
         }
         else if (message.Contains("완성하세요"))
         {
@@ -151,7 +151,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            statusText.color = Color.white;
+            statusText.color = Color.black;
         }
     }
 

@@ -47,13 +47,11 @@ using MathHighLow.Controllers;
         void OnEnable()
         {
             Events.GameEvents.OnRoundEnded += HandleRoundEnded;
-            Events.GameEvents.OnBetChanged += HandleBetChanged; // ✅ 추가
         }
 
         void OnDisable()
         {
             Events.GameEvents.OnRoundEnded -= HandleRoundEnded;
-            Events.GameEvents.OnBetChanged -= HandleBetChanged; // ✅ 추가
         }
 
         void Start()
@@ -90,33 +88,7 @@ using MathHighLow.Controllers;
             {
                 EndGame("Player");
             }
-            // ✅ 자동 재시작은 RoundController에서 처리
-        }
 
-        /// <summary>
-        /// ✅ 추가: 베팅 검증 로직
-        /// </summary>
-        private void HandleBetChanged(int requestedBet)
-        {
-            // 1. 최대 베팅 확인 (5원)
-            if (requestedBet > config.MaxBet)
-            {
-                Events.UIEvents.InvokeStatusTextUpdated($"베팅은 최대 {config.MaxBet}원까지만 가능합니다.");
-                Events.GameEvents.InvokeBetChanged(config.MaxBet);
-                return;
-            }
-
-            // 2. 보유 머니 확인
-            if (requestedBet > playerCredits)
-            {
-                Events.UIEvents.InvokeStatusTextUpdated($"보유 머니({playerCredits}원)보다 많이 걸 수 없습니다.");
-                int maxAffordable = Mathf.Min(playerCredits, config.MaxBet);
-                Events.GameEvents.InvokeBetChanged(maxAffordable);
-                return;
-            }
-
-            // 3. 정상 베팅
-            Debug.Log($"[GameController] 베팅: {requestedBet}원 (보유: {playerCredits}원)");
         }
 
         private void EndGame(string winner)

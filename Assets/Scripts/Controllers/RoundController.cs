@@ -95,7 +95,7 @@ namespace Controllers
                 }
                 else
                 {
-                    Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다.");
+                    Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 특수 카드를 모두 사용해야 합니다");
                 }
             }
         }
@@ -134,10 +134,6 @@ namespace Controllers
             Events.UIEvents.InvokeStatusTextUpdated("카드를 분배합니다...");
             yield return StartCoroutine(DealingPhase());
 
-            // ✅ 추가: 분배 완료 후 안내
-            Events.UIEvents.InvokeStatusTextUpdated("30초가 지날 때까지 수식을 완성시키고 AI와 본인 중 누가 이길지 예측해 배팅해 보세요.");
-
-            // --- 2. Waiting (대기) ---
             currentPhase = RoundPhase.Waiting;
             yield return StartCoroutine(WaitingPhase());
 
@@ -150,7 +146,7 @@ namespace Controllers
             // --- 4. Results (결과) ---
             currentPhase = RoundPhase.Results;
             Events.GameEvents.InvokeRoundEnded(result);
-            Events.UIEvents.InvokeStatusTextUpdated("수식 결과를 확인하세요.");
+            Events.UIEvents.InvokeStatusTextUpdated("수식 결과를 확인하세요");
 
             // ✅ 추가: 결과 확인 타이머
             yield return StartCoroutine(ResultsPhase());
@@ -372,7 +368,7 @@ namespace Controllers
             bool requirementMessageShown = false;
             bool earlyRequirementReminderShown = false;
 
-            Events.UIEvents.InvokeStatusTextUpdated("30초가 지날 때까지 수식을 완성시키고 AI와 본인 중 누가 이길지 예측해 배팅해 보세요.");
+            Events.UIEvents.InvokeStatusTextUpdated("30초가 지날 때까지 수식을 완성시키고, 저와 플레이어님 중 누가 이길지 예측해 배팅해 보세요");
 
             while (roundTimer < config.RoundDuration)
             {
@@ -392,7 +388,7 @@ namespace Controllers
                 {
                     if (!earlyRequirementReminderShown)
                     {
-                        Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다.");
+                        Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 특수 카드를 모두 사용해야 합니다");
                         earlyRequirementReminderShown = true;
                     }
                 }
@@ -412,7 +408,7 @@ namespace Controllers
                     {
                         Debug.Log($"[RoundController] 제출 가능! ({config.SubmissionUnlockTime}초 경과)");
                         // ✅ 추가: 제출 가능 안내 텍스트
-                        Events.UIEvents.InvokeStatusTextUpdated("수식을 완성하면 제출 버튼을 눌러 제출하세요.");
+                        Events.UIEvents.InvokeStatusTextUpdated("수식을 완성하면 제출 버튼을 눌러주세요");
                         requirementMessageShown = false;
                     }
                 }
@@ -421,7 +417,7 @@ namespace Controllers
                 {
                     if (!requirementMessageShown)
                     {
-                        Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다.");
+                        Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 특수 카드를 모두 사용해야 합니다");
                         requirementMessageShown = true;
                     }
                 }
@@ -432,8 +428,6 @@ namespace Controllers
 
                 yield return null;
             }
-
-            Debug.Log("[RoundController] 시간 초과! 강제 제출합니다.");
         }
 
         /// <summary>

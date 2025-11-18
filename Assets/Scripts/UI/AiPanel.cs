@@ -15,7 +15,7 @@ namespace UI
 
         public void UpdateCreditsText(int credits)
         {
-            creditsText.text = $"AI: ${credits}";
+            creditsText.text = $"{credits}";
         }
         public void HandleCardAdded(Card card)
         {

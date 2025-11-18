@@ -119,7 +119,7 @@ namespace Controllers
         {
             if (!expression.ExpectingNumber())
             {
-                Events.UIEvents.InvokeStatusTextUpdated("지금은 연산자 카드를 눌러주세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("지금은 연산자 카드를 눌러주세요");
                 return;
             }
 
@@ -143,7 +143,7 @@ namespace Controllers
                 isSquareRootPending = false;
                 pendingSquareRootCard = null;
 
-                Events.UIEvents.InvokeStatusTextUpdated("√ 카드가 적용되었습니다. 연산자를 선택하세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("√ 카드가 적용되었습니다\n 연산자를 선택하세요");
             }
 
             Events.UIEvents.InvokeExpressionUpdated(expression.ToString());
@@ -156,11 +156,11 @@ namespace Controllers
             }
             else if (expression.ExpectingNumber())
             {
-                Events.UIEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요");
             }
             else
             {
-                Events.UIEvents.InvokeStatusTextUpdated("연산자 카드를 눌러주세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("연산자 카드를 눌러주세요");
             }
         }
 
@@ -169,13 +169,13 @@ namespace Controllers
         {
             if (expression.ExpectingNumber() || expression.IsEmpty())
             {
-                Events.UIEvents.InvokeStatusTextUpdated("지금은 숫자 카드를 눌러주세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("지금은 숫자 카드를 눌러주세요");
                 return;
             }
 
             if (!HasUnusedNumberCards())
             {
-                Events.UIEvents.InvokeStatusTextUpdated("남은 숫자가 없어 연산자를 더 선택할 수 없습니다. 제출을 준비해 주세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("남은 숫자가 없어 연산자를 더 선택할 수 없습니다");
                 return;
             }
 
@@ -192,7 +192,7 @@ namespace Controllers
 
             if (expression.ExpectingNumber())
             {
-                Events.UIEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요");
             }
         }
 
@@ -220,13 +220,13 @@ namespace Controllers
         {
             if (expression.IsEmpty() || expression.ExpectingNumber())
             {
-                Events.UIEvents.InvokeStatusTextUpdated("숫자를 배치한 후에 × 카드를 눌러주세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("숫자를 배치한 후에 × 카드를 눌러주세요");
                 return;
             }
 
             if (!HasUnusedNumberCards())
             {
-                Events.UIEvents.InvokeStatusTextUpdated("남은 숫자가 없어 × 카드를 사용할 수 없습니다.");
+                Events.UIEvents.InvokeStatusTextUpdated("남은 숫자가 없어 × 카드를 사용할 수 없습니다");
                 return;
             }
 
@@ -235,20 +235,20 @@ namespace Controllers
             Events.CardEvents.InvokeCardConsumed(multiplyCard);
 
             Events.UIEvents.InvokeExpressionUpdated(expression.ToString());
-            Events.UIEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요.");
+            Events.UIEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요");
         }
 
         private void HandleSquareRootCardClicked(Models.Cards.SpecialCard squareRootCard)
         {
             if (isSquareRootPending)
             {
-                Events.UIEvents.InvokeStatusTextUpdated("이미 준비된 √ 카드가 있습니다. 숫자를 선택하세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("이미 준비된 √ 카드가 있습니다\n 숫자를 선택하세요");
                 return;
             }
 
             if (!expression.ExpectingNumber())
             {
-                Events.UIEvents.InvokeStatusTextUpdated("연산자를 선택한 후 숫자를 넣을 차례에 √ 카드를 눌러주세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("연산자를 선택한 후 숫자를 넣을 차례에 √ 카드를 눌러주세요");
                 return;
             }
 
@@ -261,14 +261,14 @@ namespace Controllers
 
             if (!hasAvailableNumber)
             {
-                Events.UIEvents.InvokeStatusTextUpdated("남은 숫자 카드가 없어 √ 카드를 사용할 수 없습니다.");
+                Events.UIEvents.InvokeStatusTextUpdated("남은 숫자 카드가 없어 √ 카드를 사용할 수 없습니다");
                 return;
             }
 
             isSquareRootPending = true;
             pendingSquareRootCard = squareRootCard;
 
-            Events.UIEvents.InvokeStatusTextUpdated("다음에 선택하는 숫자에 √가 적용됩니다. 숫자를 골라주세요.");
+            Events.UIEvents.InvokeStatusTextUpdated("다음에 선택하는 숫자에 √가 적용됩니다\n 숫자를 골라주세요");
         }
 
         private string OperatorToText(Algorithm.Operator.OperatorType op)
@@ -335,17 +335,17 @@ namespace Controllers
 
             if (!HasUsedRequiredSpecialCards())
             {
-                Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다.");
+                Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다");
                 return;
             }
 
             if (isSubmitAvailable)
             {
-                Events.UIEvents.InvokeStatusTextUpdated("수식을 완성했습니다. 제출 버튼으로 확인해 보세요.");
+                Events.UIEvents.InvokeStatusTextUpdated("수식을 완성했습니다\n제출 버튼으로 확인해 보세요");
             }
             else
             {
-                Events.UIEvents.InvokeStatusTextUpdated("30초가 지나면 제출 버튼이 활성화됩니다.");
+                Events.UIEvents.InvokeStatusTextUpdated("10초 후 제출 버튼이 활성화됩니다");
             }
         }
 
