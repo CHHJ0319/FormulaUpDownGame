@@ -21,12 +21,6 @@ namespace Controllers
         private Models.GameConfig config;
         private Models.Cards.Deck Deck;
 
-        // --- 컨트롤러 참조 (GameManager가 관리) ---
-        [HideInInspector]
-        public PlayerController playerController;
-        [HideInInspector]
-        public AIController aiController;
-
         // --- 라운드 상태 ---
         private Models.Hand aiHand;
         private int targetScore;
@@ -62,11 +56,7 @@ namespace Controllers
 
         void Start()
         {
-            aiController = GetComponent<AIController>();
-            if (aiController == null)
-            {
-                Debug.LogError("[RoundController] AIController를 찾을 수 없습니다!");
-            }
+
         }
 
         void OnEnable()
@@ -89,7 +79,7 @@ namespace Controllers
         {
             if (currentPhase == RoundPhase.Waiting && roundTimer >= config.SubmissionUnlockTime)
             {
-                if (playerController != null && playerController.HasUsedRequiredSpecialCards())
+                if (ActorManager.IsSpecialCardRequirementMet())
                 {
                     playerSubmitted = true;
                 }
@@ -137,7 +127,7 @@ namespace Controllers
             currentPhase = RoundPhase.Waiting;
             yield return StartCoroutine(WaitingPhase());
 
-            aiController.PlayTurn(aiHand, targetScore);
+            ActorManager.ExecuteAITurn(aiHand, targetScore);
 
             // --- 3. Evaluating (평가) ---
             currentPhase = RoundPhase.Evaluating;
@@ -158,10 +148,9 @@ namespace Controllers
 
         private IEnumerator StartStandbyPhase()
         {
-            
-
             currentBet = config.MinBet;
             Events.GameEvents.InvokeBetChanged(currentBet);
+            
             roundTimer = 0f;
             playerSubmitted = false;
 
@@ -177,53 +166,32 @@ namespace Controllers
         {
             Deck.BuildDeck();
 
-            playerController = GetComponent<PlayerController>();
-            if (playerController == null)
-            {
-                Debug.LogError("[RoundController] PlayerController를 찾을 수 없습니다!");
-            }
-            playerController.ResetHand();
             yield return StartCoroutine(DealCardsToPlayer());
 
             aiHand.Clear();
             yield return StartCoroutine(DealCardsToAI());
 
-            // Player/AI Controller에 완성된 Hand 정보 전달
-            playerController.Prepare();
+            ActorManager.PreparePlayer();
         }
 
-        /// <summary>
-        /// ✅ 플레이어에게 카드 분배
-        /// </summary>
         private IEnumerator DealCardsToPlayer()
         {
             Debug.Log("[RoundController] === 플레이어 카드 분배 시작 ===");
             Debug.Log("[RoundController] 1단계: 기본 연산자 카드 3장 제공");
 
-            var basicOperators = new[] {
-                Algorithm.Operator.OperatorType.Add,
-                Algorithm.Operator.OperatorType.Subtract,
-                Algorithm.Operator.OperatorType.Divide
-            };
-
-            foreach (var op in basicOperators)
+            foreach (var op in Algorithm.Operator.basicOperators)
             {
-                Algorithm.Operator opr = new Algorithm.Operator(op); 
-                Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(opr);
-                playerController.AddCard(operatorCard);
-                Events.GameEvents.InvokeCardAdded(operatorCard, true);
+                ActorManager.AddOperatorCardToPlayer(op);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
 
-            // --- 2단계: 숫자 카드 3장 무조건 보장 ---
             Debug.Log("[RoundController] 2단계: 초기 3장 분배 및 특수 카드 확인");
 
             int numberCardsDrawn = 0;
             int cardsDealt = 0;
             int specialCardsDrawn = 0;
 
-            // 1) 우선 3장을 뽑아서 공개한다 (숫자/특수 혼합 가능)
             while (cardsDealt < 3)
             {
                 Models.Cards.Card drawnCard = Deck.Draw();
@@ -240,13 +208,11 @@ namespace Controllers
                     Debug.Log($"[RoundController] 특수 카드 발견 (초기): {drawnCard.GetDisplayText()}");
                 }
 
-                playerController.AddCard(drawnCard);
-                Events.GameEvents.InvokeCardAdded(drawnCard, true);
+                ActorManager.AddCardToPlayer(drawnCard);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
 
-            // 2) 숫자 카드가 3장이 될 때까지 계속 뽑아서 보충한다.
             while (numberCardsDrawn < 3)
             {
                 Models.Cards.Card drawnCard = Deck.Draw();
@@ -260,8 +226,7 @@ namespace Controllers
                     specialCardsDrawn++;
                 }
 
-                playerController.AddCard(drawnCard);
-                Events.GameEvents.InvokeCardAdded(drawnCard, true);
+                ActorManager.AddCardToPlayer(drawnCard);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
@@ -381,8 +346,8 @@ namespace Controllers
                 Events.GameEvents.InvokeTimerUpdated(roundTimer, config.RoundDuration);
 
                 bool timeUnlocked = roundTimer >= config.SubmissionUnlockTime;
-                bool hasUsedRequiredSpecials = playerController != null && playerController.HasUsedRequiredSpecialCards();
-                bool needsSpecialReminder = playerController != null && playerController.NeedsSpecialCardUsageReminder();
+                bool hasUsedRequiredSpecials = ActorManager.IsSpecialCardRequirementMet();
+                bool needsSpecialReminder = ActorManager.ShouldShowSpecialCardReminder();
 
                 if (!timeUnlocked && needsSpecialReminder)
                 {
@@ -455,30 +420,26 @@ namespace Controllers
         /// </summary>
         private Models.Round.RoundResult EvaluatePhase()
         {
-            Models.Expression.Expression playerExpr = playerController.GetExpression();
-            var playerValidation = Algorithm.ExpressionValidator.Validate(playerExpr, playerController.Hand);
+            var playerValidation = ActorManager.ValidatePlayerExpression();
 
             var playerEvaluation = playerValidation.IsValid
-                ? Algorithm.ExpressionEvaluator.Evaluate(playerExpr)
+                ? ActorManager.EvaluatePlayerExpression()
                 : new Models.Expression.EvaluationResult { Success = false, ErrorMessage = playerValidation.ErrorMessage };
+            var aiEvaluation = ActorManager.EvaluateAiExpression();
 
-            Models.Expression.Expression aiExpr = aiController.GetExpression();
-            var aiEvaluation = Algorithm.ExpressionEvaluator.Evaluate(aiExpr);
-
-            return CreateRoundResult(playerExpr, playerEvaluation, aiExpr, aiEvaluation);
+            return CreateRoundResult(playerEvaluation, aiEvaluation);
         }
 
-        private Models.Round.RoundResult CreateRoundResult(Models.Expression.Expression playerExpr, Models.Expression.EvaluationResult playerEval,
-                                              Models.Expression.Expression aiExpr, Models.Expression.EvaluationResult aiEval)
+        private Models.Round.RoundResult CreateRoundResult(Models.Expression.EvaluationResult playerEval, Models.Expression.EvaluationResult aiEval)
         {
             Models.Round.RoundResult result = new Models.Round.RoundResult
             {
                 TargetScore = targetScore,
                 BetAmount = currentBet,
-                PlayerExpression = playerEval.Success ? playerExpr.ToString() : "-",
+                PlayerExpression = playerEval.Success ? ActorManager.GetPlayerExpression().ToString() : "-",
                 PlayerValue = playerEval.Success ? playerEval.Value : float.NaN,
                 PlayerError = playerEval.Success ? "" : playerEval.ErrorMessage,
-                AIExpression = aiEval.Success ? aiExpr.ToString() : "-",
+                AIExpression = aiEval.Success ? ActorManager.GetAiExpression().ToString() : "-",
                 AIValue = aiEval.Success ? aiEval.Value : float.NaN,
                 AIError = aiEval.Success ? "" : aiEval.ErrorMessage
             };

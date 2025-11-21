@@ -2,13 +2,10 @@
 using MathHighLow.Controllers;
 
     [RequireComponent(typeof(Controllers.RoundController))]
-    [RequireComponent(typeof(Controllers.PlayerController))]
-    [RequireComponent(typeof(AIController))]
     public class GameManager : MonoBehaviour
     {
         [HideInInspector] public Controllers.RoundController roundController;
-        [HideInInspector] public Controllers.PlayerController playerController;
-        [HideInInspector] public AIController aiController;
+        
 
         private Models.GameConfig config;
 
@@ -23,13 +20,10 @@ using MathHighLow.Controllers;
 
             Deck = new Models.Cards.Deck(config.NumberCardCopiesPerRound, config.SpecialCardsPerRound);
 
-            roundController = GetComponent<Controllers.RoundController>();
-            playerController = GetComponent<Controllers.PlayerController>();
-            aiController = GetComponent<AIController>();
+            ActorManager.Initialize(config.DealInterval);
 
+            roundController = GetComponent<Controllers.RoundController>();
             roundController.Initialize(config, Deck);
-            playerController.Initialize();
-            aiController.Initialize();
         }
 
         void OnEnable()

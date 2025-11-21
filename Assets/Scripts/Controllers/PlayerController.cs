@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using Events;
+using System.Linq;
 using UnityEngine;
-using static UnityEngine.Rendering.GPUSort;
 
 namespace Controllers
 {
@@ -14,7 +14,14 @@ namespace Controllers
         private bool isSquareRootPending;
         private Models.Cards.SpecialCard pendingSquareRootCard;
 
-        public void Initialize()
+        private void Awake()
+        {
+            Initialize();
+
+            ActorManager.SetPlayer(this);
+        }
+
+        private void Initialize()
         {
             Hand = new Models.Hand();
             expression = new Models.Expression.Expression();
@@ -73,6 +80,7 @@ namespace Controllers
         }
         private void HandleRoundStarted()
         {
+            ResetHand();
             Prepare();
             Events.UIEvents.InvokeExpressionUpdated("");
         }

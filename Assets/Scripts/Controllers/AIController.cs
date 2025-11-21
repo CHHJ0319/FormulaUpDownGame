@@ -1,17 +1,11 @@
-using UnityEngine;
+using Events;
 using Models.Cards;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace MathHighLow.Controllers
 {
-    /// <summary>
-    /// ✅ 수정: 연산자 카드를 한 번씩만 사용하도록 개선
-    /// 
-    /// 이제 연산자도 카드로 받기 때문에:
-    /// - +, -, ÷ 각각 1장씩만 사용 가능
-    /// - × 카드는 여러 장 가능 (특수 카드)
-    /// </summary>
     public class AIController : MonoBehaviour
     {
         private Models.Hand currentHand;
@@ -25,9 +19,16 @@ namespace MathHighLow.Controllers
         private int requiredMultiplyCount;
         private bool shouldPrioritizeSpecialUsage;
 
+        private void Start()
+        {
+            Initialize();
+
+            ActorManager.SetAi(this);
+        }
+
         public void Initialize()
         {
-            // 초기화
+
         }
 
         public void PlayTurn(Models.Hand hand, int target)
