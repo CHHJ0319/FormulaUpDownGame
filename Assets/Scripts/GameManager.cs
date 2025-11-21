@@ -11,9 +11,6 @@ using MathHighLow.Controllers;
 
         private Models.Cards.Deck Deck;
 
-        private int playerCredits;
-        private int aiCredits;
-
         void Awake()
         {
             config = Models.GameConfig.Default();
@@ -43,26 +40,22 @@ using MathHighLow.Controllers;
 
         private void StartGame()
         {
-            //ActorManager
-            playerCredits = config.StartingCredits;
-            aiCredits = config.StartingCredits;
-            Events.GameEvents.InvokeScoreChanged(playerCredits, aiCredits);
-            
+            ActorManager.SetPlayerCredits(config.StartingCredits, config.StartingCredits);
+
             roundController.StartNewRound();
+
         }
 
         private void HandleRoundEnded(Models.Round.RoundResult result)
         {
-            //ActorManager
-            playerCredits += result.PlayerScoreChange;
-            aiCredits += result.AIScoreChange;
-            Events.GameEvents.InvokeScoreChanged(playerCredits, aiCredits);
 
-            if (playerCredits <= 0)
+            ActorManager.SetPlayerCredits(result.PlayerScoreChange, result.AIScoreChange);
+
+            if (ActorManager.IsPlayerNegativeBalance())
             {
                 UIManager.ShowWinner("AI");
             }
-            else if (aiCredits <= 0)
+            else if (ActorManager.IsAINegativeBalance())
             {
                 UIManager.ShowWinner("Player");
             }

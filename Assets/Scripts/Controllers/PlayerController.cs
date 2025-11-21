@@ -9,6 +9,8 @@ namespace Controllers
         public Models.Hand Hand { get; private set; }
         private Models.Expression.Expression expression;
 
+        public int Credits { get; set; }
+
         private bool isSubmitAvailable;
 
         private bool isSquareRootPending;
@@ -270,18 +272,6 @@ namespace Controllers
             Events.UIEvents.InvokeStatusTextUpdated("다음에 선택하는 숫자에 √가 적용됩니다\n 숫자를 골라주세요");
         }
 
-        private string OperatorToText(Algorithm.Operator.OperatorType op)
-        {
-            return op switch
-            {
-                Algorithm.Operator.OperatorType.Add => "+",
-                Algorithm.Operator.OperatorType.Subtract => "-",
-                Algorithm.Operator.OperatorType.Multiply => "×",
-                Algorithm.Operator.OperatorType.Divide => "÷",
-                _ => "?"
-            };
-        }
-
         private bool HasUnusedNumberCards()
         {
             if (Hand == null)
@@ -300,9 +290,6 @@ namespace Controllers
             return false;
         }
 
-        /// <summary>
-        /// 30초 이전에도 특수 카드 사용을 안내해야 하는지 여부를 확인합니다.
-        /// </summary>
         public bool NeedsSpecialCardUsageReminder()
         {
             if (Hand == null || expression == null)
@@ -348,9 +335,6 @@ namespace Controllers
             }
         }
 
-        /// <summary>
-        /// 현재 수식이 제출 조건(모든 √, × 특수 카드 사용)을 만족하는지 확인합니다.
-        /// </summary>
         public bool HasUsedRequiredSpecialCards()
         {
             if (Hand == null || expression == null)
@@ -375,5 +359,6 @@ namespace Controllers
 
             return true;
         }
+
     }
 }

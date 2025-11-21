@@ -10,16 +10,19 @@ namespace MathHighLow.Controllers
     {
         private Models.Hand currentHand;
         private int targetNumber;
+        public int Credits { get; set; }
+
         private Models.Expression.Expression bestExpression;
         private float bestDistance;
         private Models.Expression.Expression prioritizedExpression;
         private float prioritizedDistance;
+
         private List<Algorithm.Operator> availableOperators;
         private int requiredSquareRootCount;
         private int requiredMultiplyCount;
         private bool shouldPrioritizeSpecialUsage;
 
-        private void Start()
+        private void Awake()
         {
             Initialize();
 

@@ -15,6 +15,14 @@ public class ActorManager : MonoBehaviour
         dealInterval = interval;
     }
 
+    public static void SetPlayerCredits(int playerCredits, int aiCredits)
+    {
+        player.Credits += playerCredits;
+        ai.Credits += aiCredits;
+
+        Events.GameEvents.InvokeScoreChanged(player.Credits, ai.Credits);
+    }
+
     public static void SetPlayer(Controllers.PlayerController controller)
     {
         player = controller;
@@ -82,4 +90,14 @@ public class ActorManager : MonoBehaviour
     {
         player.Prepare();
     }   
+
+    public static bool IsPlayerNegativeBalance()
+    {
+        return player.Credits <= 0;
+    }
+    public static bool IsAINegativeBalance()
+    {
+        return ai.Credits <= 0;
+    }
+
 }

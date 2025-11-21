@@ -54,8 +54,6 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-            
-        UpdateScoreText(0, 0);
         UpdateTimerText(0, 180);
 
         resultPanel.Hide();
