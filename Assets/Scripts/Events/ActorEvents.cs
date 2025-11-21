@@ -4,7 +4,7 @@ namespace Events
 {
     public static class ActorEvents
     {
-        //public static event Action<Controllers.PlayerController> OnPlayerInitialized;
+        //public static event Action<Actors.PlayerController> OnPlayerInitialized;
         //public static event Action<AIController> OnAiInitialized;
 
         //public static void ClearUIEvents()
@@ -12,7 +12,7 @@ namespace Events
         //    OnPlayerInitialized = null;
         //    OnAiInitialized = null;
         //}
-        //public static void SetPlayer(Controllers.PlayerController controller)
+        //public static void SetPlayer(Actors.PlayerController controller)
         //{
         //    OnPlayerInitialized?.Invoke(controller);
         //}

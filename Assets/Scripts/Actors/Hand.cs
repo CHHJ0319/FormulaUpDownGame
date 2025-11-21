@@ -1,21 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Models
+namespace Actors
 {
     public class Hand
     {
-        public List<Cards.NumberCard> NumberCards { get; private set; }
-        public List<Cards.OperatorCard> OperatorCards { get; private set; }
-        public List<Cards.SpecialCard> SpecialCards { get; private set; }
-        public List<Algorithm.Operator.OperatorType> DisabledOperators { get; private set; }
+        public List<Models.Cards.NumberCard> NumberCards { get; private set; }
+        public List<Models.Cards.OperatorCard> OperatorCards { get; private set; }
+        public List<Models.Cards.SpecialCard> SpecialCards { get; private set; }
 
         public Hand()
         {
-            NumberCards = new List<Cards.NumberCard>();
-            OperatorCards = new List<Cards.OperatorCard>();
-            SpecialCards = new List<Cards.SpecialCard>();
-            DisabledOperators = new List<Algorithm.Operator.OperatorType>();
+            NumberCards = new List<Models.Cards.NumberCard>();
+            OperatorCards = new List<Models.Cards.OperatorCard>();
+            SpecialCards = new List<Models.Cards.SpecialCard>();
         }
 
         public void Clear()
@@ -23,20 +21,19 @@ namespace Models
             NumberCards.Clear();
             OperatorCards.Clear();
             SpecialCards.Clear();
-            DisabledOperators.Clear();
         }
 
-        public void AddCard(Cards.Card card)
+        public void AddCard(Models.Cards.Card card)
         {
-            if (card is Cards.NumberCard num)
+            if (card is Models.Cards.NumberCard num)
             {
                 NumberCards.Add(num);
             }
-            else if (card is Cards.OperatorCard op) 
+            else if (card is Models.Cards.OperatorCard op) 
             {
                 OperatorCards.Add(op);
             }
-            else if (card is Cards.SpecialCard sp)
+            else if (card is Models.Cards.SpecialCard sp)
             {
                 SpecialCards.Add(sp);
             }
@@ -66,11 +63,6 @@ namespace Models
             {
                 card.MarkAsUnused();
             }
-        }
-
-        public bool IsOperatorEnabled(Algorithm.Operator.OperatorType op)
-        {
-            return !DisabledOperators.Contains(op);
         }
     }
 }

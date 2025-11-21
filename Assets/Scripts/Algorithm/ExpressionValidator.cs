@@ -6,7 +6,7 @@ namespace Algorithm
     public static class ExpressionValidator
     {
 
-        public static Models.Expression.ValidationResult Validate(Models.Expression.Expression expression, Models.Hand hand)
+        public static Models.Expression.ValidationResult Validate(Models.Expression.Expression expression, Actors.Hand hand)
         {
             Models.Expression.ValidationResult result = new Models.Expression.ValidationResult();
 
@@ -20,9 +20,6 @@ namespace Algorithm
                 return result;
 
             if (!AreAllSpecialCardsUsed(expression, hand, result))
-                return result;
-
-            if (!ValidateDisabledOperators(expression, hand, result))
                 return result;
 
             return result;
@@ -52,7 +49,7 @@ namespace Algorithm
             return true;
         }
 
-        private static bool AreAllNumberCardsUsed(Models.Expression.Expression expression, Models.Hand hand, Models.Expression.ValidationResult result)
+        private static bool AreAllNumberCardsUsed(Models.Expression.Expression expression, Actors.Hand hand, Models.Expression.ValidationResult result)
         {
             // 손패의 숫자별 개수 세기
             Dictionary<int, int> availableNumbers = new Dictionary<int, int>();
@@ -95,7 +92,7 @@ namespace Algorithm
             return true;
         }
 
-        private static bool AreAllSpecialCardsUsed(Models.Expression.Expression expression, Models.Hand hand, Models.Expression.ValidationResult result)
+        private static bool AreAllSpecialCardsUsed(Models.Expression.Expression expression, Actors.Hand hand, Models.Expression.ValidationResult result)
         {
             if (!AreAllSquareRootUsed(expression, hand, result))
                 return false;
@@ -106,7 +103,7 @@ namespace Algorithm
             return true;
         }
 
-        private static bool AreAllSquareRootUsed(Models.Expression.Expression expression, Models.Hand hand, Models.Expression.ValidationResult result)
+        private static bool AreAllSquareRootUsed(Models.Expression.Expression expression, Actors.Hand hand, Models.Expression.ValidationResult result)
         {
             int requiredCount = hand.GetSquareRootCount();
             int usedCount = 0;
@@ -130,7 +127,7 @@ namespace Algorithm
             return true;
         }
 
-        private static bool AreAllMultiplyUsed(Models.Expression.Expression expression, Models.Hand hand, Models.Expression.ValidationResult result)
+        private static bool AreAllMultiplyUsed(Models.Expression.Expression expression, Actors.Hand hand, Models.Expression.ValidationResult result)
         {
             int requiredCount = hand.GetMultiplyCount();
             int usedCount = 0;
@@ -153,38 +150,6 @@ namespace Algorithm
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// 6단계: 비활성화된 연산자 사용 여부 검증
-        /// </summary>
-        private static bool ValidateDisabledOperators(Models.Expression.Expression expression, Models.Hand hand, Models.Expression.ValidationResult result)
-        {
-            foreach (var op in expression.Operators)
-            {
-                if (!hand.IsOperatorEnabled(op.Type) && op.Type != Algorithm.Operator.OperatorType.Multiply)
-                {
-                    result.MarkInvalid($"비활성화된 연산자를 사용했습니다: {GetOperatorName(op.Type)}");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// 연산자 이름 반환
-        /// </summary>
-        private static string GetOperatorName(Algorithm.Operator.OperatorType op)
-        {
-            return op switch
-            {
-                Algorithm.Operator.OperatorType.Add => "+",
-                Algorithm.Operator.OperatorType.Subtract => "-",
-                Algorithm.Operator.OperatorType.Multiply => "×",
-                Algorithm.Operator.OperatorType.Divide => "÷",
-                _ => "?"
-            };
         }
     }
 }

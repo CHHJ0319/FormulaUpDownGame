@@ -7,7 +7,7 @@ namespace Algorithm
 {
     public static class FormulaApproximator
     {
-        private static Models.Hand currentHand;
+        private static Actors.Hand currentHand;
         private static int targetScore;
 
         private static Models.Expression.Expression bestExpression;
@@ -20,7 +20,7 @@ namespace Algorithm
         private static int requiredMultiplyCount;
         private static bool shouldPrioritizeSpecialUsage;
 
-        public static  Models.Expression.Expression FindBestExpression(int target, Models.Hand hand)
+        public static  Models.Expression.Expression FindBestExpression(int target, Actors.Hand hand)
         {
             targetScore = target;
             currentHand = hand;
@@ -36,7 +36,6 @@ namespace Algorithm
             shouldPrioritizeSpecialUsage = (requiredSquareRootCount > 0 || requiredMultiplyCount > 0);
 
             availableOperators = currentHand.OperatorCards
-                .Where(op => currentHand.IsOperatorEnabled(op.Operator.Type))
                 .Select(op => op.Operator)
                 .ToList();
 

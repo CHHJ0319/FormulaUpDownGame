@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ActorManager : MonoBehaviour
 {
-    private static Controllers.PlayerController player;
-    private static Controllers.AIController ai;
+    private static Actors.PlayerController player;
+    private static Actors.AIController ai;
 
     void OnEnable()
     {
@@ -68,12 +68,12 @@ public class ActorManager : MonoBehaviour
         Events.GameEvents.InvokeScoreChanged(player.Credits, ai.Credits);
     }
 
-    public static void SetPlayer(Controllers.PlayerController controller)
+    public static void SetPlayer(Actors.PlayerController controller)
     {
         player = controller;
     }
 
-    public static void SetAi(Controllers.AIController controller)
+    public static void SetAi(Actors.AIController controller)
     {
         ai = controller;
     }

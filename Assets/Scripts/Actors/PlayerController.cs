@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-namespace Controllers
+namespace Actors
 {
     public class PlayerController : MonoBehaviour
     {
-        public Models.Hand Hand { get; private set; }
+        public Hand Hand { get; private set; }
         private Models.Expression.Expression expression;
         public int Credits { get; set; }
 
@@ -20,7 +20,7 @@ namespace Controllers
 
         private void Initialize()
         {
-            Hand = new Models.Hand();
+            Hand = new Hand();
             expression = new Models.Expression.Expression();
 
             isSquareRootPending = false;

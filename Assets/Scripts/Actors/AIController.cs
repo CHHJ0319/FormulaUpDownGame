@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Controllers
+namespace Actors
 {
     public class AIController : MonoBehaviour
     {
-        public Models.Hand Hand { get; private set; }
+        public Actors.Hand Hand { get; private set; }
         public int Credits { get; set; }
 
         private Models.Expression.Expression bestExpression;
@@ -20,7 +20,7 @@ namespace Controllers
 
         private void Initialize()
         {
-            Hand = new Models.Hand();
+            Hand = new Actors.Hand();
         }
 
         public void ResetHand()
@@ -60,7 +60,7 @@ namespace Controllers
             return bestExpression ?? new Models.Expression.Expression();
         }
 
-        private Models.Expression.Expression BuildFallbackExpression(Models.Hand hand)
+        private Models.Expression.Expression BuildFallbackExpression(Actors.Hand hand)
         {
             Models.Expression.Expression fallback = new Models.Expression.Expression();
 
