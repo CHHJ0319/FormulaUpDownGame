@@ -21,12 +21,15 @@ namespace UI
         void OnEnable()
         {
             Events.UIEvents.OnExpressionUpdated += UpdateExpressionText;
+            Events.GameEvents.OnSubmitAvailabilityChanged += UpdateSubmitAvailability;
+
 
         }
 
         void OnDisable()
         {
             Events.UIEvents.OnExpressionUpdated -= UpdateExpressionText;
+            Events.GameEvents.OnSubmitAvailabilityChanged -= UpdateSubmitAvailability;
         }
 
         public void Initialize()
@@ -40,11 +43,6 @@ namespace UI
         public void UpdateCreditsText(int credits)
         {
             creditsText.text = $"{credits}";
-        }
-
-        public void DisableSubmitButton()
-        {
-            submitButton.interactable = false;
         }
 
         public void HandleCardAdded(Card card)
@@ -70,10 +68,10 @@ namespace UI
 
         public void UpdateSubmitAvailability(bool canSubmit)
         {
-            submitButton.interactable = canSubmit;
-
             var colors = submitButton.colors;
             colors.normalColor = canSubmit ? Color.white : Color.gray;
+            colors.highlightedColor = canSubmit ? Color.white : Color.gray;
+            colors.selectedColor = canSubmit ? Color.white : Color.gray;
             submitButton.colors = colors;
         }
     }

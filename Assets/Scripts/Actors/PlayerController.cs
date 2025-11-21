@@ -11,8 +11,6 @@ namespace Controllers
 
         public int Credits { get; set; }
 
-        private bool isSubmitAvailable;
-
         private bool isSquareRootPending;
         private Models.Cards.SpecialCard pendingSquareRootCard;
 
@@ -28,41 +26,20 @@ namespace Controllers
             Hand = new Models.Hand();
             expression = new Models.Expression.Expression();
 
-            isSubmitAvailable = false;
-
             isSquareRootPending = false;
             pendingSquareRootCard = null;
         }
 
         void OnEnable()
         {
-            Events.GameEvents.OnRoundStarted += HandleRoundStarted;
             Events.GameEvents.OnResetClicked += HandleResetClicked;
             Events.CardEvents.OnCardClicked += HandleCardClicked;
-            Events.GameEvents.OnSubmitAvailabilityChanged += HandleSubmitAvailabilityChanged;
         }
 
         void OnDisable()
         {
-            Events.GameEvents.OnRoundStarted -= HandleRoundStarted;
             Events.GameEvents.OnResetClicked -= HandleResetClicked;
             Events.CardEvents.OnCardClicked -= HandleCardClicked;
-            Events.GameEvents.OnSubmitAvailabilityChanged -= HandleSubmitAvailabilityChanged;
-        }
-
-        public void ResetHand()
-        {
-            Hand.Clear();
-        }
-
-        public void Prepare()
-        {
-            expression.Clear();
-            Hand.ResetCardsUsage();
-            
-            isSubmitAvailable = false;
-            isSquareRootPending = false;
-            pendingSquareRootCard = null;
         }
 
         public void AddCard(Models.Cards.Card card)
@@ -79,24 +56,32 @@ namespace Controllers
         {
             return expression.Clone();
         }
-        private void HandleRoundStarted()
+
+        public void HandleRoundStarted()
         {
             ResetHand();
             Prepare();
+        }
+
+        private void ResetHand()
+        {
+            Hand.Clear();
+        }
+
+        private void Prepare()
+        {
+            Hand.ResetCardsUsage();
+
+            isSquareRootPending = false;
+            pendingSquareRootCard = null;
+
+            expression.Clear();
             Events.UIEvents.InvokeExpressionUpdated("");
         }
 
         private void HandleResetClicked()
         {
             Prepare();
-            Events.UIEvents.InvokeExpressionUpdated("");
-        }
-
-        private void HandleSubmitAvailabilityChanged(bool canSubmit)
-        {
-            isSubmitAvailable = canSubmit;
-
-            ShowCompletionStatus();
         }
 
         private void HandleCardClicked(Models.Cards.Card card)
@@ -117,15 +102,14 @@ namespace Controllers
 
         private void HandleNumberCardClicked(Models.Cards.NumberCard numberCard)
         {
-            if (!expression.ExpectingNumber())
+            if (!Hand.NumberCards.Contains(numberCard))
             {
-                Events.UIEvents.InvokeStatusTextUpdated("지금은 연산자 카드를 눌러주세요");
                 return;
             }
 
-            if (!Hand.NumberCards.Contains(numberCard))
+            if (!expression.ExpectingNumber())
             {
-                Debug.LogWarning("[PlayerController] 손패에 없는 숫자 카드입니다.");
+                Events.UIEvents.InvokeStatusTextUpdated("지금은 연산자 카드를 눌러주세요");
                 return;
             }
 
@@ -148,39 +132,26 @@ namespace Controllers
 
             Events.UIEvents.InvokeExpressionUpdated(expression.ToString());
 
-            bool hasUnusedNumbers = HasUnusedNumberCards();
-
-            if (!hasUnusedNumbers && !expression.ExpectingNumber())
-            {
-                ShowCompletionStatus();
-            }
-            else if (expression.ExpectingNumber())
-            {
-                Events.UIEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요");
-            }
-            else
-            {
-                Events.UIEvents.InvokeStatusTextUpdated("연산자 카드를 눌러주세요");
-            }
+            Events.UIEvents.InvokeStatusTextUpdated("연산자 카드를 눌러주세요");
         }
 
 
         private void HandleOperatorCardClicked(Models.Cards.OperatorCard operatorCard)
         {
+            if (!Hand.OperatorCards.Contains(operatorCard))
+            {
+                return;
+            }
+
             if (expression.ExpectingNumber() || expression.IsEmpty())
             {
                 Events.UIEvents.InvokeStatusTextUpdated("지금은 숫자 카드를 눌러주세요");
                 return;
             }
 
-            if (!HasUnusedNumberCards())
+            if (IsAllNumberCardsUsed())
             {
                 Events.UIEvents.InvokeStatusTextUpdated("남은 숫자가 없어 연산자를 더 선택할 수 없습니다");
-                return;
-            }
-
-            if (!Hand.OperatorCards.Contains(operatorCard))
-            {
                 return;
             }
 
@@ -190,10 +161,7 @@ namespace Controllers
 
             Events.UIEvents.InvokeExpressionUpdated(expression.ToString());
 
-            if (expression.ExpectingNumber())
-            {
-                Events.UIEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요");
-            }
+            Events.UIEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요");
         }
 
         private void HandleSpecialCardClicked(Models.Cards.SpecialCard specialCard)
@@ -224,7 +192,7 @@ namespace Controllers
                 return;
             }
 
-            if (!HasUnusedNumberCards())
+            if (IsAllNumberCardsUsed())
             {
                 Events.UIEvents.InvokeStatusTextUpdated("남은 숫자가 없어 × 카드를 사용할 수 없습니다");
                 return;
@@ -235,6 +203,7 @@ namespace Controllers
             Events.CardEvents.InvokeCardConsumed(multiplyCard);
 
             Events.UIEvents.InvokeExpressionUpdated(expression.ToString());
+            
             Events.UIEvents.InvokeStatusTextUpdated("숫자 카드를 눌러주세요");
         }
 
@@ -248,18 +217,11 @@ namespace Controllers
 
             if (!expression.ExpectingNumber())
             {
-                Events.UIEvents.InvokeStatusTextUpdated("연산자를 선택한 후 숫자를 넣을 차례에 √ 카드를 눌러주세요");
+                Events.UIEvents.InvokeStatusTextUpdated("숫자를 넣을 차례에 √ 카드를 눌러주세요");
                 return;
             }
 
-            bool hasAvailableNumber = Hand.NumberCards.Any(numberCard =>
-            {
-                numberCard.MarkAsUnused();
-
-                return !numberCard.IsUsed;
-            });
-
-            if (!hasAvailableNumber)
+            if (IsAllNumberCardsUsed())
             {
                 Events.UIEvents.InvokeStatusTextUpdated("남은 숫자 카드가 없어 √ 카드를 사용할 수 없습니다");
                 return;
@@ -271,7 +233,7 @@ namespace Controllers
             Events.UIEvents.InvokeStatusTextUpdated("다음에 선택하는 숫자에 √가 적용됩니다\n 숫자를 골라주세요");
         }
 
-        private bool HasUnusedNumberCards()
+        public bool IsAllNumberCardsUsed()
         {
             if (Hand == null)
             {
@@ -282,76 +244,6 @@ namespace Controllers
             {
                 if (!card.IsUsed)   
                 {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool NeedsSpecialCardUsageReminder()
-        {
-            if (Hand == null || expression == null)
-            {
-                return false;
-            }
-
-            if (expression.IsEmpty())
-            {
-                return false;
-            }
-
-            bool expressionComplete = !HasUnusedNumberCards() && !expression.ExpectingNumber();
-
-            if (!expressionComplete)
-            {
-                return false;
-            }
-
-            return !HasUsedRequiredSpecialCards();
-        }
-
-        private void ShowCompletionStatus()
-        {
-            if (HasUnusedNumberCards() || expression == null || expression.ExpectingNumber())
-            {
-                return;
-            }
-
-            if (!HasUsedRequiredSpecialCards())
-            {
-                Events.UIEvents.InvokeStatusTextUpdated("제출하려면 받은 √와 × 카드를 모두 사용해야 합니다");
-                return;
-            }
-
-            if (isSubmitAvailable)
-            {
-                Events.UIEvents.InvokeStatusTextUpdated("수식을 완성했습니다\n제출 버튼으로 확인해 보세요");
-            }
-            else
-            {
-                Events.UIEvents.InvokeStatusTextUpdated("10초 후 제출 버튼이 활성화됩니다");
-            }
-        }
-
-        public bool HasUsedRequiredSpecialCards()
-        {
-            if (Hand == null || expression == null)
-            {
-                return false;
-            }
-
-            if (expression.IsEmpty())
-            {
-                return false;
-            }
-
-            foreach (var specialCard in Hand.SpecialCards)
-            {
-                if ((specialCard.Type == Algorithm.Operator.OperatorType.Multiply ||
-                     specialCard.Type == Algorithm.Operator.OperatorType.SquareRoot) &&
-                    !specialCard.IsUsed)
-                {
                     return false;
                 }
             }
@@ -359,5 +251,23 @@ namespace Controllers
             return true;
         }
 
+        public bool IsAllSpecialCardsUsed()
+        {
+            if (Hand == null)
+            {
+                return false;
+            }
+
+            foreach (var specialCard in Hand.SpecialCards)
+            {
+                if (!specialCard.IsUsed)
+                {
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

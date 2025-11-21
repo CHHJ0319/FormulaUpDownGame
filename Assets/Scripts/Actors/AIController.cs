@@ -10,17 +10,6 @@ namespace Controllers
         public int Credits { get; set; }
 
         private Models.Expression.Expression bestExpression;
-        
-
-        void OnEnable()
-        {
-            Events.GameEvents.OnRoundStarted += ResetHand;
-        }
-
-        void OnDisable()
-        {
-            Events.GameEvents.OnRoundStarted -= ResetHand;
-        }
 
         private void Awake()
         {
@@ -33,7 +22,12 @@ namespace Controllers
         {
             Hand = new Models.Hand();
         }
-        public void ResetHand()
+        public void HandleRoundStarted()
+        {
+            ResetHand();
+        }
+
+        private void ResetHand()
         {
             Hand.Clear();
         }

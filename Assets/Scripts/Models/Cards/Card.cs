@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Models.Cards
 {
     public abstract class Card

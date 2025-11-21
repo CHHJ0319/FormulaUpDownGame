@@ -13,10 +13,10 @@ namespace Algorithm
             SquareRoot
         }
 
-        public static OperatorType[] basicOperators = new[] {
-            OperatorType.Add,
-            OperatorType.Subtract,
-            OperatorType.Divide
+        public static Operator[] BasicOperators = new[] {
+            new Operator(OperatorType.Add),
+            new Operator(OperatorType.Subtract),
+            new Operator(OperatorType.Divide)
         };
 
 

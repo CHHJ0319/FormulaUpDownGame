@@ -7,11 +7,11 @@ namespace UI
 {
     public class CardButton : MonoBehaviour
     {
-        [Header("카드 색상")]
+        [Header("Cadrd Color")]
         [SerializeField] private Color playerNumberCardColor = Color.white;
-        [SerializeField] private Color playerOperatorCardColor = new Color(0.8f, 1f, 0.8f); // 연두색
-        [SerializeField] private Color specialCardColor = new Color(1f, 0.9f, 0.5f); // 노란색
-        [SerializeField] private Color aiCardColor = new Color(0.9f, 0.9f, 1f); // 연한 파란색
+        [SerializeField] private Color playerOperatorCardColor = new Color(0.8f, 1f, 0.8f);
+        [SerializeField] private Color specialCardColor = new Color(1f, 0.9f, 0.5f);
+        [SerializeField] private Color aiCardColor = new Color(0.9f, 0.9f, 1f);
 
         private TextMeshProUGUI displayText;
         private Image backgroundImage;
@@ -22,15 +22,13 @@ namespace UI
 
         void OnEnable()
         {
-            Events.GameEvents.OnRoundStarted += ResetCartButton;
-            Events.GameEvents.OnResetClicked += ResetCartButton;
+            Events.GameEvents.OnResetClicked += ResetCardButton;
             Events.CardEvents.OnCardConsumed += HandleCardUsed;
         }
 
         void OnDisable()
         {
-            Events.GameEvents.OnRoundStarted -= ResetCartButton;
-            Events.GameEvents.OnResetClicked -= ResetCartButton;
+            Events.GameEvents.OnResetClicked -= ResetCardButton;
             Events.CardEvents.OnCardConsumed -= HandleCardUsed;
         }
 
@@ -43,13 +41,13 @@ namespace UI
 
         public void Initialize(Card card, bool isPlayer)
         {
-            this.card = card;
-            this.isPlayerCard = isPlayer;
-
             if (card == null)
             {
                 return;
             }
+
+            this.card = card;
+            this.isPlayerCard = isPlayer;
 
             SetCardButtonText();
             SetCardButtonColor();
@@ -65,7 +63,7 @@ namespace UI
             }
         }
         
-        private void ResetCartButton()
+        private void ResetCardButton()
         {
             if (isPlayerCard && (card is NumberCard || card is OperatorCard))
             {
@@ -119,7 +117,7 @@ namespace UI
             if (isPlayerCard)
             {
                 button.interactable = true;
-                button.onClick.AddListener(HandleClick);
+                button.onClick.AddListener(HandleClicked);
             }
             else
             {
@@ -127,7 +125,7 @@ namespace UI
             }
         }
 
-        private void HandleClick()
+        private void HandleClicked()
         {
             if (card == null)
             {

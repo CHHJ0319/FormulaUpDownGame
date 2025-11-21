@@ -29,6 +29,20 @@ namespace Models.Cards
             ShuffleDeck();
         }
 
+        public Card Draw()
+        {
+            if (cards.Count == 0)
+            {
+                BuildDeck();
+            }
+
+            int lastIndex = cards.Count - 1;
+            Card card = cards[lastIndex];
+            cards.RemoveAt(lastIndex);
+
+            return card.Clone();
+        }
+
         private void ResetDeck()
         {
             cards.Clear();
@@ -72,20 +86,6 @@ namespace Models.Cards
                 cards[i] = cards[randomIndex];
                 cards[randomIndex] = temp;
             }
-        }
-
-        public Card Draw()
-        {
-            if (cards.Count == 0)
-            {
-                BuildDeck();
-            }
-
-            int lastIndex = cards.Count - 1;
-            Card card = cards[lastIndex];
-            cards.RemoveAt(lastIndex);
-
-            return card.Clone();
         }
     }
 }

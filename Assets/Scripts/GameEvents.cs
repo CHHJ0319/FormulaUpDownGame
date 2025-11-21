@@ -130,9 +130,6 @@ namespace Events
             OnTimerUpdated?.Invoke(currentTime, maxTime);
         }
 
-        /// <summary>
-        /// 제출 가능 여부 변경 이벤트 발행
-        /// </summary>
         public static void InvokeSubmitAvailabilityChanged(bool canSubmit)
         {
             OnSubmitAvailabilityChanged?.Invoke(canSubmit);

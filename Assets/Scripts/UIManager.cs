@@ -29,9 +29,6 @@ public class UIManager : MonoBehaviour
         Events.GameEvents.OnBetChanged += bettingPanel.UpdateBetText;
         Events.GameEvents.OnTimerUpdated += UpdateTimerText;
 
-        // 제출 가능 여부
-        Events.GameEvents.OnSubmitAvailabilityChanged += playerPanel.UpdateSubmitAvailability;
-
         Events.UIEvents.OnStatusTextUpdated += UpdateStatusText;
 
         Events.RoundEvents.OnTargetScoreSet += OnTargetSet;
@@ -45,7 +42,6 @@ public class UIManager : MonoBehaviour
         Events.GameEvents.OnRoundEnded -= resultPanel.HandleRoundEnded;
         Events.GameEvents.OnBetChanged -= bettingPanel.UpdateBetText;
         Events.GameEvents.OnTimerUpdated -= UpdateTimerText;
-        Events.GameEvents.OnSubmitAvailabilityChanged -= playerPanel.UpdateSubmitAvailability;
         Events.UIEvents.OnStatusTextUpdated -= UpdateStatusText;
 
         Events.RoundEvents.OnTargetScoreSet -= OnTargetSet;
@@ -74,7 +70,7 @@ public class UIManager : MonoBehaviour
 
         resultPanel.Hide();
         playerPanel.UpdateExpressionText("");
-        playerPanel.DisableSubmitButton();
+        playerPanel.UpdateSubmitAvailability(false);
 
         UpdateTimerText(0, 180);
     }
@@ -98,15 +94,9 @@ public class UIManager : MonoBehaviour
         if (remainingTime < 0)
         {
             timerText.text = "00:00";
-            timerText.color = Color.red;
         }
         else
         {
-            int minutes = Mathf.FloorToInt(remainingTime / 60f);
-            int seconds = Mathf.FloorToInt(remainingTime % 60f);
-            timerText.text = $"{minutes:00}:{seconds:00}";
-
-            // 30초 이하면 빨간색으로 경고
             if (remainingTime <= 30)
             {
                 timerText.color = Color.red;
@@ -115,6 +105,11 @@ public class UIManager : MonoBehaviour
             {
                 timerText.color = Color.white;
             }
+
+            int minutes = Mathf.FloorToInt(remainingTime / 60f);
+            int seconds = Mathf.FloorToInt(remainingTime % 60f);
+
+            timerText.text = $"{minutes:00}:{seconds:00}";
         }
     }
 

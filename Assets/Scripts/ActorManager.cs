@@ -5,11 +5,24 @@ public class ActorManager : MonoBehaviour
     private static Controllers.PlayerController player;
     private static Controllers.AIController ai;
 
-    private static float dealInterval;
-
-    public static void Initialize(float interval)
+    void OnEnable()
     {
-        dealInterval = interval;
+        Events.GameEvents.OnRoundStarted += HandleRoundStarted;
+    }
+
+    void OnDisable()
+    {
+        Events.GameEvents.OnRoundStarted -= HandleRoundStarted;
+    }
+
+    public void HandleRoundStarted()
+    {
+        player.HandleRoundStarted();
+        ai.HandleRoundStarted();
+    }
+
+    public static void Initialize()
+    {
     }
 
     public static void SetPlayerCredits(int playerCredits, int aiCredits)
@@ -35,30 +48,14 @@ public class ActorManager : MonoBehaviour
         ai.PlayTurn(targetScore);
     }
 
-    public static bool IsSpecialCardRequirementMet()
+    public static bool IsAllSpecialCardsUsed()
     {
-        return player != null && player.HasUsedRequiredSpecialCards();
+        return player != null && player.IsAllSpecialCardsUsed();
     }
 
-    public static bool ShouldShowSpecialCardReminder()
+    public static bool IsAllNumberCardsUsed()
     {
-        return player != null && player.NeedsSpecialCardUsageReminder();
-    }
-
-    public static void AddOperatorCardToPlayer(Algorithm.Operator.OperatorType op)
-    {
-        Algorithm.Operator opr = new Algorithm.Operator(op);
-        Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(opr);
-
-        AddCardToPlayer(operatorCard);
-    }
-
-    public static void AddOperatorCardToAI(Algorithm.Operator.OperatorType op)
-    {
-        Algorithm.Operator opr = new Algorithm.Operator(op);
-        Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(opr);
-
-        AddCardToAi(operatorCard);
+        return player != null && player.IsAllNumberCardsUsed();
     }
 
     public static void AddCardToPlayer(Models.Cards.Card card)
@@ -97,10 +94,6 @@ public class ActorManager : MonoBehaviour
     {
         return ai.GetExpression();
     }
-    public static void PreparePlayer()
-    {
-        player.Prepare();
-    }   
 
     public static bool IsPlayerNegativeBalance()
     {
