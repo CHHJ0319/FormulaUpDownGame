@@ -1,26 +1,26 @@
-using Events;
-using Models.Cards;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace MathHighLow.Controllers
+namespace Controllers
 {
     public class AIController : MonoBehaviour
     {
-        private Models.Hand currentHand;
-        private int targetNumber;
+        public Models.Hand Hand { get; private set; }
         public int Credits { get; set; }
 
         private Models.Expression.Expression bestExpression;
-        private float bestDistance;
-        private Models.Expression.Expression prioritizedExpression;
-        private float prioritizedDistance;
+        
 
-        private List<Algorithm.Operator> availableOperators;
-        private int requiredSquareRootCount;
-        private int requiredMultiplyCount;
-        private bool shouldPrioritizeSpecialUsage;
+        void OnEnable()
+        {
+            Events.GameEvents.OnRoundStarted += ResetHand;
+        }
+
+        void OnDisable()
+        {
+            Events.GameEvents.OnRoundStarted -= ResetHand;
+        }
 
         private void Awake()
         {
@@ -31,30 +31,37 @@ namespace MathHighLow.Controllers
 
         public void Initialize()
         {
-
+            Hand = new Models.Hand();
+        }
+        public void ResetHand()
+        {
+            Hand.Clear();
         }
 
-        public void PlayTurn(Models.Hand hand, int target)
+        public void AddCard(Models.Cards.Card card)
         {
-            bestExpression = FindBestExpression(hand, target);
+            if (Hand == null)
+            {
+                return;
+            }
 
-            var validation = Algorithm.ExpressionValidator.Validate(bestExpression, hand);
+            Hand.AddCard(card);
+        }
+
+        public void PlayTurn(int target)
+        {
+            bestExpression = Algorithm.FormulaApproximator.FindBestExpression(target, Hand);
+
+            var validation = Algorithm.ExpressionValidator.Validate(bestExpression, Hand);
             if (!validation.IsValid)
             {
-                Debug.LogWarning($"[AI] 탐색된 수식이 유효하지 않습니다: {validation.ErrorMessage}");
-                bestExpression = BuildFallbackExpression(hand);
+                bestExpression = BuildFallbackExpression(Hand);
 
-                var fallbackValidation = Algorithm.ExpressionValidator.Validate(bestExpression, hand);
+                var fallbackValidation = Algorithm.ExpressionValidator.Validate(bestExpression, Hand);
                 if (!fallbackValidation.IsValid)
                 {
                     Debug.LogWarning($"[AI] 대체 수식도 규칙을 만족하지 못했습니다: {fallbackValidation.ErrorMessage}");
                 }
-            }
-
-            // ✅ 디버그: AI가 선택한 수식 출력
-            if (bestExpression != null)
-            {
-                Debug.Log($"[AI] 선택한 수식: {bestExpression.ToString()}");
             }
         }
 
@@ -63,255 +70,6 @@ namespace MathHighLow.Controllers
             return bestExpression ?? new Models.Expression.Expression();
         }
 
-        /// <summary>
-        /// 최적 수식을 찾습니다 (완전 탐색)
-        /// </summary>
-        private Models.Expression.Expression FindBestExpression(Models.Hand hand, int target)
-        {
-            // 초기화
-            currentHand = hand;
-            targetNumber = target;
-            bestExpression = new Models.Expression.Expression();
-            bestDistance = float.PositiveInfinity;
-            prioritizedExpression = null;
-            prioritizedDistance = float.PositiveInfinity;
-            requiredSquareRootCount = hand.GetSquareRootCount();
-            requiredMultiplyCount = hand.GetMultiplyCount();
-            shouldPrioritizeSpecialUsage = (requiredSquareRootCount > 0 || requiredMultiplyCount > 0);
-
-            availableOperators = hand.OperatorCards
-                .Where(op => hand.IsOperatorEnabled(op.Operator.Type))
-                .Select(op => op.Operator)
-                .ToList();
-
-            // ✅ 디버그: 사용 가능한 연산자 출력
-            Debug.Log($"[AI] 사용 가능한 연산자: {string.Join(", ", availableOperators)}");
-
-            // 카드가 없으면 빈 수식 반환
-            if (hand.NumberCards.Count == 0)
-                return new Models.Expression.Expression();
-
-            // 곱하기와 기본 연산자 검증
-            int totalSlots = Mathf.Max(0, hand.NumberCards.Count - 1);
-            if (requiredMultiplyCount > totalSlots)
-                return new Models.Expression.Expression();
-
-            int baseOperatorSlots = totalSlots - requiredMultiplyCount;
-            if (baseOperatorSlots > availableOperators.Count)
-                return new Models.Expression.Expression();
-
-            // 완전 탐색 시작
-            var numbers = hand.NumberCards.Select(c => c.Value).ToList();
-            PermuteNumbers(numbers, new List<int>(), new Dictionary<int, int>());
-
-            if (shouldPrioritizeSpecialUsage && prioritizedExpression != null)
-            {
-                return prioritizedExpression.Clone();
-            }
-
-            return bestExpression.Clone();
-        }
-
-        /// <summary>
-        /// 1단계: 숫자 순열 생성
-        /// </summary>
-        private void PermuteNumbers(List<int> remaining, List<int> current, Dictionary<int, int> used)
-        {
-            // 모든 숫자를 배치했으면 다음 단계
-            if (current.Count == currentHand.NumberCards.Count)
-            {
-                DistributeSquareRoots(current, 0, new List<int>());
-                return;
-            }
-
-            // 각 숫자별로 사용 가능한 개수 세기
-            var numberCounts = new Dictionary<int, int>();
-            foreach (var num in remaining)
-            {
-                if (!numberCounts.ContainsKey(num))
-                    numberCounts[num] = 0;
-                numberCounts[num]++;
-            }
-
-            // 각 고유 숫자 시도
-            foreach (var kvp in numberCounts)
-            {
-                int number = kvp.Key;
-
-                // 이 숫자를 사용할 수 있는지 확인
-                int usedCount = used.ContainsKey(number) ? used[number] : 0;
-                if (usedCount >= kvp.Value)
-                    continue;
-
-                // 백트래킹
-                current.Add(number);
-                used[number] = usedCount + 1;
-
-                PermuteNumbers(remaining, current, used);
-
-                current.RemoveAt(current.Count - 1);
-                used[number] = usedCount;
-            }
-        }
-
-        /// <summary>
-        /// 2단계: 제곱근 분배
-        /// </summary>
-        private void DistributeSquareRoots(List<int> numbers, int index, List<int> sqrtCounts)
-        {
-            // 모든 숫자에 √ 분배 완료
-            if (index == numbers.Count)
-            {
-                // √ 총 개수 확인
-                int totalSqrt = sqrtCounts.Sum();
-                if (totalSqrt == requiredSquareRootCount)
-                {
-                    EnumerateOperators(numbers, sqrtCounts);
-                }
-                return;
-            }
-
-            // 현재 숫자에 √를 0개~남은개수만큼 시도
-            int remaining = requiredSquareRootCount - sqrtCounts.Sum();
-            int numbersLeft = numbers.Count - index;
-
-            int maxCountForThisNumber = Mathf.Min(1, remaining);
-            int minCountForThisNumber = Mathf.Max(0, remaining - (numbersLeft - 1));
-
-            if (minCountForThisNumber > maxCountForThisNumber)
-                return;
-
-            for (int count = maxCountForThisNumber; count >= minCountForThisNumber; count--)
-            {
-                sqrtCounts.Add(count);
-                DistributeSquareRoots(numbers, index + 1, sqrtCounts);
-                sqrtCounts.RemoveAt(sqrtCounts.Count - 1);
-            }
-        }
-
-        /// <summary>
-        /// 3단계: 연산자 배치
-        /// </summary>
-        private void EnumerateOperators(List<int> numbers, List<int> sqrtCounts)
-        {
-            // ✅ 수정: 사용 가능한 연산자 리스트 전달
-            var operatorPool = new List<Algorithm.Operator>(availableOperators);
-            AssignOperators(numbers, sqrtCounts, new List<Algorithm.Operator>(),
-                           operatorPool, 0, 0);
-        }
-
-        /// <summary>
-        /// ✅ 완전히 수정: 연산자를 한 번씩만 사용하도록 재귀 배치
-        /// </summary>
-        private void AssignOperators(List<int> numbers, List<int> sqrtCounts,
-            List<Algorithm.Operator> operators,
-            List<Algorithm.Operator> remainingOperators, // ✅ 추가: 남은 연산자 추적
-            int index, int multiplyUsed)
-        {
-            int totalSlots = numbers.Count - 1;
-            int multiplyNeeded = currentHand.GetMultiplyCount();
-            int slotsRemaining = totalSlots - index;
-            int multiplyRemaining = multiplyNeeded - multiplyUsed;
-
-            // 가지치기: 남은 슬롯에 × 를 다 못 채우면 중단
-            if (multiplyRemaining > slotsRemaining)
-                return;
-
-            // 모든 슬롯 채움
-            if (index == totalSlots)
-            {
-                if (multiplyUsed == multiplyNeeded)
-                {
-                    BuildAndEvaluate(numbers, sqrtCounts, operators);
-                }
-                return;
-            }
-
-            // × 배치 시도 (아직 필요하면)
-            if (multiplyUsed < multiplyNeeded)
-            {
-                operators.Add(new Algorithm.Operator(Algorithm.Operator.OperatorType.Multiply));
-                AssignOperators(numbers, sqrtCounts, operators, remainingOperators,
-                               index + 1, multiplyUsed + 1);
-                operators.RemoveAt(operators.Count - 1);
-            }
-
-            // ✅ 수정: 기본 연산자 배치 (한 번씩만 사용)
-            for (int i = 0; i < remainingOperators.Count; i++)
-            {
-                var op = remainingOperators[i];
-
-                // 이 연산자를 사용
-                operators.Add(op);
-
-                // ✅ 핵심: 이 연산자를 제거한 새 리스트 생성
-                var newRemaining = new List<Algorithm.Operator>(remainingOperators);
-                newRemaining.RemoveAt(i);
-
-                // 재귀 호출
-                AssignOperators(numbers, sqrtCounts, operators, newRemaining,
-                               index + 1, multiplyUsed);
-
-                // 백트래킹
-                operators.RemoveAt(operators.Count - 1);
-            }
-        }
-
-        /// <summary>
-        /// 4단계: 수식 구성 및 평가
-        /// </summary>
-        private void BuildAndEvaluate(List<int> numbers, List<int> sqrtCounts,
-            List<Algorithm.Operator> operators)
-        {
-            // Expression 객체 구성
-            Models.Expression.Expression expr = new Models.Expression.Expression();
-
-            for (int i = 0; i < numbers.Count; i++)
-            {
-                // √ 적용 여부
-                bool hasRoot = sqrtCounts[i] > 0;
-                expr.AddNumber(numbers[i], hasRoot);
-
-                // 연산자 추가 (마지막이 아니면)
-                if (i < operators.Count)
-                {
-                    expr.AddOperator(operators[i]);
-                }
-            }
-
-            // 검증
-            var validation = Algorithm.ExpressionValidator.Validate(expr, currentHand);
-            if (!validation.IsValid)
-                return;
-
-            // 계산
-            var evaluation = Algorithm.ExpressionEvaluator.Evaluate(expr);
-            if (!evaluation.Success)
-                return;
-
-            // 목표값과의 거리 계산
-            float distance = Mathf.Abs(evaluation.Value - targetNumber);
-
-            // 더 좋은 결과면 저장
-            if (shouldPrioritizeSpecialUsage && UsesAllRequiredSpecialCards(expr))
-            {
-                if (distance < prioritizedDistance)
-                {
-                    prioritizedDistance = distance;
-                    prioritizedExpression = expr.Clone();
-                }
-            }
-
-            if (distance < bestDistance)
-            {
-                bestDistance = distance;
-                bestExpression = expr.Clone();
-            }
-        }
-
-        /// <summary>
-        /// 탐색에서 실패했을 때 모든 특수 카드를 강제로 사용하는 기본 수식을 구성합니다.
-        /// </summary>
         private Models.Expression.Expression BuildFallbackExpression(Models.Hand hand)
         {
             Models.Expression.Expression fallback = new Models.Expression.Expression();
@@ -362,20 +120,6 @@ namespace MathHighLow.Controllers
             }
 
             return fallback;
-        }
-
-        /// <summary>
-        /// 현재 손패에서 요구하는 모든 √/× 카드를 사용했는지 확인합니다.
-        /// </summary>
-        private bool UsesAllRequiredSpecialCards(Models.Expression.Expression expr)
-        {
-            if (expr == null)
-                return false;
-
-            int usedRoots = expr.HasSquareRoot.Count(hasRoot => hasRoot);
-            int usedMultiply = expr.Operators.Count(op => op.Type == Algorithm.Operator.OperatorType.Multiply);
-
-            return usedRoots == requiredSquareRootCount && usedMultiply == requiredMultiplyCount;
         }
     }
 }

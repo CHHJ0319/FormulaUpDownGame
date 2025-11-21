@@ -1,12 +1,9 @@
-using Controllers;
-using MathHighLow.Controllers;
-using System.Collections;
 using UnityEngine;
 
 public class ActorManager : MonoBehaviour
 {
     private static Controllers.PlayerController player;
-    private static AIController ai;
+    private static Controllers.AIController ai;
 
     private static float dealInterval;
 
@@ -28,14 +25,14 @@ public class ActorManager : MonoBehaviour
         player = controller;
     }
 
-    public static void SetAi(AIController controller)
+    public static void SetAi(Controllers.AIController controller)
     {
         ai = controller;
     }
 
-    public static void ExecuteAITurn(Models.Hand hand, int targetScore)
+    public static void ExecuteAITurn(int targetScore)
     {
-        ai.PlayTurn(hand, targetScore);
+        ai.PlayTurn(targetScore);
     }
 
     public static bool IsSpecialCardRequirementMet()
@@ -56,10 +53,24 @@ public class ActorManager : MonoBehaviour
         AddCardToPlayer(operatorCard);
     }
 
+    public static void AddOperatorCardToAI(Algorithm.Operator.OperatorType op)
+    {
+        Algorithm.Operator opr = new Algorithm.Operator(op);
+        Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(opr);
+
+        AddCardToAi(operatorCard);
+    }
+
     public static void AddCardToPlayer(Models.Cards.Card card)
     {
         player.AddCard(card);
         Events.GameEvents.InvokeCardAdded(card, true);
+    }
+
+    public static void AddCardToAi(Models.Cards.Card card)
+    {
+        ai.AddCard(card);
+        Events.GameEvents.InvokeCardAdded(card, false);
     }
 
     public static Models.Expression.ValidationResult ValidatePlayerExpression()

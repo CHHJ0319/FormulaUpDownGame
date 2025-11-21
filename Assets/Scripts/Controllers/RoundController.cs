@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using MathHighLow.Controllers;
 
 namespace Controllers
 {
@@ -21,8 +20,6 @@ namespace Controllers
         private Models.GameConfig config;
         private Models.Cards.Deck Deck;
 
-        // --- 라운드 상태 ---
-        private Models.Hand aiHand;
         private int targetScore;
         private int currentBet;
 
@@ -47,9 +44,6 @@ namespace Controllers
         {
             this.config = config;
             this.Deck = Deck;
-
-            // 라운드에서 사용할 손패 객체 생성
-            aiHand = new Models.Hand();
         }
 
         #region Unity 생명주기 및 이벤트 구독
@@ -127,7 +121,7 @@ namespace Controllers
             currentPhase = RoundPhase.Waiting;
             yield return StartCoroutine(WaitingPhase());
 
-            ActorManager.ExecuteAITurn(aiHand, targetScore);
+            ActorManager.ExecuteAITurn(targetScore);
 
             // --- 3. Evaluating (평가) ---
             currentPhase = RoundPhase.Evaluating;
@@ -168,7 +162,6 @@ namespace Controllers
 
             yield return StartCoroutine(DealCardsToPlayer());
 
-            aiHand.Clear();
             yield return StartCoroutine(DealCardsToAI());
 
             ActorManager.PreparePlayer();
@@ -241,19 +234,9 @@ namespace Controllers
         {
             Debug.Log("[RoundController] === AI 카드 분배 시작 ===");
 
-            // --- 1단계: 기본 연산자 카드 3장 (+, -, ÷) 자동 제공 ---
-            var basicOperators = new[] {
-                Algorithm.Operator.OperatorType.Add,
-                Algorithm.Operator.OperatorType.Subtract,
-                Algorithm.Operator.OperatorType.Divide
-            };
-
-            foreach (var op in basicOperators)
+            foreach (var op in Algorithm.Operator.basicOperators)
             {
-                Algorithm.Operator opr = new Algorithm.Operator(op);
-                Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(opr);
-                aiHand.AddCard(operatorCard);
-                Events.GameEvents.InvokeCardAdded(operatorCard, false);
+                ActorManager.AddOperatorCardToAI(op);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
@@ -278,8 +261,7 @@ namespace Controllers
                     Debug.Log($"[RoundController] (AI) 특수 카드 발견 (초기): {drawnCard.GetDisplayText()}");
                 }
 
-                aiHand.AddCard(drawnCard);
-                Events.GameEvents.InvokeCardAdded(drawnCard, false);
+                ActorManager.AddCardToAi(drawnCard);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
@@ -299,8 +281,7 @@ namespace Controllers
                     Debug.Log($"[RoundController] (AI) 특수 카드 추가 발견: {drawnCard.GetDisplayText()}");
                 }
 
-                aiHand.AddCard(drawnCard);
-                Events.GameEvents.InvokeCardAdded(drawnCard, false);
+                ActorManager.AddCardToAi(drawnCard);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }

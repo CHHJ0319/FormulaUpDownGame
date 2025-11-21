@@ -52,7 +52,7 @@ namespace Controllers
 
         public void ResetHand()
         {
-            Hand = new Models.Hand();
+            Hand.Clear();
         }
 
         public void Prepare()
@@ -69,7 +69,6 @@ namespace Controllers
         {
             if (Hand == null)
             {
-                Debug.LogWarning("[PlayerController] 손패가 설정되지 않았습니다.");
                 return;
             }
 
