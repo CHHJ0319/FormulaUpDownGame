@@ -180,13 +180,13 @@ namespace Actors
                 return;
             }
 
-            if (specialCard.Type == Algorithm.Operator.OperatorType.Multiply)
+            if (specialCard.Operator.Type == Algorithm.Operator.OperatorType.Multiply)
             {
                 HandleMultiplyCardClicked(specialCard);
                 return;
             }
 
-            if (specialCard.Type == Algorithm.Operator.OperatorType.SquareRoot)
+            if (specialCard.Operator.Type == Algorithm.Operator.OperatorType.SquareRoot)
             {
                 HandleSquareRootCardClicked(specialCard);
                 return;

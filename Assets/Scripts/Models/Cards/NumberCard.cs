@@ -20,11 +20,6 @@ namespace Models.Cards
             return Value.ToString();
         }
 
-        public override string GetCardType()
-        {
-            return "Number";
-        }
-
         public override Card Clone()
         {
             return new NumberCard(Value);

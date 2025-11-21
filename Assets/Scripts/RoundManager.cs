@@ -208,11 +208,11 @@ namespace Controllers
             {
                 Models.Cards.Card drawnCard = Deck.Draw();
 
-                if (drawnCard.GetCardType() == "Number")
+                if (drawnCard is NumberCard)
                 {
                     numberCardsDrawn++;
                 }
-                else if (drawnCard.GetCardType() == "Special")
+                else if (drawnCard is SpecialCard)
                 {
                     if(specialCardsDrawn >= config.MaxNumberCardsPerRound)
                     {
@@ -243,11 +243,11 @@ namespace Controllers
             {
                 Models.Cards.Card drawnCard = Deck.Draw();
 
-                if (drawnCard.GetCardType() == "Number")
+                if (drawnCard is NumberCard)
                 {
                     numberCardsDrawn++;
                 }
-                else if (drawnCard.GetCardType() == "Special")
+                else if (drawnCard is SpecialCard)
                 {
                     if (specialCardsDrawn >= config.MaxNumberCardsPerRound)
                     {

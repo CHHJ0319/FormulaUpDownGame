@@ -4,32 +4,20 @@ namespace Models.Cards
     {
         public Algorithm.Operator Operator { get;}
 
-        public OperatorCard(Algorithm.Operator op)
+        public OperatorCard(Algorithm.Operator.OperatorType type)
         {
-            Operator = op;
+            Operator = new Algorithm.Operator(type);
             MarkAsUnused();
         }
 
         public override string GetDisplayText()
         {
-            return Operator.Type switch
-            {
-                Algorithm.Operator.OperatorType.Add => "+",
-                Algorithm.Operator.OperatorType.Subtract => "-",
-                Algorithm.Operator.OperatorType.Multiply => "×",
-                Algorithm.Operator.OperatorType.Divide => "÷",
-                _ => "?"
-            };
-        }
-
-        public override string GetCardType()
-        {
-            return "Operator";
+            return Converter.OperatorTypeWithString.ToSymbolString(Operator.Type);
         }
 
         public override Card Clone()
         {
-            return new OperatorCard(Operator);
+            return new OperatorCard(Operator.Type);
         }
     }
 }

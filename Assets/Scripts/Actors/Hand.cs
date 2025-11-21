@@ -41,12 +41,12 @@ namespace Actors
 
         public int GetMultiplyCount()
         {
-            return SpecialCards.Count(c => c.Type == Algorithm.Operator.OperatorType.Multiply);
+            return SpecialCards.Count(c => c.Operator.Type == Algorithm.Operator.OperatorType.Multiply);
         }
 
         public int GetSquareRootCount()
         {
-            return SpecialCards.Count(c => c.Type == Algorithm.Operator.OperatorType.SquareRoot);
+            return SpecialCards.Count(c => c.Operator.Type == Algorithm.Operator.OperatorType.SquareRoot);
         }
 
         public void ResetCardsUsage()

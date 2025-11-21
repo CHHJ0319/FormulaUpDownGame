@@ -2,32 +2,22 @@ namespace Models.Cards
 {   
     public class SpecialCard : Card
     {
-        public Algorithm.Operator.OperatorType Type { get; set; }
+        public Algorithm.Operator Operator { get; set; }
 
         public SpecialCard(Algorithm.Operator.OperatorType type)
         {
-            Type = type;
+            Operator = new Algorithm.Operator(type);
             MarkAsUnused();
         }
 
         public override string GetDisplayText()
         {
-            return Type switch
-            {
-                Algorithm.Operator.OperatorType.Multiply => "×",
-                Algorithm.Operator.OperatorType.SquareRoot => "√",
-                _ => "?"
-            };
-        }
-
-        public override string GetCardType()
-        {
-            return "Special";
+            return Converter.OperatorTypeWithString.ToSymbolString(Operator.Type);
         }
 
         public override Card Clone()
         {
-            return new SpecialCard(Type);
+            return new SpecialCard(Operator.Type);
         }
     }
 }
