@@ -18,13 +18,14 @@ namespace Controllers
             ActorManager.SetAi(this);
         }
 
-        public void Initialize()
-        {
-            Hand = new Models.Hand();
-        }
         public void HandleRoundStarted()
         {
             ResetHand();
+        }
+
+        private void Initialize()
+        {
+            Hand = new Models.Hand();
         }
 
         private void ResetHand()

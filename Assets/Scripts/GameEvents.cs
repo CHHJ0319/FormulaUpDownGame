@@ -8,11 +8,6 @@ namespace Events
     /// </summary>
     public static class GameEvents
     {
-        // ===== 카드 관련 이벤트 =====
-
-       
-        public static event Action<Card, bool> OnCardAdded; // Card, isPlayer
-
         // ===== 연산자 관련 이벤트 =====
 
         public static event Action<Algorithm.Operator.OperatorType> OnOperatorSelected;
@@ -24,7 +19,6 @@ namespace Events
         public static event Action OnRoundStarted;
         public static event Action<Models.Round.RoundResult> OnRoundEnded;
         public static event Action OnSubmitClicked;
-        public static event Action OnResetClicked;
 
         // ===== 설정 관련 이벤트 =====
 
@@ -50,14 +44,12 @@ namespace Events
         public static void ClearAllEvents()
         {
             CardEvents.ClearCarddEvents();
-            OnCardAdded = null;
             OnOperatorSelected = null;
             OnSquareRootClicked = null;
             OnOperatorDisabled = null;
             OnRoundStarted = null;
             OnRoundEnded = null;
             OnSubmitClicked = null;
-            OnResetClicked = null;
             OnTargetSelected = null;
             OnBetChanged = null;
             OnScoreChanged = null;
@@ -83,13 +75,6 @@ namespace Events
             OnSubmitClicked?.Invoke();
         }
 
-        public static void InvokeReset()
-        {
-            OnResetClicked?.Invoke();
-        }
-
-
-
         public static void InvokeBetChanged(int bet)
         {
             OnBetChanged?.Invoke(bet);
@@ -109,11 +94,6 @@ namespace Events
         {
             OnScoreChanged?.Invoke(playerScore, aiScore);
         }
-
-        public static void InvokeCardAdded(Card card, bool isPlayer)
-        {
-            OnCardAdded?.Invoke(card, isPlayer);
-        } 
 
         public static void InvokeOperatorDisabled(Algorithm.Operator.OperatorType op)
         {

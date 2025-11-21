@@ -1,3 +1,4 @@
+using UI;
 using UnityEngine;
 
 public class ActorManager : MonoBehaviour
@@ -8,17 +9,49 @@ public class ActorManager : MonoBehaviour
     void OnEnable()
     {
         Events.GameEvents.OnRoundStarted += HandleRoundStarted;
+        Events.CardEvents.OnCardAdded += AddCard;
+        Events.ButtonEvents.OnResetButtonClicked += HandleResetButtonClicked;
+        Events.CardEvents.OnCardClicked += HandleCardClicked;
     }
 
     void OnDisable()
     {
         Events.GameEvents.OnRoundStarted -= HandleRoundStarted;
+        Events.CardEvents.OnCardAdded -= AddCard;
+        Events.ButtonEvents.OnResetButtonClicked -= HandleResetButtonClicked;
+        Events.CardEvents.OnCardClicked -= HandleCardClicked;
+
+
     }
 
     public void HandleRoundStarted()
     {
         player.HandleRoundStarted();
         ai.HandleRoundStarted();
+    }
+
+    public static void AddCard(Models.Cards.Card card, bool isPlayer)
+    {
+        if (isPlayer)
+        {
+            player.AddCard(card);
+
+        }
+        else
+        {
+            ai.AddCard(card);
+
+        }
+    }
+
+    private static void HandleResetButtonClicked()
+    {
+        player.HandleResetButtonClicked();
+    }
+
+    private void HandleCardClicked(Models.Cards.Card card)
+    {
+        player.HandleCardClicked(card);
     }
 
     public static void Initialize()
@@ -58,17 +91,7 @@ public class ActorManager : MonoBehaviour
         return player != null && player.IsAllNumberCardsUsed();
     }
 
-    public static void AddCardToPlayer(Models.Cards.Card card)
-    {
-        player.AddCard(card);
-        Events.GameEvents.InvokeCardAdded(card, true);
-    }
-
-    public static void AddCardToAi(Models.Cards.Card card)
-    {
-        ai.AddCard(card);
-        Events.GameEvents.InvokeCardAdded(card, false);
-    }
+    
 
     public static Models.Expression.ValidationResult ValidatePlayerExpression()
     {

@@ -1,6 +1,4 @@
-﻿using Events;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Controllers
 {
@@ -8,7 +6,6 @@ namespace Controllers
     {
         public Models.Hand Hand { get; private set; }
         private Models.Expression.Expression expression;
-
         public int Credits { get; set; }
 
         private bool isSquareRootPending;
@@ -30,16 +27,31 @@ namespace Controllers
             pendingSquareRootCard = null;
         }
 
-        void OnEnable()
+        public void HandleResetButtonClicked()
         {
-            Events.GameEvents.OnResetClicked += HandleResetClicked;
-            Events.CardEvents.OnCardClicked += HandleCardClicked;
+            Prepare();
         }
 
-        void OnDisable()
+        public void HandleRoundStarted()
         {
-            Events.GameEvents.OnResetClicked -= HandleResetClicked;
-            Events.CardEvents.OnCardClicked -= HandleCardClicked;
+            ResetHand();
+            Prepare();
+        }
+
+        public void HandleCardClicked(Models.Cards.Card card)
+        {
+            if (card is Models.Cards.NumberCard numberCard)
+            {
+                HandleNumberCardClicked(numberCard);
+            }
+            else if (card is Models.Cards.OperatorCard operatorCard)
+            {
+                HandleOperatorCardClicked(operatorCard);
+            }
+            else if (card is Models.Cards.SpecialCard specialCard)
+            {
+                HandleSpecialCardClicked(specialCard);
+            }
         }
 
         public void AddCard(Models.Cards.Card card)
@@ -57,12 +69,6 @@ namespace Controllers
             return expression.Clone();
         }
 
-        public void HandleRoundStarted()
-        {
-            ResetHand();
-            Prepare();
-        }
-
         private void ResetHand()
         {
             Hand.Clear();
@@ -76,29 +82,9 @@ namespace Controllers
             pendingSquareRootCard = null;
 
             expression.Clear();
-            Events.UIEvents.InvokeExpressionUpdated("");
         }
 
-        private void HandleResetClicked()
-        {
-            Prepare();
-        }
-
-        private void HandleCardClicked(Models.Cards.Card card)
-        {
-            if (card is Models.Cards.NumberCard numberCard)
-            {
-                HandleNumberCardClicked(numberCard);
-            }
-            else if (card is Models.Cards.OperatorCard operatorCard)
-            {
-                HandleOperatorCardClicked(operatorCard);
-            }
-            else if (card is Models.Cards.SpecialCard specialCard)
-            {
-                HandleSpecialCardClicked(specialCard);
-            }
-        }
+        
 
         private void HandleNumberCardClicked(Models.Cards.NumberCard numberCard)
         {
@@ -117,12 +103,12 @@ namespace Controllers
 
             expression.AddNumber(numberCard.Value, applySquareRoot);
             numberCard.MarkAsUsed();
-            Events.CardEvents.InvokeCardConsumed(numberCard);
+            Events.CardEvents.InvokeCardUsed(numberCard);
 
             if (applySquareRoot)
             {
                 pendingSquareRootCard.MarkAsUsed();
-                Events.CardEvents.InvokeCardConsumed(pendingSquareRootCard);
+                Events.CardEvents.InvokeCardUsed(pendingSquareRootCard);
 
                 isSquareRootPending = false;
                 pendingSquareRootCard = null;
@@ -157,7 +143,7 @@ namespace Controllers
 
             expression.AddOperator(operatorCard.Operator);
             operatorCard.MarkAsUsed();
-            Events.CardEvents.InvokeCardConsumed(operatorCard);
+            Events.CardEvents.InvokeCardUsed(operatorCard);
 
             Events.UIEvents.InvokeExpressionUpdated(expression.ToString());
 
@@ -200,7 +186,7 @@ namespace Controllers
 
             expression.AddOperator(new Algorithm.Operator(Algorithm.Operator.OperatorType.Multiply));
             multiplyCard.MarkAsUsed();
-            Events.CardEvents.InvokeCardConsumed(multiplyCard);
+            Events.CardEvents.InvokeCardUsed(multiplyCard);
 
             Events.UIEvents.InvokeExpressionUpdated(expression.ToString());
             

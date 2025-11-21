@@ -1,3 +1,4 @@
+using Models.Cards;
 using System;
 
 namespace Events
@@ -5,21 +6,34 @@ namespace Events
     public static class CardEvents
     {
         public static event Action<Models.Cards.Card> OnCardClicked;
-        public static event Action<Models.Cards.Card> OnCardConsumed;
-
+        public static event Action<Models.Cards.Card> OnCardUsed;
+        public static event Action<Card, bool> OnCardAdded;
 
         public static void ClearCarddEvents()
         {
             OnCardClicked = null;
-            OnCardConsumed = null;
+            OnCardUsed = null;
+            OnCardAdded = null;
         }
+
         public static void InvokeCardClicked(Models.Cards.Card card)
         {
             OnCardClicked?.Invoke(card);
         }
-        public static void InvokeCardConsumed(Models.Cards.Card card)
+
+        public static void InvokeCardUsed(Models.Cards.Card card)
         {
-            OnCardConsumed?.Invoke(card);
+            OnCardUsed?.Invoke(card);
+        }
+
+        public static void AddCardToPlayer(Card card)
+        {
+            OnCardAdded?.Invoke(card, true);
+        }
+
+        public static void AddCardToAI(Card card)
+        {
+            OnCardAdded?.Invoke(card, false);
         }
     }
 }

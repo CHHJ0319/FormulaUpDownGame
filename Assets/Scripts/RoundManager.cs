@@ -197,7 +197,7 @@ namespace Controllers
             foreach (var op in Algorithm.Operator.BasicOperators)
             {
                 Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(op);
-                ActorManager.AddCardToPlayer(operatorCard);
+                Events.CardEvents.AddCardToPlayer(operatorCard);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
@@ -221,7 +221,7 @@ namespace Controllers
                     specialCardsDrawn++;
                 }
 
-                ActorManager.AddCardToPlayer(drawnCard);
+                Events.CardEvents.AddCardToPlayer(drawnCard);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
@@ -232,7 +232,7 @@ namespace Controllers
             foreach (var op in Algorithm.Operator.BasicOperators)
             {
                 Models.Cards.OperatorCard operatorCard = new Models.Cards.OperatorCard(op);
-                ActorManager.AddCardToAi(operatorCard);
+                Events.CardEvents.AddCardToAI(operatorCard);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }
@@ -256,7 +256,7 @@ namespace Controllers
                     specialCardsDrawn++;
                 }
 
-                ActorManager.AddCardToAi(drawnCard);
+                Events.CardEvents.AddCardToAI(drawnCard);
 
                 yield return new WaitForSeconds(config.DealInterval);
             }

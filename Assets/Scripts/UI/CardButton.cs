@@ -22,14 +22,12 @@ namespace UI
 
         void OnEnable()
         {
-            Events.GameEvents.OnResetClicked += ResetCardButton;
-            Events.CardEvents.OnCardConsumed += HandleCardUsed;
+            Events.CardEvents.OnCardUsed += HandleCardUsed;
         }
 
         void OnDisable()
         {
-            Events.GameEvents.OnResetClicked -= ResetCardButton;
-            Events.CardEvents.OnCardConsumed -= HandleCardUsed;
+            Events.CardEvents.OnCardUsed -= HandleCardUsed;
         }
 
         private void Awake()
@@ -63,27 +61,12 @@ namespace UI
             }
         }
         
-        private void ResetCardButton()
+        public void ResetCardButton()
         {
-            if (isPlayerCard && (card is NumberCard || card is OperatorCard))
-            {
-                button.interactable = true;
+            button.interactable = true;
+            card.MarkAsUnused();
 
-                if (card is NumberCard)
-                {
-                    backgroundImage.color = playerNumberCardColor;
-                }
-                else if (card is OperatorCard)
-                {
-                    backgroundImage.color = playerOperatorCardColor;
-                }
-            }
-            else if (isPlayerCard && card is SpecialCard specialCard)
-            {
-                specialCard.MarkAsUnused();
-                button.interactable = true;
-                backgroundImage.color = specialCardColor;
-            }
+            SetCardButtonColor();
         }
 
         private void SetCardButtonText()

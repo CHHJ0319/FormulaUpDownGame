@@ -13,29 +13,37 @@ namespace UI
 
         [SerializeField] private HandContainer handContainer;
         [SerializeField] private CardButton cardPrefab;
-        private List<GameObject> cardsInHand = new List<GameObject>();
+        private List<CardButton> cardsInHand = new List<CardButton>();
 
         [SerializeField] private Button submitButton;
         [SerializeField] private Button resetButton;
 
-        void OnEnable()
-        {
-            Events.UIEvents.OnExpressionUpdated += UpdateExpressionText;
-            Events.GameEvents.OnSubmitAvailabilityChanged += UpdateSubmitAvailability;
-
-
-        }
-
-        void OnDisable()
-        {
-            Events.UIEvents.OnExpressionUpdated -= UpdateExpressionText;
-            Events.GameEvents.OnSubmitAvailabilityChanged -= UpdateSubmitAvailability;
-        }
-
         public void Initialize()
         {
             submitButton.onClick.AddListener(() => Events.GameEvents.InvokeSubmit());
-            resetButton.onClick.AddListener(() => Events.GameEvents.InvokeReset());
+            resetButton.onClick.AddListener(() => Events.ButtonEvents.ResetPlayerHand());
+
+            UpdateExpressionText("");
+        }
+
+        public void AddCard(Card card)
+        {
+            CardButton newCardButton = Instantiate(cardPrefab, handContainer.transform);
+            newCardButton.Initialize(card, true);
+            cardsInHand.Add(newCardButton);
+        }
+
+        public void UpdateExpressionText(string text)
+        {
+            expressionText.text = string.IsNullOrEmpty(text) ? "..." : text;
+        }
+
+        public void ResetCardInHandUsage()
+        {
+            foreach (var card in cardsInHand)
+            {
+                card.ResetCardButton();
+            }
 
             UpdateExpressionText("");
         }
@@ -45,28 +53,16 @@ namespace UI
             creditsText.text = $"{credits}";
         }
 
-        public void HandleCardAdded(Card card)
-        {
-            CardButton newCardButton = Instantiate(cardPrefab, handContainer.transform);
-            newCardButton.Initialize(card, true);
-            cardsInHand.Add(newCardButton.gameObject);
-        }
-
         public void ResetHand()
         {
             foreach (var card in cardsInHand)
             {
-                Destroy(card);
+                Destroy(card.gameObject);
             }
             cardsInHand.Clear();
         }
 
-        public void UpdateExpressionText(string text)
-        {
-            expressionText.text = string.IsNullOrEmpty(text) ? "..." : text;
-        }
-
-        public void UpdateSubmitAvailability(bool canSubmit)
+        public void UpdateSubmitButton(bool canSubmit)
         {
             var colors = submitButton.colors;
             colors.normalColor = canSubmit ? Color.white : Color.gray;

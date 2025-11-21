@@ -15,39 +15,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI statusText;
 
-    void OnEnable()
-    {
-        // 점수
-        Events.GameEvents.OnScoreChanged += UpdateScoreText;
-
-        // 라운드 진행
-        Events.GameEvents.OnRoundStarted += HandleRoundStarted;
-        Events.GameEvents.OnCardAdded += HandleCardAdded;
-        Events.GameEvents.OnRoundEnded += resultPanel.HandleRoundEnded;
-
-        // 플레이어 입력
-        Events.GameEvents.OnBetChanged += bettingPanel.UpdateBetText;
-        Events.GameEvents.OnTimerUpdated += UpdateTimerText;
-
-        Events.UIEvents.OnStatusTextUpdated += UpdateStatusText;
-
-        Events.RoundEvents.OnTargetScoreSet += OnTargetSet;
-    }
-
-    void OnDisable()
-    {
-        Events.GameEvents.OnScoreChanged -= UpdateScoreText;
-        Events.GameEvents.OnRoundStarted -= HandleRoundStarted;
-        Events.GameEvents.OnCardAdded -= HandleCardAdded;
-        Events.GameEvents.OnRoundEnded -= resultPanel.HandleRoundEnded;
-        Events.GameEvents.OnBetChanged -= bettingPanel.UpdateBetText;
-        Events.GameEvents.OnTimerUpdated -= UpdateTimerText;
-        Events.UIEvents.OnStatusTextUpdated -= UpdateStatusText;
-
-        Events.RoundEvents.OnTargetScoreSet -= OnTargetSet;
-    }
-
-
     void Start()
     {
         UpdateTimerText(0, 180);
@@ -55,6 +22,67 @@ public class UIManager : MonoBehaviour
         resultPanel.Hide();
         playerPanel.Initialize();
         bettingPanel.Initialize();
+    }
+
+    void OnEnable()
+    {
+        Events.CardEvents.OnCardAdded += HandleCardAdded;
+        Events.UIEvents.OnExpressionUpdated += UpdateExpressionText;
+        Events.ButtonEvents.OnResetButtonClicked += HandleResetButtonClicked;
+        Events.GameEvents.OnSubmitAvailabilityChanged += UpdateSubmitAvailability;
+
+        Events.GameEvents.OnScoreChanged += UpdateScoreText;
+        Events.GameEvents.OnRoundStarted += HandleRoundStarted;
+        Events.GameEvents.OnRoundEnded += resultPanel.HandleRoundEnded;
+        Events.GameEvents.OnBetChanged += bettingPanel.UpdateBetText;
+        Events.GameEvents.OnTimerUpdated += UpdateTimerText;
+
+        Events.UIEvents.OnStatusTextUpdated += UpdateStatusText;
+        Events.RoundEvents.OnTargetScoreSet += OnTargetSet;
+    }
+
+    void OnDisable()
+    {
+        Events.CardEvents.OnCardAdded -= HandleCardAdded;
+        Events.UIEvents.OnExpressionUpdated -= UpdateExpressionText;
+        Events.ButtonEvents.OnResetButtonClicked -= HandleResetButtonClicked;
+        Events.GameEvents.OnSubmitAvailabilityChanged -= UpdateSubmitAvailability;
+
+        Events.GameEvents.OnScoreChanged -= UpdateScoreText;
+        Events.GameEvents.OnRoundStarted -= HandleRoundStarted;
+        Events.GameEvents.OnRoundEnded -= resultPanel.HandleRoundEnded;
+        Events.GameEvents.OnBetChanged -= bettingPanel.UpdateBetText;
+        Events.GameEvents.OnTimerUpdated -= UpdateTimerText;
+
+        Events.UIEvents.OnStatusTextUpdated -= UpdateStatusText;
+        Events.RoundEvents.OnTargetScoreSet -= OnTargetSet;
+    }
+
+    private void HandleCardAdded(Card card, bool isPlayer)
+    {
+        if (isPlayer)
+        {
+            playerPanel.AddCard(card);
+        }
+        else
+        {
+            aiPanel.HandleCardAdded(card);
+        }
+    }
+
+    private void UpdateExpressionText(string text)
+    {
+        playerPanel.UpdateExpressionText(text);
+    }
+
+    private void HandleResetButtonClicked()
+    {
+        playerPanel.ResetCardInHandUsage();
+    }
+
+    public void UpdateSubmitAvailability(bool canSubmit)
+    {
+        playerPanel.UpdateSubmitButton(canSubmit);
     }
 
     private void UpdateScoreText(int playerScore, int aiScore)
@@ -70,21 +98,9 @@ public class UIManager : MonoBehaviour
 
         resultPanel.Hide();
         playerPanel.UpdateExpressionText("");
-        playerPanel.UpdateSubmitAvailability(false);
+        playerPanel.UpdateSubmitButton(false);
 
         UpdateTimerText(0, 180);
-    }
-
-    private void HandleCardAdded(Card card, bool isPlayer)
-    {
-        if(isPlayer)
-        {
-            playerPanel.HandleCardAdded(card);
-        }
-        else
-        {
-            aiPanel.HandleCardAdded(card);
-        }   
     }
 
     private void UpdateTimerText(float currentTime, float maxTime)
