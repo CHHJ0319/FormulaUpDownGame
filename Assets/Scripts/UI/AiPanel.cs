@@ -8,8 +8,8 @@ namespace UI
     public class AiPanel : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI creditsText;
-
         [SerializeField] private HandContainer handContainer;
+
         [SerializeField] private CardButton cardPrefab;
         private List<GameObject> cardsInHand = new List<GameObject>();
 
@@ -17,7 +17,8 @@ namespace UI
         {
             creditsText.text = $"{credits}";
         }
-        public void HandleCardAdded(Card card)
+
+        public void AddCard(Card card)
         {
             CardButton newCardButton = Instantiate(cardPrefab, handContainer.transform);
             newCardButton.Initialize(card, false);

@@ -27,17 +27,6 @@ namespace Controllers
             pendingSquareRootCard = null;
         }
 
-        public void HandleResetButtonClicked()
-        {
-            Prepare();
-        }
-
-        public void HandleRoundStarted()
-        {
-            ResetHand();
-            Prepare();
-        }
-
         public void HandleCardClicked(Models.Cards.Card card)
         {
             if (card is Models.Cards.NumberCard numberCard)
@@ -69,12 +58,12 @@ namespace Controllers
             return expression.Clone();
         }
 
-        private void ResetHand()
+        public void ResetHand()
         {
             Hand.Clear();
         }
 
-        private void Prepare()
+        public void Prepare()
         {
             Hand.ResetCardsUsage();
 
@@ -84,7 +73,42 @@ namespace Controllers
             expression.Clear();
         }
 
-        
+        public bool IsAllNumberCardsUsed()
+        {
+            if (Hand == null)
+            {
+                return false;
+            }
+
+            foreach (var card in Hand.NumberCards)
+            {
+                if (!card.IsUsed)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool IsAllSpecialCardsUsed()
+        {
+            if (Hand == null)
+            {
+                return false;
+            }
+
+            foreach (var specialCard in Hand.SpecialCards)
+            {
+                if (!specialCard.IsUsed)
+                {
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         private void HandleNumberCardClicked(Models.Cards.NumberCard numberCard)
         {
@@ -120,7 +144,6 @@ namespace Controllers
 
             Events.UIEvents.InvokeStatusTextUpdated("연산자 카드를 눌러주세요");
         }
-
 
         private void HandleOperatorCardClicked(Models.Cards.OperatorCard operatorCard)
         {
@@ -219,41 +242,5 @@ namespace Controllers
             Events.UIEvents.InvokeStatusTextUpdated("다음에 선택하는 숫자에 √가 적용됩니다\n 숫자를 골라주세요");
         }
 
-        public bool IsAllNumberCardsUsed()
-        {
-            if (Hand == null)
-            {
-                return false;
-            }
-
-            foreach (var card in Hand.NumberCards)
-            {
-                if (!card.IsUsed)   
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool IsAllSpecialCardsUsed()
-        {
-            if (Hand == null)
-            {
-                return false;
-            }
-
-            foreach (var specialCard in Hand.SpecialCards)
-            {
-                if (!specialCard.IsUsed)
-                {
-
-                    return false;
-                }
-            }
-
-            return true;
-        }
     }
 }

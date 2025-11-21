@@ -10,8 +10,8 @@ namespace UI
     {
         [SerializeField] private TextMeshProUGUI creditsText;
         [SerializeField] private TextMeshProUGUI expressionText;
-
         [SerializeField] private HandContainer handContainer;
+
         [SerializeField] private CardButton cardPrefab;
         private List<CardButton> cardsInHand = new List<CardButton>();
 

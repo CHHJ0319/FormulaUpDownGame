@@ -66,7 +66,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            aiPanel.HandleCardAdded(card);
+            aiPanel.AddCard(card);
         }
     }
 

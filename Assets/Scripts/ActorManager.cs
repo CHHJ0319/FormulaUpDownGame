@@ -26,8 +26,10 @@ public class ActorManager : MonoBehaviour
 
     public void HandleRoundStarted()
     {
-        player.HandleRoundStarted();
-        ai.HandleRoundStarted();
+        player.ResetHand();
+        player.Prepare();
+
+        ai.ResetHand();
     }
 
     public static void AddCard(Models.Cards.Card card, bool isPlayer)
@@ -46,7 +48,7 @@ public class ActorManager : MonoBehaviour
 
     private static void HandleResetButtonClicked()
     {
-        player.HandleResetButtonClicked();
+        player.Prepare();
     }
 
     private void HandleCardClicked(Models.Cards.Card card)

@@ -18,17 +18,12 @@ namespace Controllers
             ActorManager.SetAi(this);
         }
 
-        public void HandleRoundStarted()
-        {
-            ResetHand();
-        }
-
         private void Initialize()
         {
             Hand = new Models.Hand();
         }
 
-        private void ResetHand()
+        public void ResetHand()
         {
             Hand.Clear();
         }
@@ -43,9 +38,9 @@ namespace Controllers
             Hand.AddCard(card);
         }
 
-        public void PlayTurn(int target)
+        public void PlayTurn(int targetScore)
         {
-            bestExpression = Algorithm.FormulaApproximator.FindBestExpression(target, Hand);
+            bestExpression = Algorithm.FormulaApproximator.FindBestExpression(targetScore, Hand);
 
             var validation = Algorithm.ExpressionValidator.Validate(bestExpression, Hand);
             if (!validation.IsValid)
