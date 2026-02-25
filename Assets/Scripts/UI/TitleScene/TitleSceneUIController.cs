@@ -1,17 +1,20 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace UI.TitleScene
 {
     public class TitleSceneUIController : MonoBehaviour
     {
-        void Start()
+
+        void Awake()
         {
 
         }
 
-        void Update()
+        void Start()
         {
-
+            UIManager.Instance.SetTitleSceneUIController(this);
         }
     }
 }

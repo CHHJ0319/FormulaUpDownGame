@@ -1,11 +1,16 @@
-﻿using UnityEngine;
-using TMPro;
-using Models.Cards;
+﻿using Models.Cards;
 using System.Collections;
+using TMPro;
+using UI.MenuScene;
+using UI.TitleScene;
+using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
+
+    private TitleSceneUIController titleSceneUIController;
+    private MenuSceneUIController menuSceneUIController;
 
     [SerializeField] private UI.PlayerPanel playerPanel;
     [SerializeField] private UI.AiPanel aiPanel;
@@ -71,6 +76,16 @@ public class UIManager : MonoBehaviour
 
         Events.UIEvents.OnStatusTextUpdated -= UpdateStatusText;
         Events.RoundEvents.OnTargetScoreSet -= OnTargetSet;
+    }
+
+    public void SetTitleSceneUIController(TitleSceneUIController controller)
+    {
+        titleSceneUIController = controller;
+    }
+
+    public void SetMenuSceneUIController(MenuSceneUIController controller)
+    {
+        menuSceneUIController = controller;
     }
 
     private void HandleCardAdded(Card card, bool isPlayer)
