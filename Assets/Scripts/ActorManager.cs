@@ -32,7 +32,7 @@ public class ActorManager : MonoBehaviour
         Events.CardEvents.OnCardClicked -= HandleCardClicked;
     }
 
-    public void StartRound()
+    public void InitializeRound()
     {
         player.ResetHand();
         player.Prepare();

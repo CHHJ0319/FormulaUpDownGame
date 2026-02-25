@@ -11,7 +11,6 @@ namespace UI.GameScene
         public TextMeshProUGUI statusText;
 
         public SlotMachineUI slotMachine;
-        public Transform targetScorePanel;
         public ResultPanel resultPanel;
         public BettingPanel bettingPanel;
 
@@ -19,10 +18,14 @@ namespace UI.GameScene
         public PlayerPanel playerPanel;
         public AiPanel aiPanel;
 
-        void Start()
+        void Awake()
         {
+            Initialize();
             UIManager.Instance.SetGameSceneUIController(this);
+        }
 
+        private void Initialize()
+        {
             resultPanel.Hide();
             playerPanel.Initialize();
             bettingPanel.Initialize();
@@ -91,15 +94,6 @@ namespace UI.GameScene
             });
 
             yield return new WaitUntil(() => isSlotFinished);
-
-            UpdateTargetScore(score);
-        }
-
-        private void UpdateTargetScore(int targetValue)
-        {
-            TextMeshProUGUI targetScoreText = targetScorePanel.GetChild(0).GetComponent<TextMeshProUGUI>();
-
-            targetScoreText.text = "" + targetValue;
         }
 
         public void UpdateBettingText(int bet)
@@ -110,17 +104,18 @@ namespace UI.GameScene
             }
         }
 
-        public void StartRound()
+        public void InitializeRound()
         {
             if(playerPanel == null
                || aiPanel == null) return;
 
             playerPanel.ResetHand();
-            aiPanel.ResetHand();
-
-            resultPanel.Hide();
             playerPanel.UpdateExpression("");
             playerPanel.UpdateSubmitButton(false);
+
+            aiPanel.ResetHand();
+
+            resultPanel.Hide();            
         }
 
         public void AddCardInPlayerHand(Card card)
@@ -152,6 +147,11 @@ namespace UI.GameScene
         {
             playerPanel.UpdateCreditsText(playerCredits);
             aiPanel.UpdateCreditsText(aiCredits);
+        }
+
+        public void ShowRoundResult(string summary, string detail)
+        {
+            resultPanel.ShowRoundResult(summary, detail);
         }
     }
 }

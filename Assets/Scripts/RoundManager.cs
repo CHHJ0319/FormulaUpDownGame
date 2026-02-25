@@ -120,8 +120,8 @@ public class RoundManager : MonoBehaviour
 
     private IEnumerator StartStandbyPhase()
     {
-        UIManager.Instance.StartRound();
-        ActorManager.Instance.StartRound();
+        ActorManager.Instance.InitializeRound();
+        UIManager.Instance.InitializeRound();
 
         ChangeBet(config.MinBet);
         SetTargetScore();
@@ -211,7 +211,7 @@ public class RoundManager : MonoBehaviour
             }
             else if (drawnCard is Models.Cards.SpecialCard)
             {
-                if(specialCardsDrawn >= config.MaxNumberCardsPerRound)
+                if(specialCardsDrawn >= config.MaxNumberCardsPerRound - 1)
                 {
                     continue;
                 }
@@ -262,7 +262,10 @@ public class RoundManager : MonoBehaviour
 
     private IEnumerator ResultsPhase(Models.Round.RoundResult result)
     {
+        UIManager.Instance.ShowRoundResult(result);
+
         ActorManager.Instance.SetCredits(result.PlayerScoreChange, result.AIScoreChange);
+        
         if (ActorManager.Instance.IsPlayerNegativeBalance())
         {
             UIManager.ShowWinner("AI");

@@ -33,7 +33,6 @@ namespace UI.GameScene
             }
             cardsInHand.Clear();
         }
-
     }
 }
 

@@ -13,11 +13,12 @@ namespace UI.GameScene
             gameObject.SetActive(false);
         }
 
-        public  void HandleRoundEnded(Models.Round.RoundResult result)
+        public void ShowRoundResult(string summary, string detail)
         {
-            resultSummaryText.text = result.GetSummary();
-            resultDetailText.text = result.GetDetail();
             gameObject.SetActive(true);
+
+            resultSummaryText.text = summary;
+            resultDetailText.text = detail;
         }
     }
 }

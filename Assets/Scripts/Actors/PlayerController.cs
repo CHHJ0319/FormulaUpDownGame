@@ -14,7 +14,6 @@ namespace Actors
         private void Awake()
         {
             Initialize();
-
             ActorManager.Instance.SetPlayer(this);
         }
 

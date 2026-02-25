@@ -1,4 +1,5 @@
 ﻿using Models.Cards;
+using UI.GameScene;
 using UI.MenuScene;
 using UI.TitleScene;
 using UnityEngine;
@@ -55,11 +56,11 @@ public class UIManager : MonoBehaviour
         gameSceneUIController = controller;
     }
 
-    public void StartRound()
+    public void InitializeRound()
     {
         if(gameSceneUIController != null)
         {
-            gameSceneUIController.StartRound();
+            gameSceneUIController.InitializeRound();
         }
     }
 
@@ -112,6 +113,11 @@ public class UIManager : MonoBehaviour
     public void UpdateCredits(int playerCredits, int aiCredits)
     {
         gameSceneUIController.UpdateCredits(playerCredits, aiCredits);
+    }
+
+    public void ShowRoundResult(Models.Round.RoundResult result)
+    {
+        gameSceneUIController.ShowRoundResult(result.GetSummary(), result.GetDetail());
     }
 
     public static void ShowWinner(string winner)

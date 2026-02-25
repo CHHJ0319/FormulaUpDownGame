@@ -17,20 +17,27 @@ namespace UI.GameScene
 
         [SerializeField] private float rollingDuration = 1.0f;
 
+        private RectTransform rect;
         private AudioSource audioSource;
 
         private string animationStateName = "Slotmachine";
 
         void Awake()
         {
+            rect = GetComponent<RectTransform>();
             audioSource = GetComponent<AudioSource>();
         }
 
         public void Show()
         {
-            resultText.text = "";
-
             gameObject.SetActive(true);
+
+            rect.anchoredPosition = new Vector2(0, 0);
+            rect.sizeDelta = new Vector2(100, 100);
+
+            resultText.text = "";
+            resultText.fontSize = 20;
+            resultText.GetComponent<RectTransform>().anchoredPosition = new Vector2(28, 3);
         }
 
         public void Hide()
@@ -77,7 +84,17 @@ namespace UI.GameScene
             onComplete?.Invoke();
 
             yield return new WaitForSeconds(0.5f);
-            Hide();
+
+            SetTargetScore();
+        }
+
+        public void SetTargetScore()
+        {
+            rect.sizeDelta = new Vector2(40, 40);
+            rect.anchoredPosition = new Vector2(-560, -77);
+
+            resultText.fontSize = 8;
+            resultText.GetComponent<RectTransform>().anchoredPosition = new Vector2(28, -2.3f);
         }
     }
 }
