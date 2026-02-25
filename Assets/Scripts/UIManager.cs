@@ -5,6 +5,8 @@ using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
+    public static UIManager Instance { get; private set; }
+
     [SerializeField] private UI.PlayerPanel playerPanel;
     [SerializeField] private UI.AiPanel aiPanel;
     [SerializeField] private UI.BettingPanel bettingPanel;
@@ -15,13 +17,26 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI statusText;
 
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void Start()
     {
         UpdateTimerText(0, 180);
 
-        resultPanel.Hide();
-        playerPanel.Initialize();
-        bettingPanel.Initialize();
+        //resultPanel.Hide();
+        //playerPanel.Initialize();
+        //bettingPanel.Initialize();
     }
 
     void OnEnable()
@@ -33,8 +48,8 @@ public class UIManager : MonoBehaviour
 
         Events.GameEvents.OnScoreChanged += UpdateScoreText;
         Events.GameEvents.OnRoundStarted += HandleRoundStarted;
-        Events.GameEvents.OnRoundEnded += resultPanel.HandleRoundEnded;
-        Events.GameEvents.OnBetChanged += bettingPanel.UpdateBetText;
+        //Events.GameEvents.OnRoundEnded += resultPanel.HandleRoundEnded;
+        //Events.GameEvents.OnBetChanged += bettingPanel.UpdateBetText;
         Events.GameEvents.OnTimerUpdated += UpdateTimerText;
 
         Events.UIEvents.OnStatusTextUpdated += UpdateStatusText;
@@ -119,13 +134,13 @@ public class UIManager : MonoBehaviour
             }
             else
             {
-                timerText.color = Color.white;
+                //timerText.color = Color.white;
             }
 
             int minutes = Mathf.FloorToInt(remainingTime / 60f);
             int seconds = Mathf.FloorToInt(remainingTime % 60f);
 
-            timerText.text = $"{minutes:00}:{seconds:00}";
+            //timerText.text = $"{minutes:00}:{seconds:00}";
         }
     }
 

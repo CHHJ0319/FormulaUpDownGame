@@ -1,10 +1,24 @@
-using UI;
 using UnityEngine;
 
 public class ActorManager : MonoBehaviour
 {
+    public static ActorManager Instance { get; private set; }
+
     private static Actors.PlayerController player;
     private static Actors.AIController ai;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void OnEnable()
     {
