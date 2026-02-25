@@ -1,3 +1,5 @@
+using Models.Cards;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -20,9 +22,13 @@ namespace UI.GameScene
         void Start()
         {
             UIManager.Instance.SetGameSceneUIController(this);
+
+            resultPanel.Hide();
+            playerPanel.Initialize();
+            bettingPanel.Initialize();
         }
 
-        public void UpdateTimerText(float currentTime, float maxTime)
+        public void UpdateTimer(float currentTime, float maxTime)
         {
             TextMeshProUGUI timerText = timer.GetChild(0).GetComponent<TextMeshProUGUI>();
             float remainingTime = maxTime - currentTime;
@@ -49,7 +55,7 @@ namespace UI.GameScene
             }
         }
 
-        private void UpdateStatusText(string message)
+        public void UpdateStatusText(string message)
         {
             statusText.text = message;
 
@@ -75,11 +81,77 @@ namespace UI.GameScene
             }
         }
 
-        public void UpdateTargetScoreText(int targetValue)
+        public IEnumerator PlayTargetScoreSequence(int score)
         {
-            TextMeshProUGUI targetScoreText = targetScorePanel.GetChild(0).GetComponent< TextMeshProUGUI>();
+            bool isSlotFinished = false;
+
+            slotMachine.PlaySlot(score, () =>
+            {
+                isSlotFinished = true;
+            });
+
+            yield return new WaitUntil(() => isSlotFinished);
+
+            UpdateTargetScore(score);
+        }
+
+        private void UpdateTargetScore(int targetValue)
+        {
+            TextMeshProUGUI targetScoreText = targetScorePanel.GetChild(0).GetComponent<TextMeshProUGUI>();
 
             targetScoreText.text = "" + targetValue;
+        }
+
+        public void UpdateBettingText(int bet)
+        {
+            if (bettingPanel != null)
+            {
+                bettingPanel.UpdateBetText(bet);
+            }
+        }
+
+        public void StartRound()
+        {
+            if(playerPanel == null
+               || aiPanel == null) return;
+
+            playerPanel.ResetHand();
+            aiPanel.ResetHand();
+
+            resultPanel.Hide();
+            playerPanel.UpdateExpression("");
+            playerPanel.UpdateSubmitButton(false);
+        }
+
+        public void AddCardInPlayerHand(Card card)
+        {
+            playerPanel.AddCard(card);
+        }
+
+        public void AddCardInAIHand(Card card)
+        {
+            aiPanel.AddCard(card);
+        }
+
+        public void UpdateSubmitAvailability(bool canSubmit)
+        {
+            playerPanel.UpdateSubmitButton(canSubmit);
+        }
+
+        public void UpdateExpression(string text)
+        {
+            playerPanel.UpdateExpression(text);
+        }
+
+        public void ResetCardInPlayerHandUsage()
+        {
+            playerPanel.ResetCardInHandUsage();
+        }
+
+        public void UpdateCredits(int playerCredits, int aiCredits)
+        {
+            playerPanel.UpdateCreditsText(playerCredits);
+            aiPanel.UpdateCreditsText(aiCredits);
         }
     }
 }

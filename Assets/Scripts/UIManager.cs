@@ -1,6 +1,4 @@
 ﻿using Models.Cards;
-using System.Collections;
-using TMPro;
 using UI.MenuScene;
 using UI.TitleScene;
 using UnityEngine;
@@ -26,40 +24,20 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-
-        //resultPanel.Hide();
-        //playerPanel.Initialize();
-        //bettingPanel.Initialize();
-    }
-
     void OnEnable()
     {
-        Events.CardEvents.OnCardAdded += HandleCardAdded;
-        Events.UIEvents.OnExpressionUpdated += UpdateExpressionText;
+        Events.GameEvents.OnBetChanged += UpdateBettingText;
+        Events.UIEvents.OnStatusTextUpdated += UpdateStatusText;
+        Events.UIEvents.OnExpressionUpdated += UpdateExpression;
         Events.ButtonEvents.OnResetButtonClicked += HandleResetButtonClicked;
-        Events.GameEvents.OnSubmitAvailabilityChanged += UpdateSubmitAvailability;
-
-        Events.GameEvents.OnScoreChanged += UpdateScoreText;
-        Events.GameEvents.OnRoundStarted += HandleRoundStarted;
-        //Events.GameEvents.OnBetChanged += bettingPanel.UpdateBetText;
-
-        Events.RoundEvents.OnTargetScoreSet += OnTargetSet;
     }
 
     void OnDisable()
     {
-        Events.CardEvents.OnCardAdded -= HandleCardAdded;
-        Events.UIEvents.OnExpressionUpdated -= UpdateExpressionText;
+        Events.GameEvents.OnBetChanged -= UpdateBettingText;
+        Events.UIEvents.OnStatusTextUpdated -= UpdateStatusText;
+        Events.UIEvents.OnExpressionUpdated -= UpdateExpression;
         Events.ButtonEvents.OnResetButtonClicked -= HandleResetButtonClicked;
-        Events.GameEvents.OnSubmitAvailabilityChanged -= UpdateSubmitAvailability;
-
-        Events.GameEvents.OnScoreChanged -= UpdateScoreText;
-        Events.GameEvents.OnRoundStarted -= HandleRoundStarted;
-        //Events.GameEvents.OnBetChanged -= bettingPanel.UpdateBetText;
-
-        Events.RoundEvents.OnTargetScoreSet -= OnTargetSet;
     }
 
     public void SetTitleSceneUIController(TitleSceneUIController controller)
@@ -77,72 +55,67 @@ public class UIManager : MonoBehaviour
         gameSceneUIController = controller;
     }
 
-    private void HandleCardAdded(Card card, bool isPlayer)
+    public void StartRound()
     {
-        if (isPlayer)
+        if(gameSceneUIController != null)
         {
-            //playerPanel.AddCard(card);
-        }
-        else
-        {
-            //aiPanel.AddCard(card);
+            gameSceneUIController.StartRound();
         }
     }
 
-    private void UpdateExpressionText(string text)
+    public void SetTargetScore(int score)
     {
-        //playerPanel.UpdateExpressionText(text);
+        StopAllCoroutines();
+        StartCoroutine(gameSceneUIController.PlayTargetScoreSequence(score));
     }
 
-    private void HandleResetButtonClicked()
+    public void AddCardInPlayerHand(Models.Cards.Card card)
     {
-       // playerPanel.ResetCardInHandUsage();
+        gameSceneUIController.AddCardInPlayerHand(card);
+    }
+
+    public void AddCardInAIHand(Models.Cards.Card card)
+    {
+        gameSceneUIController.AddCardInAIHand(card);
+    }
+
+    public void UpdateTimer(float currentTime, float maxTime)
+    {
+        gameSceneUIController.UpdateTimer(currentTime, maxTime); ;
     }
 
     public void UpdateSubmitAvailability(bool canSubmit)
     {
-        //playerPanel.UpdateSubmitButton(canSubmit);
+        gameSceneUIController.UpdateSubmitAvailability(canSubmit);
     }
 
-    private void UpdateScoreText(int playerScore, int aiScore)
+    private void UpdateBettingText(int bet)
     {
-        //playerPanel.UpdateCreditsText(playerScore);
-        //aiPanel.UpdateCreditsText(aiScore);
+        gameSceneUIController.UpdateBettingText(bet);
     }
 
-    private void HandleRoundStarted()
+    private void UpdateStatusText(string message)
     {
-        //playerPanel.ResetHand();
-        //aiPanel.ResetHand();
+        gameSceneUIController.UpdateStatusText(message);
+    }
 
-        //resultPanel.Hide();
-        //playerPanel.UpdateExpressionText("");
-        //playerPanel.UpdateSubmitButton(false);
+    private void UpdateExpression(string text)
+    {
+        gameSceneUIController.UpdateExpression(text);
+    }
+
+    private void HandleResetButtonClicked()
+    {
+        gameSceneUIController.ResetCardInPlayerHandUsage();
+    }
+
+    public void UpdateCredits(int playerCredits, int aiCredits)
+    {
+        gameSceneUIController.UpdateCredits(playerCredits, aiCredits);
     }
 
     public static void ShowWinner(string winner)
     {
         // = $"게임 종료! 최종 승자: {winner}";
     }
-
-    private void OnTargetSet(int score)
-    {
-        StopAllCoroutines();
-        StartCoroutine(PlayTargetScoreSequence(score));
-    }
-
-    public IEnumerator PlayTargetScoreSequence(int score)
-    {
-        bool isSlotFinished = false;
-
-        //slotMachine.PlaySlot(score, () =>
-        //{
-        //    isSlotFinished = true;
-        //});
-
-        yield return new WaitUntil(() => isSlotFinished);
-
-        //targetScorePanel.UpdateTargetScoreText(score);
-    }
- 
 }

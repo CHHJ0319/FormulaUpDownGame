@@ -23,7 +23,7 @@ namespace UI.GameScene
             submitButton.onClick.AddListener(() => Events.GameEvents.InvokeSubmit());
             resetButton.onClick.AddListener(() => Events.ButtonEvents.ResetPlayerHand());
 
-            UpdateExpressionText("");
+            UpdateExpression("");
         }
 
         public void AddCard(Card card)
@@ -33,7 +33,7 @@ namespace UI.GameScene
             cardsInHand.Add(newCardButton);
         }
 
-        public void UpdateExpressionText(string text)
+        public void UpdateExpression(string text)
         {
             expressionText.text = string.IsNullOrEmpty(text) ? "..." : text;
         }
@@ -45,7 +45,7 @@ namespace UI.GameScene
                 card.ResetCardButton();
             }
 
-            UpdateExpressionText("");
+            UpdateExpression("");
         }
 
         public void UpdateCreditsText(int credits)

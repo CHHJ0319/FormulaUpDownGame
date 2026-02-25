@@ -22,21 +22,17 @@ public class ActorManager : MonoBehaviour
 
     void OnEnable()
     {
-        Events.GameEvents.OnRoundStarted += HandleRoundStarted;
-        Events.CardEvents.OnCardAdded += AddCard;
         Events.ButtonEvents.OnResetButtonClicked += HandleResetButtonClicked;
         Events.CardEvents.OnCardClicked += HandleCardClicked;
     }
 
     void OnDisable()
     {
-        Events.GameEvents.OnRoundStarted -= HandleRoundStarted;
-        Events.CardEvents.OnCardAdded -= AddCard;
         Events.ButtonEvents.OnResetButtonClicked -= HandleResetButtonClicked;
         Events.CardEvents.OnCardClicked -= HandleCardClicked;
     }
 
-    public void HandleRoundStarted()
+    public void StartRound()
     {
         player.ResetHand();
         player.Prepare();
@@ -44,21 +40,19 @@ public class ActorManager : MonoBehaviour
         ai.ResetHand();
     }
 
-    public static void AddCard(Models.Cards.Card card, bool isPlayer)
+    public void AddCardInPlayerHand(Models.Cards.Card card)
     {
-        if (isPlayer)
-        {
-            player.AddCard(card);
-
-        }
-        else
-        {
-            ai.AddCard(card);
-
-        }
+        player.AddCard(card);
+        UIManager.Instance.AddCardInPlayerHand(card);
     }
 
-    private static void HandleResetButtonClicked()
+    public void AddCardInAIHand(Models.Cards.Card card)
+    {
+        ai.AddCard(card);
+        UIManager.Instance.AddCardInAIHand(card);
+    }
+
+    private void HandleResetButtonClicked()
     {
         player.Prepare();
     }
@@ -68,75 +62,71 @@ public class ActorManager : MonoBehaviour
         player.HandleCardClicked(card);
     }
 
-    public static void Initialize()
-    {
-    }
-
-    public static void SetPlayerCredits(int playerCredits, int aiCredits)
+    public void SetCredits(int playerCredits, int aiCredits)
     {
         player.Credits += playerCredits;
         ai.Credits += aiCredits;
 
-        Events.GameEvents.InvokeScoreChanged(player.Credits, ai.Credits);
+        UIManager.Instance.UpdateCredits(player.Credits, ai.Credits);
     }
 
-    public static void SetPlayer(Actors.PlayerController controller)
+    public void SetPlayer(Actors.PlayerController controller)
     {
         player = controller;
     }
 
-    public static void SetAi(Actors.AIController controller)
+    public void SetAi(Actors.AIController controller)
     {
         ai = controller;
     }
 
-    public static void ExecuteAITurn(int targetScore)
+    public void ExecuteAITurn(int targetScore)
     {
         ai.PlayTurn(targetScore);
     }
 
-    public static bool IsAllSpecialCardsUsed()
+    public bool IsAllSpecialCardsUsed()
     {
         return player != null && player.IsAllSpecialCardsUsed();
     }
 
-    public static bool IsAllNumberCardsUsed()
+    public bool IsAllNumberCardsUsed()
     {
         return player != null && player.IsAllNumberCardsUsed();
     }
 
     
 
-    public static Models.Expression.ValidationResult ValidatePlayerExpression()
+    public Models.Expression.ValidationResult ValidatePlayerExpression()
     {
         return Algorithm.ExpressionValidator.Validate(player.GetExpression(), player.Hand);
     }
 
-    public static Models.Expression.EvaluationResult EvaluatePlayerExpression()
+    public Models.Expression.EvaluationResult EvaluatePlayerExpression()
     {
         return Algorithm.ExpressionEvaluator.Evaluate(player.GetExpression());
     }
 
-    public static Models.Expression.EvaluationResult EvaluateAiExpression()
+    public Models.Expression.EvaluationResult EvaluateAiExpression()
     {
         return Algorithm.ExpressionEvaluator.Evaluate(ai.GetExpression());
     }
 
-    public static Models.Expression.Expression GetPlayerExpression()
+    public Models.Expression.Expression GetPlayerExpression()
     {
         return player.GetExpression();
     }
 
-    public static Models.Expression.Expression GetAiExpression()
+    public Models.Expression.Expression GetAiExpression()
     {
         return ai.GetExpression();
     }
 
-    public static bool IsPlayerNegativeBalance()
+    public bool IsPlayerNegativeBalance()
     {
         return player.Credits <= 0;
     }
-    public static bool IsAINegativeBalance()
+    public bool IsAINegativeBalance()
     {
         return ai.Credits <= 0;
     }

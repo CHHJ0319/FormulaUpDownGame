@@ -1,5 +1,4 @@
-﻿using Controllers;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -9,8 +8,6 @@ public class GameManager : MonoBehaviour
     public string CurrentScene { get; private set; }
 
     private Models.GameConfig config;
-
-    private Models.Cards.Deck Deck;
 
     void Awake()
     {
@@ -31,23 +28,11 @@ public class GameManager : MonoBehaviour
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
-
-        Events.GameEvents.OnRoundEnded += HandleRoundEnded;
     }
 
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
-
-        Events.GameEvents.OnRoundEnded -= HandleRoundEnded;
-    }
-
-    void Start()
-    {
-        ActorManager.Initialize();
-        //RoundManager.Instance.Initialize(config);
-            
-        //StartGame();
     }
 
     private void GetCurrentSceneName()
@@ -58,6 +43,12 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         GetCurrentSceneName();
+
+        if(CurrentScene == "GameScene")
+        {
+            RoundManager.Instance.Initialize(config);
+            StartRound();
+        }
     }
 
     public void QuitGame()
@@ -69,32 +60,9 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
-    /// <summary>
-    /// /////////////////////////////////////////////////////
-    /// </summary>
-
-    private void StartGame()
+    private void StartRound()
     {
-
-        ActorManager.SetPlayerCredits(config.StartingCredits, config.StartingCredits);
-
+        ActorManager.Instance.SetCredits(config.StartingCredits, config.StartingCredits);
         RoundManager.Instance.StartNewRound();
-
-    }
-
-    private void HandleRoundEnded(Models.Round.RoundResult result)
-    {
-
-        ActorManager.SetPlayerCredits(result.PlayerScoreChange, result.AIScoreChange);
-
-        if (ActorManager.IsPlayerNegativeBalance())
-        {
-            UIManager.ShowWinner("AI");
-        }
-        else if (ActorManager.IsAINegativeBalance())
-        {
-            UIManager.ShowWinner("Player");
-        }
-
     }
 }

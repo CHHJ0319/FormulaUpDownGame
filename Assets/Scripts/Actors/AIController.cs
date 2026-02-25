@@ -15,7 +15,7 @@ namespace Actors
         {
             Initialize();
 
-            ActorManager.SetAi(this);
+            ActorManager.Instance.SetAi(this);
         }
 
         private void Initialize()

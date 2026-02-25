@@ -15,7 +15,7 @@ namespace Actors
         {
             Initialize();
 
-            ActorManager.SetPlayer(this);
+            ActorManager.Instance.SetPlayer(this);
         }
 
         private void Initialize()
@@ -141,7 +141,6 @@ namespace Actors
             }
 
             Events.UIEvents.InvokeExpressionUpdated(expression.ToString());
-
             Events.UIEvents.InvokeStatusTextUpdated("연산자 카드를 눌러주세요");
         }
 
