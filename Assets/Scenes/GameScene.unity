@@ -1641,8 +1641,8 @@ RectTransform:
   - {fileID: 253326669}
   - {fileID: 942991736}
   - {fileID: 2070437466}
-  - {fileID: 701330233}
   - {fileID: 831777436}
+  - {fileID: 701330233}
   - {fileID: 637878780}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4124,7 +4124,6 @@ MonoBehaviour:
   timer: {fileID: 253326669}
   statusText: {fileID: 342414740}
   slotMachine: {fileID: 831777440}
-  targetScorePanel: {fileID: 0}
   resultPanel: {fileID: 637878781}
   bettingPanel: {fileID: 701330234}
   playerPanel: {fileID: 2070437468}

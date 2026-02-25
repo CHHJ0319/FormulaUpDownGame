@@ -40,11 +40,13 @@ public class RoundManager : MonoBehaviour
     void OnEnable()
     {
         Events.GameEvents.OnSubmitClicked += HandleSubmitClicked;
+        Events.GameEvents.OnBetChanged += HandleBetChanged;
     }
 
     void OnDisable()
     {
         Events.GameEvents.OnSubmitClicked -= HandleSubmitClicked;
+        Events.GameEvents.OnBetChanged -= HandleBetChanged;
     }
 
     public void Initialize(Models.GameConfig gameConfig)
@@ -95,6 +97,11 @@ public class RoundManager : MonoBehaviour
 
         playerSubmitted = true;
 
+    }
+
+    private void HandleBetChanged(int bet)
+    {
+        currentBet = bet;
     }
 
     private IEnumerator RoundLoopRoutine()
