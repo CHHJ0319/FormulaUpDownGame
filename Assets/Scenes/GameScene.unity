@@ -3643,14 +3643,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9195e25ad04105d4493ffd6e715449c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPanel: {fileID: 2081152312}
-  aiPanel: {fileID: 942991737}
-  bettingPanel: {fileID: 701330234}
-  resultPanel: {fileID: 637878781}
-  targetScorePanel: {fileID: 1202353384}
-  slotMachine: {fileID: 831777440}
-  timerText: {fileID: 1042388264}
-  statusText: {fileID: 342414740}
 --- !u!1 &1202353380
 GameObject:
   m_ObjectHideFlags: 0
@@ -5450,12 +5442,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ffe165bd4c427e46b1e3aa621e9693b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2103217316
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2103217318}
+  - component: {fileID: 2103217317}
+  m_Layer: 0
+  m_Name: UIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2103217317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103217316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49dd22df21b53024b9f95f666c6faf0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timer: {fileID: 253326669}
+  statusText: {fileID: 342414740}
+  slotMachine: {fileID: 831777440}
+  targetScorePanel: {fileID: 1202353381}
+  resultPanel: {fileID: 637878781}
+  bettingPanel: {fileID: 701330234}
+  playerPanel: {fileID: 2081152312}
+  aiPanel: {fileID: 942991737}
+--- !u!4 &2103217318
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103217316}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 386.84598, y: 167.276, z: -1.6220603}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
+  - {fileID: 2103217318}
   - {fileID: 105440431}
   - {fileID: 657950826}
   - {fileID: 845209166}

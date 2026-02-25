@@ -30,7 +30,7 @@ namespace UI.MenuScene
 
         private void OnChallengeModeButtonClick()
         {
-
+            Util.SceneLoader.LoadSceneByName("GameScene");
         }
 
         private void OnTutorialModeButtonClick()

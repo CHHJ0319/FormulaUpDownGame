@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-namespace UI
+namespace UI.GameScene
 {
     public class BettingPanel : MonoBehaviour
     {

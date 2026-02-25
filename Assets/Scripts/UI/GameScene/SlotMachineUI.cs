@@ -3,7 +3,8 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-namespace UI {
+namespace UI.GameScene
+{
     public class SlotMachineUI : MonoBehaviour
     {
         [SerializeField] private Animator animator;

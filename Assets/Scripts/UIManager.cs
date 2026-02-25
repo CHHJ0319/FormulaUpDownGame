@@ -11,16 +11,7 @@ public class UIManager : MonoBehaviour
 
     private TitleSceneUIController titleSceneUIController;
     private MenuSceneUIController menuSceneUIController;
-
-    [SerializeField] private UI.PlayerPanel playerPanel;
-    [SerializeField] private UI.AiPanel aiPanel;
-    [SerializeField] private UI.BettingPanel bettingPanel;
-    [SerializeField] private UI.ResultPanel resultPanel;
-    [SerializeField] private UI.TargetScorePanel targetScorePanel;
-    [SerializeField] private UI.SlotMachineUI slotMachine;
-
-    [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private TextMeshProUGUI statusText;
+    private UI.GameScene.UIController gameSceneUIController;
 
     void Awake()
     {
@@ -37,7 +28,6 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        UpdateTimerText(0, 180);
 
         //resultPanel.Hide();
         //playerPanel.Initialize();
@@ -53,11 +43,8 @@ public class UIManager : MonoBehaviour
 
         Events.GameEvents.OnScoreChanged += UpdateScoreText;
         Events.GameEvents.OnRoundStarted += HandleRoundStarted;
-        //Events.GameEvents.OnRoundEnded += resultPanel.HandleRoundEnded;
         //Events.GameEvents.OnBetChanged += bettingPanel.UpdateBetText;
-        Events.GameEvents.OnTimerUpdated += UpdateTimerText;
 
-        Events.UIEvents.OnStatusTextUpdated += UpdateStatusText;
         Events.RoundEvents.OnTargetScoreSet += OnTargetSet;
     }
 
@@ -70,11 +57,8 @@ public class UIManager : MonoBehaviour
 
         Events.GameEvents.OnScoreChanged -= UpdateScoreText;
         Events.GameEvents.OnRoundStarted -= HandleRoundStarted;
-        Events.GameEvents.OnRoundEnded -= resultPanel.HandleRoundEnded;
-        Events.GameEvents.OnBetChanged -= bettingPanel.UpdateBetText;
-        Events.GameEvents.OnTimerUpdated -= UpdateTimerText;
+        //Events.GameEvents.OnBetChanged -= bettingPanel.UpdateBetText;
 
-        Events.UIEvents.OnStatusTextUpdated -= UpdateStatusText;
         Events.RoundEvents.OnTargetScoreSet -= OnTargetSet;
     }
 
@@ -88,106 +72,57 @@ public class UIManager : MonoBehaviour
         menuSceneUIController = controller;
     }
 
+    public void SetGameSceneUIController(UI.GameScene.UIController controller)
+    {
+        gameSceneUIController = controller;
+    }
+
     private void HandleCardAdded(Card card, bool isPlayer)
     {
         if (isPlayer)
         {
-            playerPanel.AddCard(card);
+            //playerPanel.AddCard(card);
         }
         else
         {
-            aiPanel.AddCard(card);
+            //aiPanel.AddCard(card);
         }
     }
 
     private void UpdateExpressionText(string text)
     {
-        playerPanel.UpdateExpressionText(text);
+        //playerPanel.UpdateExpressionText(text);
     }
 
     private void HandleResetButtonClicked()
     {
-        playerPanel.ResetCardInHandUsage();
+       // playerPanel.ResetCardInHandUsage();
     }
 
     public void UpdateSubmitAvailability(bool canSubmit)
     {
-        playerPanel.UpdateSubmitButton(canSubmit);
+        //playerPanel.UpdateSubmitButton(canSubmit);
     }
 
     private void UpdateScoreText(int playerScore, int aiScore)
     {
-        playerPanel.UpdateCreditsText(playerScore);
-        aiPanel.UpdateCreditsText(aiScore);
+        //playerPanel.UpdateCreditsText(playerScore);
+        //aiPanel.UpdateCreditsText(aiScore);
     }
 
     private void HandleRoundStarted()
     {
-        playerPanel.ResetHand();
-        aiPanel.ResetHand();
+        //playerPanel.ResetHand();
+        //aiPanel.ResetHand();
 
-        resultPanel.Hide();
-        playerPanel.UpdateExpressionText("");
-        playerPanel.UpdateSubmitButton(false);
-
-        UpdateTimerText(0, 180);
-    }
-
-    private void UpdateTimerText(float currentTime, float maxTime)
-    {
-        float remainingTime = maxTime - currentTime;
-
-        if (remainingTime < 0)
-        {
-            timerText.text = "00:00";
-        }
-        else
-        {
-            if (remainingTime <= 30)
-            {
-                timerText.color = Color.red;
-            }
-            else
-            {
-                //timerText.color = Color.white;
-            }
-
-            int minutes = Mathf.FloorToInt(remainingTime / 60f);
-            int seconds = Mathf.FloorToInt(remainingTime % 60f);
-
-            //timerText.text = $"{minutes:00}:{seconds:00}";
-        }
+        //resultPanel.Hide();
+        //playerPanel.UpdateExpressionText("");
+        //playerPanel.UpdateSubmitButton(false);
     }
 
     public static void ShowWinner(string winner)
     {
         // = $"게임 종료! 최종 승자: {winner}";
-    }
-
-    private void UpdateStatusText(string message)
-    {
-        statusText.text = message;
-
-        if (message.Contains("분배"))
-        {
-            statusText.color = Color.black;
-        }
-        else if (message.Contains("완성하세요"))
-        {
-            statusText.color = Color.cyan;
-        }
-        else if (message.Contains("제출"))
-        {
-            statusText.color = Color.green;
-        }
-        else if (message.Contains("결과"))
-        {
-            statusText.color = Color.yellow;
-        }
-        else
-        {
-            statusText.color = Color.black;
-        }
     }
 
     private void OnTargetSet(int score)
@@ -200,14 +135,14 @@ public class UIManager : MonoBehaviour
     {
         bool isSlotFinished = false;
 
-        slotMachine.PlaySlot(score, () =>
-        {
-            isSlotFinished = true;
-        });
+        //slotMachine.PlaySlot(score, () =>
+        //{
+        //    isSlotFinished = true;
+        //});
 
         yield return new WaitUntil(() => isSlotFinished);
 
-        targetScorePanel.UpdateTargetScoreText(score);
+        //targetScorePanel.UpdateTargetScoreText(score);
     }
  
 }

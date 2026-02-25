@@ -34,8 +34,6 @@ public class ActorManager : MonoBehaviour
         Events.CardEvents.OnCardAdded -= AddCard;
         Events.ButtonEvents.OnResetButtonClicked -= HandleResetButtonClicked;
         Events.CardEvents.OnCardClicked -= HandleCardClicked;
-
-
     }
 
     public void HandleRoundStarted()

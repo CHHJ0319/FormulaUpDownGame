@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace UI
+namespace UI.GameScene
 {
     public class AiPanel : MonoBehaviour
     {
