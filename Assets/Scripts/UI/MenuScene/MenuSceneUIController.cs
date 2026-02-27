@@ -45,7 +45,7 @@ namespace UI.MenuScene
 
         private void OnQuitModeButtonClick()
         {
-            GameManager.Instance.QuitGame();
+            Events.GameEvents.QuitGame();
         }
     }
 }

@@ -28,11 +28,15 @@ public class GameManager : MonoBehaviour
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        Events.GameEvents.OnQuitGame += QuitGame;
     }
 
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    
+        Events.GameEvents.OnQuitGame -= QuitGame;
     }
 
     private void GetCurrentSceneName()
@@ -51,7 +55,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void QuitGame()
+    private void QuitGame()
     {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
