@@ -7,6 +7,8 @@ namespace UI
 {
     public class CardButton : MonoBehaviour
     {
+        public Sprite[] numberImageList;
+
         [Header("Cadrd Color")]
         [SerializeField] private Color playerNumberCardColor = Color.white;
         [SerializeField] private Color playerOperatorCardColor = new Color(0.8f, 1f, 0.8f);
@@ -14,6 +16,7 @@ namespace UI
         [SerializeField] private Color aiCardColor = new Color(0.9f, 0.9f, 1f);
 
         private TextMeshProUGUI displayText;
+        public Image numberImage;
         private Image backgroundImage;
         private Button button;
 
@@ -47,7 +50,15 @@ namespace UI
             this.card = card;
             this.isPlayerCard = isPlayer;
 
-            SetCardButtonText();
+            if(card is NumberCard numberCard)
+            {
+                int num = numberCard.Value;
+                SetCardButtonNumber(num);
+            }
+            else
+            {
+                SetCardButtonText();
+            }
             SetCardButtonColor();
             SetEffect();
         }
@@ -67,6 +78,12 @@ namespace UI
             card.MarkAsUnused();
 
             SetCardButtonColor();
+        }
+
+        private void SetCardButtonNumber(int value)
+        {
+            numberImage.gameObject.SetActive(true);
+            numberImage.sprite = numberImageList[value];
         }
 
         private void SetCardButtonText()

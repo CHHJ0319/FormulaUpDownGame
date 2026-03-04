@@ -5,7 +5,7 @@ namespace Models.Cards
     public class NumberCard : Card
     {
         private int minValue = 0;
-        private int maxValue = 10;
+        private int maxValue = 9;
 
         public int Value { get; }
 
