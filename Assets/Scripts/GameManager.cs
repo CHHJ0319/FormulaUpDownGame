@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -29,14 +30,14 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
 
-        Events.GameEvents.OnQuitGame += QuitGame;
+        Events.GameEvents.OnQuitGame += () => StartCoroutine(QuitGame());
     }
 
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     
-        Events.GameEvents.OnQuitGame -= QuitGame;
+        Events.GameEvents.OnQuitGame -= () => StartCoroutine(QuitGame());
     }
 
     private void GetCurrentSceneName()
@@ -55,8 +56,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void QuitGame()
+    private IEnumerator QuitGame()
     {
+        yield return new WaitForSeconds(0.2f);
+
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

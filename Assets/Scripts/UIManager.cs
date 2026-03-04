@@ -9,7 +9,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     private TitleSceneUIController titleSceneUIController;
-    private MenuSceneUIController menuSceneUIController;
+	private UI.MenuScene.UIController menuSceneUIController;
     private UI.GameScene.UIController gameSceneUIController;
 
     void Awake()
@@ -46,9 +46,9 @@ public class UIManager : MonoBehaviour
         titleSceneUIController = controller;
     }
 
-    public void SetMenuSceneUIController(MenuSceneUIController controller)
+    public void SetUIController(UI.MenuScene.UIController controller)
     {
-        menuSceneUIController = controller;
+		menuSceneUIController = controller;
     }
 
     public void SetGameSceneUIController(UI.GameScene.UIController controller)

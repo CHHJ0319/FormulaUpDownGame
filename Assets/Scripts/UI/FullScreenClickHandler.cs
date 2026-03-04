@@ -8,7 +8,7 @@ public class FullScreenClickHandler : MonoBehaviour, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            Util.SceneLoader.LoadSceneByName("MenuScene");
+            StartCoroutine(Util.SceneLoader.LoadSceneByName("MenuScene"));
         }
     }
 }
