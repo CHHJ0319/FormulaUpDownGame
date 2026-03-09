@@ -91,7 +91,7 @@ namespace UI.GameScene
         public void SetTargetScore()
         {
             rect.sizeDelta = new Vector2(40, 40);
-            rect.anchoredPosition = new Vector2(-560, -77);
+            rect.anchoredPosition = new Vector2(700, 90);
 
             resultText.fontSize = 8;
             resultText.GetComponent<RectTransform>().anchoredPosition = new Vector2(28, -2.3f);
