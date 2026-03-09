@@ -10,11 +10,6 @@ namespace Models.Cards
             MarkAsUnused();
         }
 
-        public override string GetDisplayText()
-        {
-            return Converter.OperatorTypeWithString.ToSymbolString(Operator.Type);
-        }
-
         public override Card Clone()
         {
             return new SpecialCard(Operator.Type);

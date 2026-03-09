@@ -4,7 +4,6 @@ namespace Models.Cards
     {
         public bool IsUsed { get; protected set; }
 
-        public abstract string GetDisplayText();
         public abstract Card Clone();
         public void MarkAsUsed()
         {

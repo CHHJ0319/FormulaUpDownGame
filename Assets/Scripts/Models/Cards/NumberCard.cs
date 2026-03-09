@@ -15,11 +15,6 @@ namespace Models.Cards
             MarkAsUnused();
         }
 
-        public override string GetDisplayText()
-        {
-            return Value.ToString();
-        }
-
         public override Card Clone()
         {
             return new NumberCard(Value);

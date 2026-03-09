@@ -1,22 +1,23 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+﻿using Algorithm;
 using Models.Cards;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
     public class CardButton : MonoBehaviour
     {
+        public Sprite[] backgroundImageList;
         public Sprite[] numberImageList;
+        public Sprite[] OperatorImageList;
 
         [Header("Cadrd Color")]
-        [SerializeField] private Color playerNumberCardColor = Color.white;
-        [SerializeField] private Color playerOperatorCardColor = new Color(0.8f, 1f, 0.8f);
-        [SerializeField] private Color specialCardColor = new Color(1f, 0.9f, 0.5f);
         [SerializeField] private Color aiCardColor = new Color(0.9f, 0.9f, 1f);
 
+        public Image cardImage;
+
         private TextMeshProUGUI displayText;
-        public Image numberImage;
         private Image backgroundImage;
         private Button button;
 
@@ -50,15 +51,23 @@ namespace UI
             this.card = card;
             this.isPlayerCard = isPlayer;
 
-            if(card is NumberCard numberCard)
+            cardImage.gameObject.SetActive(true);
+            if (card is NumberCard numberCard)
             {
                 int num = numberCard.Value;
-                SetCardButtonNumber(num);
+                SetNumber(num);
             }
-            else
+            else if (card is OperatorCard operatorCard)
             {
-                SetCardButtonText();
+                Algorithm.Operator opt = operatorCard.Operator;
+                SetOperator(opt);
             }
+            else if (card is SpecialCard specialCard)
+            {
+                Algorithm.Operator opt = specialCard.Operator;
+                SetOperator(opt);
+            }
+
             SetCardButtonColor();
             SetEffect();
         }
@@ -80,15 +89,34 @@ namespace UI
             SetCardButtonColor();
         }
 
-        private void SetCardButtonNumber(int value)
+        private void SetNumber(int value)
         {
-            numberImage.gameObject.SetActive(true);
-            numberImage.sprite = numberImageList[value];
+            cardImage.sprite = numberImageList[value];
         }
 
-        private void SetCardButtonText()
+        private void SetOperator(Algorithm.Operator type)
         {
-            displayText.text = card.GetDisplayText();
+            if (type.Type == Algorithm.Operator.OperatorType.Add)
+            {
+                cardImage.sprite = OperatorImageList[0];
+            }
+            else if (type.Type == Algorithm.Operator.OperatorType.Subtract)
+            {
+                cardImage.sprite = OperatorImageList[1];
+            }
+            else if (type.Type == Algorithm.Operator.OperatorType.Multiply)
+            {
+                cardImage.sprite = OperatorImageList[2];
+            }
+            else if (type.Type == Algorithm.Operator.OperatorType.Divide)
+            {
+                cardImage.sprite = OperatorImageList[3];
+            }
+            else if (type.Type == Algorithm.Operator.OperatorType.SquareRoot)
+            {
+                cardImage.sprite = OperatorImageList[4];
+            }
+
         }
 
         private void SetCardButtonColor()
@@ -99,15 +127,15 @@ namespace UI
             }
             else if (card is NumberCard)
             {
-                backgroundImage.color = playerNumberCardColor;
+                backgroundImage.sprite = backgroundImageList[0];
             }
             else if (card is OperatorCard)
             {
-                backgroundImage.color = playerOperatorCardColor;
+                backgroundImage.sprite = backgroundImageList[1];
             }
             else if (card is SpecialCard)
             {
-                backgroundImage.color = specialCardColor;
+                backgroundImage.sprite = backgroundImageList[2];
             }
         }
 
