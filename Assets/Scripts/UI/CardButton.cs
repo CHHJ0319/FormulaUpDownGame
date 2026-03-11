@@ -13,7 +13,9 @@ namespace UI
         public Sprite[] OperatorImageList;
 
         [Header("Cadrd Color")]
+        [SerializeField] private Color normalCardColor = Color.white;
         [SerializeField] private Color aiCardColor = new Color(0.9f, 0.9f, 1f);
+
 
         public Image cardImage;
 
@@ -68,7 +70,7 @@ namespace UI
                 SetOperator(opt);
             }
 
-            SetCardButtonColor();
+            InitializeCardButtonColor();
             SetEffect();
         }
 
@@ -86,7 +88,7 @@ namespace UI
             button.interactable = true;
             card.MarkAsUnused();
 
-            SetCardButtonColor();
+            InitializeCardButtonColor();
         }
 
         private void SetNumber(int value)
@@ -119,7 +121,7 @@ namespace UI
 
         }
 
-        private void SetCardButtonColor()
+        private void InitializeCardButtonColor()
         {
             if (!isPlayerCard)
             {
@@ -128,14 +130,17 @@ namespace UI
             else if (card is NumberCard)
             {
                 backgroundImage.sprite = backgroundImageList[0];
+                backgroundImage.color = normalCardColor;
             }
             else if (card is OperatorCard)
             {
                 backgroundImage.sprite = backgroundImageList[1];
+                backgroundImage.color = normalCardColor;
             }
             else if (card is SpecialCard)
             {
                 backgroundImage.sprite = backgroundImageList[2];
+                backgroundImage.color = normalCardColor;
             }
         }
 

@@ -150,11 +150,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 56e657cdd7cef8147b1cc60f5755cff5, type: 3}
   - {fileID: 21300000, guid: 7bfe7fb02ee154b44973a63f320a820b, type: 3}
   OperatorImageList:
-  - {fileID: 21300000, guid: 7c6d2663581c88840aec10a87f387422, type: 3}
-  - {fileID: 21300000, guid: 93837775e1cf92c46933de4c0fd9f2a9, type: 3}
-  - {fileID: 21300000, guid: 375f93b3f5f626842a95d0497d8dbab2, type: 3}
-  - {fileID: 21300000, guid: 2a0e8627039088841a31c8b5a767dc13, type: 3}
-  - {fileID: 21300000, guid: 25657694a8f951648b8f5e35227f80d0, type: 3}
+  - {fileID: 21300000, guid: 27978574fdb5bda47bd6e02ad3c86c90, type: 3}
+  - {fileID: 21300000, guid: dee5698405994b940bb44bb79beb64ec, type: 3}
+  - {fileID: 21300000, guid: ade1d25777f139d488421d9b22b81e80, type: 3}
+  - {fileID: 21300000, guid: d346fd2758a5d5c46b28426b2ef08bc3, type: 3}
+  - {fileID: 21300000, guid: 61d135f6aae4f5841ba1fe2311bb50d2, type: 3}
   aiCardColor: {r: 0.9, g: 0.9, b: 1, a: 1}
   cardImage: {fileID: 7925322647598401383}
 --- !u!1 &5033137945349974721
@@ -174,7 +174,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6914441266141544194
 RectTransform:
   m_ObjectHideFlags: 0
@@ -191,8 +191,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3, y: -5}
-  m_SizeDelta: {x: 78.6234, y: 73.8583}
+  m_AnchoredPosition: {x: 4, y: -5}
+  m_SizeDelta: {x: 120.5991, y: 88.0034}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1125759481180007064
 CanvasRenderer:
@@ -215,7 +215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3820755, g: 0.92546904, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
