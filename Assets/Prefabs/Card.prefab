@@ -155,6 +155,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ade1d25777f139d488421d9b22b81e80, type: 3}
   - {fileID: 21300000, guid: d346fd2758a5d5c46b28426b2ef08bc3, type: 3}
   - {fileID: 21300000, guid: 61d135f6aae4f5841ba1fe2311bb50d2, type: 3}
+  normalCardColor: {r: 1, g: 1, b: 1, a: 1}
   aiCardColor: {r: 0.9, g: 0.9, b: 1, a: 1}
   cardImage: {fileID: 7925322647598401383}
 --- !u!1 &5033137945349974721
@@ -222,7 +223,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 286cc272f75c5b9479af999ff41366b2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 61d135f6aae4f5841ba1fe2311bb50d2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

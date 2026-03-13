@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 43f5096ee0bd9c948ad959fe466adc77
+guid: c1a49ea83c61fe448bd4081617007ec6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -835559888589180755
-    second: Generated Image November 17, 2025 - 2_36PM_0
+      213: 5458820683319721656
+    second: BettingPanel_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Generated Image November 17, 2025 - 2_36PM_0
+      name: BettingPanel_0
       rect:
         serializedVersion: 2
-        x: 36
-        y: 34
-        width: 542
-        height: 729
+        x: 33
+        y: 0
+        width: 899
+        height: 367
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: da0b31455be7764f0800000000000000
-      internalID: -835559888589180755
+      spriteID: 8beb3d94d70a1cb40800000000000000
+      internalID: 5458820683319721656
       vertices: []
       indices: 
       edges: []
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Generated Image November 17, 2025 - 2_36PM_0: -835559888589180755
+      BettingPanel_0: 5458820683319721656
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

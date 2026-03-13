@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 7935b757eae715c4686393249ff3cd1a
+guid: 02582011fa427d846914d586f95fc405
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4927149247914429902
-    second: Generated Image November 18, 2025 - 10_42AM_0
-  - first:
-      213: 5991848789894703001
-    second: Generated Image November 18, 2025 - 10_42AM_1
+      213: -6822227148877729941
+    second: CreditIcon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -142,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Generated Image November 18, 2025 - 10_42AM_0
+      name: CreditIcon_0
       rect:
         serializedVersion: 2
-        x: 36
-        y: 43
-        width: 1358
-        height: 630
+        x: 0
+        y: 0
+        width: 236
+        height: 273
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -157,30 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ecdc545c220c06440800000000000000
-      internalID: 4927149247914429902
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Generated Image November 18, 2025 - 10_42AM_1
-      rect:
-        serializedVersion: 2
-        x: 1329
-        y: 31
-        width: 48
-        height: 47
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 997278d6ab2572350800000000000000
-      internalID: 5991848789894703001
+      spriteID: b6fed16cd849251a0800000000000000
+      internalID: -6822227148877729941
       vertices: []
       indices: 
       edges: []
@@ -199,8 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Generated Image November 18, 2025 - 10_42AM_0: 4927149247914429902
-      Generated Image November 18, 2025 - 10_42AM_1: 5991848789894703001
+      CreditIcon_0: -6822227148877729941
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
