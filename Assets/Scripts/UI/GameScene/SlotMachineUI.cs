@@ -20,7 +20,7 @@ namespace UI.GameScene
         private RectTransform rect;
         private AudioSource audioSource;
 
-        private string animationStateName = "Slotmachine";
+        private string animationStateName = "SlotMachine";
 
         void Awake()
         {
@@ -33,7 +33,7 @@ namespace UI.GameScene
             gameObject.SetActive(true);
 
             rect.anchoredPosition = new Vector2(0, 0);
-            rect.sizeDelta = new Vector2(100, 100);
+            rect.sizeDelta = new Vector2(70, 70);
 
             resultText.text = "";
             resultText.fontSize = 20;
@@ -90,8 +90,8 @@ namespace UI.GameScene
 
         public void SetTargetScore()
         {
-            rect.sizeDelta = new Vector2(40, 40);
-            rect.anchoredPosition = new Vector2(700, 90);
+            rect.sizeDelta = new Vector2(25, 25);
+            rect.anchoredPosition = new Vector2(600, 30);
 
             resultText.fontSize = 8;
             resultText.GetComponent<RectTransform>().anchoredPosition = new Vector2(28, -2.3f);
